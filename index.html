@@ -277,10 +277,6 @@
       line-height: 1.3;
     }
 
-    .photo-comment {
-      display: none;
-    }
-
     #backBtn {
       margin: 8px 15px;
       padding: 8px 20px;
@@ -308,7 +304,7 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - Avec traduction === */
+    /* === MENU HAMBURGER === */
     .hamburger-menu {
       display: none;
       position: absolute;
@@ -356,7 +352,6 @@
       display: flex;
     }
 
-    /* Boutons dans le menu - Petit, noir, compact */
     .hamburger-menu .history-btn,
     .hamburger-menu .action-btn,
     .hamburger-menu .auth-btn {
@@ -432,7 +427,7 @@
       margin: 3px 0;
     }
 
-    /* Style de la traduction dans le menu */
+    /* Traduction dans le menu */
     .hamburger-menu .translate-container {
       width: 100%;
       padding: 4px 0;
@@ -478,7 +473,7 @@
       display: none !important;
     }
 
-    /* Statut dans le menu - Noir */
+    /* Statut dans le menu */
     .hamburger-menu .auth-status {
       display: none;
     }
@@ -804,7 +799,7 @@
       <span class="auth-status" id="authStatus"></span>
     </div>
     
-    <!-- Menu hamburger avec traduction -->
+    <!-- Menu hamburger -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
@@ -915,10 +910,18 @@
           <label for="addName">Nom complet *</label>
           <input type="text" id="addName" required placeholder="Entrez le nom complet">
         </div>
+        
+        <!-- 
+        ═══════════════════════════════════════════════════════════
+        CHAMP PHOTO - Caché par défaut
+        Pour activer, supprimez les commentaires ci-dessous
+        ═══════════════════════════════════════════════════════════
         <div class="form-group">
           <label for="addPhoto">Nom de la photo (ex: nom.jpg)</label>
           <input type="text" id="addPhoto" placeholder="nom_de_la_photo.jpg">
         </div>
+        -->
+        
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeAddModal()">Annuler</button>
           <button type="submit" class="btn-submit">Ajouter</button>
@@ -937,10 +940,18 @@
           <label for="editName">Nom complet *</label>
           <input type="text" id="editName" required placeholder="Entrez le nom complet">
         </div>
+        
+        <!-- 
+        ═══════════════════════════════════════════════════════════
+        CHAMP PHOTO - Caché par défaut
+        Pour activer, supprimez les commentaires ci-dessous
+        ═══════════════════════════════════════════════════════════
         <div class="form-group">
           <label for="editPhoto">Nom de la photo (ex: nom.jpg)</label>
           <input type="text" id="editPhoto" placeholder="nom_de_la_photo.jpg">
         </div>
+        -->
+        
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeEditModal()">Annuler</button>
           <button type="submit" class="btn-submit">Modifier</button>
@@ -1323,13 +1334,6 @@
 
         div.appendChild(img);
         div.appendChild(name);
-        
-        // Ajout du nom de la photo en commentaire HTML (caché dans l'interface)
-        if (child.photo) {
-          const comment = document.createComment(` photo: ${child.photo} `);
-          div.appendChild(comment);
-        }
-        
         treeEl.appendChild(div);
       });
     }
@@ -1366,13 +1370,6 @@
 
       div.appendChild(img);
       div.appendChild(name);
-      
-      // Ajout du nom de la photo de la racine en commentaire HTML
-      if (family.photo) {
-        const comment = document.createComment(` photo: ${family.photo} `);
-        div.appendChild(comment);
-      }
-      
       treeEl.appendChild(div);
     }
 
@@ -1434,6 +1431,7 @@
       }
     };
 
+    // ===== AJOUTER =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
         alert("Vous n'avez pas les permissions pour ajouter des personnes.");
@@ -1441,7 +1439,12 @@
       }
       document.getElementById("addModal").classList.add("active");
       document.getElementById("addName").value = "";
-      document.getElementById("addPhoto").value = "";
+      
+      // Réinitialiser la photo si le champ existe
+      const photoInput = document.getElementById("addPhoto");
+      if (photoInput) {
+        photoInput.value = "";
+      }
     };
 
     window.closeAddModal = function() {
@@ -1456,7 +1459,11 @@
       }
 
       const name = document.getElementById("addName").value.trim();
-      const photo = document.getElementById("addPhoto").value.trim();
+      
+      // La photo est toujours définie à "" par défaut
+      // Si vous décommentez le champ dans le HTML, cette ligne fonctionnera
+      const photoInput = document.getElementById("addPhoto");
+      const photo = photoInput ? photoInput.value.trim() : "";
 
       if (!name) {
         alert("Veuillez entrer un nom.");
@@ -1496,6 +1503,7 @@
       }
     };
 
+    // ===== MODIFIER =====
     let editingPerson = null;
     let editingParent = null;
 
@@ -1514,7 +1522,13 @@
         editingPerson = result.node;
         editingParent = result.parent;
         document.getElementById("editName").value = editingPerson.name;
-        document.getElementById("editPhoto").value = editingPerson.photo || "";
+        
+        // Récupérer la photo si le champ existe
+        const photoInput = document.getElementById("editPhoto");
+        if (photoInput) {
+          photoInput.value = editingPerson.photo || "";
+        }
+        
         document.getElementById("editModal").classList.add("active");
       } else {
         alert("Erreur : personne non trouvée dans l'arbre.");
@@ -1535,7 +1549,10 @@
       }
 
       const name = document.getElementById("editName").value.trim();
-      const photo = document.getElementById("editPhoto").value.trim();
+      
+      // Récupérer la photo si le champ existe
+      const photoInput = document.getElementById("editPhoto");
+      const photo = photoInput ? photoInput.value.trim() : "";
 
       if (!name) {
         alert("Veuillez entrer un nom.");
@@ -1574,6 +1591,7 @@
       }
     };
 
+    // ===== SUPPRIMER =====
     let deletingPerson = null;
     let deletingParent = null;
 
@@ -1637,6 +1655,7 @@
       }
     };
 
+    // ===== HISTOIRE =====
     window.openHistoryModal = function() {
       document.getElementById("historyModal").classList.add("active");
     };
@@ -1645,6 +1664,7 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
+    // ===== INITIALISATION =====
     async function init() {
       await loadPasswords();
       await chargerfamille();
