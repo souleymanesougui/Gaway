@@ -156,6 +156,15 @@
       color: #95a5a6;
     }
 
+    [data-theme="dark"] .detail-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .detail-card .detail-label {
+      color: #95a5a6;
+    }
+
     /* === TOASTS === */
     .toast-container {
       position: fixed;
@@ -435,7 +444,7 @@
       color: #a569bd;
     }
 
-    /* === BARRE DE RECHERCHE AVEC SUGGESTIONS === */
+    /* === BARRE DE RECHERCHE === */
     .search-wrapper {
       width: 90%;
       max-width: 450px;
@@ -598,6 +607,24 @@
       border-radius: 20px;
       font-weight: 600;
       box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
+    }
+
+    .person .detail-hint {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-size: 10px;
+      color: var(--text-light);
+      opacity: 0.6;
+      background: rgba(255,255,255,0.6);
+      padding: 1px 8px;
+      border-radius: 10px;
+      backdrop-filter: blur(4px);
+    }
+
+    [data-theme="dark"] .person .detail-hint {
+      background: rgba(0,0,0,0.3);
+      color: #95a5a6;
     }
 
     #backBtn {
@@ -823,7 +850,9 @@
     }
 
     .modal-content.person-detail-modal {
-      max-width: 500px;
+      max-width: 480px;
+      padding: 0;
+      overflow: hidden;
     }
 
     .modal-content.stats-modal {
@@ -869,6 +898,7 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
+      z-index: 10;
     }
 
     .modal-close:hover {
@@ -1190,48 +1220,138 @@
       display: block;
     }
 
-    /* === DETAIL PERSONNE === */
-    .person-detail-header {
+    /* === DÉTAIL PERSONNE - NOUVEAU STYLE === */
+    .detail-cover {
+      position: relative;
+      height: 120px;
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
       display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 50px;
     }
 
-    .person-detail-header img {
-      width: 80px;
-      height: 80px;
+    .detail-avatar-wrapper {
+      position: absolute;
+      bottom: -45px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .detail-avatar-wrapper img {
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid var(--accent);
+      border: 4px solid var(--card-bg);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      background: #ecf0f1;
     }
 
-    .person-detail-header .detail-name {
-      font-size: 20px;
-      font-weight: 600;
+    .detail-body {
+      padding: 55px 28px 28px 28px;
+    }
+
+    .detail-body .detail-name {
+      font-size: 22px;
+      font-weight: 700;
       color: var(--primary);
+      text-align: center;
+      margin-bottom: 4px;
     }
 
-    .person-detail-header .detail-role {
-      font-size: 13px;
-      color: var(--text-light);
-    }
-
-    .detail-info-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    .detail-body .detail-role {
+      text-align: center;
       font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 20px;
     }
 
-    .detail-info-item .label {
+    .detail-body .detail-role .role-badge {
+      display: inline-block;
+      padding: 2px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(142, 68, 173, 0.1);
+      color: var(--accent);
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .detail-card {
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .detail-card .detail-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       color: var(--text-light);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .detail-card .detail-value {
+      font-size: 15px;
+      color: var(--text-dark);
       font-weight: 500;
     }
 
-    .detail-info-item .value {
+    .detail-card .detail-value.empty {
+      color: var(--text-light);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .detail-actions .btn-detail {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      background: rgba(0, 0, 0, 0.04);
       color: var(--text-dark);
+    }
+
+    .detail-actions .btn-detail:hover {
+      background: rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .detail-actions .btn-detail.btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .detail-actions .btn-detail.btn-primary:hover {
+      background: #6c3483;
+    }
+
+    .detail-actions .btn-detail.btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .detail-actions .btn-detail.btn-danger:hover {
+      background: #c0392b;
     }
 
     /* === RESPONSIVE === */
@@ -1295,6 +1415,11 @@
         max-width: 100%;
       }
 
+      .modal-content.person-detail-modal {
+        max-width: 100%;
+        border-radius: 24px;
+      }
+
       .hamburger-menu {
         padding: 10px 14px 14px 14px;
         min-width: 200px;
@@ -1311,6 +1436,28 @@
 
       .stats-simple .stat-number-big {
         font-size: 48px;
+      }
+
+      .detail-cover {
+        height: 90px;
+      }
+
+      .detail-avatar-wrapper img {
+        width: 70px;
+        height: 70px;
+        bottom: -35px;
+      }
+
+      .detail-body {
+        padding: 45px 18px 20px 18px;
+      }
+
+      .detail-body .detail-name {
+        font-size: 19px;
+      }
+
+      .person .detail-hint {
+        display: none;
       }
     }
 
@@ -1428,7 +1575,7 @@
     </div>
   </div>
 
-  <!-- Stats Modal (SIMPLIFIÉ - visible par tout le monde) -->
+  <!-- Stats Modal -->
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
@@ -1512,7 +1659,7 @@
     </div>
   </div>
 
-  <!-- Add Person Modal (SANS le champ photo) -->
+  <!-- Add Person Modal -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">✕</button>
@@ -1538,7 +1685,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal (SANS le champ photo) -->
+  <!-- Edit Person Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1584,33 +1731,44 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal -->
+  <!-- Person Detail Modal - NOUVEAU STYLE -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
-      <div class="person-detail-header" id="detailHeader">
-        <img id="detailAvatar" src="ssi.jpg" alt="Photo">
-        <div>
-          <div class="detail-name" id="detailName">Nom</div>
-          <div class="detail-role" id="detailRole">Membre</div>
+      
+      <div class="detail-cover">
+        <div class="detail-avatar-wrapper">
+          <img id="detailAvatar" src="ssi.jpg" alt="Photo">
         </div>
       </div>
-      <div id="detailInfo">
-        <div class="detail-info-item">
-          <span class="label">Naissance</span>
-          <span class="value" id="detailBirth">Non renseigné</span>
+      
+      <div class="detail-body">
+        <div class="detail-name" id="detailName">Nom</div>
+        <div class="detail-role">
+          <span class="role-badge" id="detailRole">Membre</span>
         </div>
-        <div class="detail-info-item">
-          <span class="label">Biographie</span>
-          <span class="value" id="detailBio">Non renseignée</span>
+        
+        <div class="detail-grid">
+          <div class="detail-card">
+            <div class="detail-label">📅 Date de naissance</div>
+            <div class="detail-value" id="detailBirth">Non renseigné</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">👤 Biographie</div>
+            <div class="detail-value" id="detailBio">Non renseignée</div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">👨‍👦 Enfants</div>
+            <div class="detail-value" id="detailChildren">0</div>
+          </div>
         </div>
-        <div class="detail-info-item">
-          <span class="label">Enfants</span>
-          <span class="value" id="detailChildren">0</span>
+        
+        <div class="detail-actions">
+          <button type="button" class="btn-detail btn-primary" onclick="closePersonDetailModal(); navigateToPerson();">
+            🌳 Voir dans l'arbre
+          </button>
+          <button type="button" class="btn-detail" onclick="closePersonDetailModal()">Fermer</button>
         </div>
-      </div>
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="closePersonDetailModal()">Fermer</button>
       </div>
     </div>
   </div>
@@ -1677,6 +1835,7 @@
     let currentPath = [];
     let currentNode = null;
     let currentParent = null;
+    let lastDetailPerson = null;
 
     // ===== TOAST SYSTEM =====
     function showToast(message, type = 'success', duration = 3500) {
@@ -1895,7 +2054,7 @@
       }
     };
 
-    // ===== STATISTIQUES (SIMPLIFIÉES) =====
+    // ===== STATISTIQUES =====
     window.openStatsModal = function() {
       if (!family) {
         showToast("Les données ne sont pas encore chargées", "warning");
@@ -2023,8 +2182,6 @@
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
-      
-      // Statistiques : visible par tout le monde
       document.getElementById("statsBtn").style.display = "flex";
       
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
@@ -2171,16 +2328,18 @@
         const div = document.createElement("div");
         div.className = "person";
 
+        // === NOUVEAU : Un clic = afficher les détails ===
         div.onclick = (e) => {
+          e.stopPropagation();
+          openPersonDetail(child);
+        };
+
+        // === Double-clic = naviguer vers l'enfant ===
+        div.ondblclick = (e) => {
           e.stopPropagation();
           history.push(person);
           currentPath.push(child);
           displayPerson(child);
-        };
-
-        div.ondblclick = (e) => {
-          e.stopPropagation();
-          openPersonDetail(child);
         };
 
         const img = document.createElement("img");
@@ -2194,6 +2353,12 @@
 
         div.appendChild(img);
         div.appendChild(name);
+
+        // Indice : "👆 Détails"
+        const hint = document.createElement("div");
+        hint.className = "detail-hint";
+        hint.textContent = "👆 Détails";
+        div.appendChild(hint);
 
         if (child.children && child.children.length > 0) {
           const badge = document.createElement("span");
@@ -2225,13 +2390,15 @@
       const div = document.createElement("div");
       div.className = "person";
 
+      // === NOUVEAU : Un clic = détails de la racine ===
       div.onclick = () => {
-        history.push(family);
-        displayPerson(family);
+        openPersonDetail(family);
       };
 
+      // === Double-clic = naviguer ===
       div.ondblclick = () => {
-        openPersonDetail(family);
+        history.push(family);
+        displayPerson(family);
       };
 
       const img = document.createElement("img");
@@ -2245,6 +2412,11 @@
 
       div.appendChild(img);
       div.appendChild(name);
+
+      const hint = document.createElement("div");
+      hint.className = "detail-hint";
+      hint.textContent = "👆 Détails";
+      div.appendChild(hint);
 
       if (family.children && family.children.length > 0) {
         const badge = document.createElement("span");
@@ -2291,7 +2463,7 @@
       }
     }
 
-    // ===== SEARCH WITH SUGGESTIONS =====
+    // ===== SEARCH =====
     let searchTimeout = null;
     let allNames = [];
 
@@ -2373,18 +2545,29 @@
       }
     });
 
-    // ===== PERSON DETAIL =====
+    // ===== PERSON DETAIL - NOUVEAU STYLE =====
     window.openPersonDetail = function(person) {
+      lastDetailPerson = person;
+      
       document.getElementById("detailName").textContent = person.name || "Nom inconnu";
       document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
       document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
-      document.getElementById("detailBirth").textContent = person.birth || "Non renseigné";
-      document.getElementById("detailBio").textContent = person.bio || "Non renseignée";
-      document.getElementById("detailChildren").textContent = (person.children && person.children.length) || 0;
+      
+      const birth = person.birth || "Non renseigné";
+      document.getElementById("detailBirth").textContent = birth;
+      document.getElementById("detailBirth").className = `detail-value${birth === "Non renseigné" ? " empty" : ""}`;
+      
+      const bio = person.bio || "Non renseignée";
+      document.getElementById("detailBio").textContent = bio;
+      document.getElementById("detailBio").className = `detail-value${bio === "Non renseignée" ? " empty" : ""}`;
+      
+      const childrenCount = (person.children && person.children.length) || 0;
+      document.getElementById("detailChildren").textContent = childrenCount;
       
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      document.getElementById("detailRole").textContent = person === family ? "Racine" : 
-        (isProprietaire ? "Membre" : "Membre");
+      const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+      const roleText = person === family ? "👑 Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
+      document.getElementById("detailRole").textContent = roleText;
       
       document.getElementById("personDetailModal").classList.add("active");
     };
@@ -2393,7 +2576,19 @@
       document.getElementById("personDetailModal").classList.remove("active");
     };
 
-    // ===== ADD PERSON (SANS PHOTO) =====
+    // Fonction pour naviguer vers la personne depuis le détail
+    window.navigateToPerson = function() {
+      if (lastDetailPerson) {
+        const path = findPathToNode(family, lastDetailPerson.name);
+        if (path) {
+          history = path.slice(0, -1);
+          currentPath = path;
+          displayPerson(path[path.length - 1]);
+        }
+      }
+    };
+
+    // ===== ADD PERSON =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
         showToast("Vous n'avez pas les permissions pour ajouter", "error");
@@ -2460,7 +2655,7 @@
       }
     };
 
-    // ===== EDIT PERSON (SANS PHOTO) =====
+    // ===== EDIT PERSON =====
     let editingPerson = null;
     let editingParent = null;
 
@@ -2632,7 +2827,7 @@
       updateUIForAuth();
       
       setTimeout(() => {
-        showToast("Bienvenue sur l'arbre généalogique des fils Gaïda 🌳", "info", 4000);
+        showToast("👆 Cliquez sur une personne pour voir ses détails", "info", 4000);
       }, 500);
     }
 
