@@ -165,6 +165,15 @@
       color: #95a5a6;
     }
 
+    [data-theme="dark"] .detail-btn {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #ecf0f1 !important;
+    }
+
+    [data-theme="dark"] .detail-btn:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+
     /* === TOASTS === */
     .toast-container {
       position: fixed;
@@ -542,7 +551,7 @@
     .person {
       text-align: center;
       cursor: pointer;
-      padding: 10px;
+      padding: 10px 10px 8px 10px;
       border-radius: 16px;
       background: var(--card-bg);
       backdrop-filter: blur(20px);
@@ -609,22 +618,73 @@
       box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
     }
 
-    .person .detail-hint {
+    /* === BOUTON DÉTAILS EN HAUT À DROITE === */
+    .detail-btn {
       position: absolute;
-      bottom: 6px;
-      right: 8px;
-      font-size: 10px;
-      color: var(--text-light);
-      opacity: 0.6;
-      background: rgba(255,255,255,0.6);
-      padding: 1px 8px;
-      border-radius: 10px;
-      backdrop-filter: blur(4px);
+      top: 6px;
+      right: 6px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      color: var(--accent);
+      z-index: 5;
+      opacity: 0;
+      transform: scale(0.8);
     }
 
-    [data-theme="dark"] .person .detail-hint {
-      background: rgba(0,0,0,0.3);
-      color: #95a5a6;
+    .person:hover .detail-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .detail-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: scale(1.1) !important;
+      box-shadow: 0 4px 20px rgba(142, 68, 173, 0.3);
+    }
+
+    /* Sur mobile, toujours visible */
+    @media (max-width: 600px) {
+      .detail-btn {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(255, 255, 255, 0.85);
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        top: 4px;
+        right: 4px;
+      }
+    }
+
+    .person .click-hint {
+      font-size: 10px;
+      color: var(--text-light);
+      opacity: 0.5;
+      margin-top: 4px;
+      display: block;
+    }
+
+    [data-theme="dark"] .detail-btn {
+      background: rgba(30, 30, 50, 0.7);
+      color: #a569bd;
+    }
+
+    [data-theme="dark"] .detail-btn:hover {
+      background: var(--accent);
+      color: white;
     }
 
     #backBtn {
@@ -1220,7 +1280,7 @@
       display: block;
     }
 
-    /* === DÉTAIL PERSONNE - NOUVEAU STYLE === */
+    /* === DÉTAIL PERSONNE === */
     .detail-cover {
       position: relative;
       height: 120px;
@@ -1456,7 +1516,7 @@
         font-size: 19px;
       }
 
-      .person .detail-hint {
+      .person .click-hint {
         display: none;
       }
     }
@@ -1731,7 +1791,7 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal - NOUVEAU STYLE -->
+  <!-- Person Detail Modal -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
@@ -2328,15 +2388,10 @@
         const div = document.createElement("div");
         div.className = "person";
 
-        // === NOUVEAU : Un clic = afficher les détails ===
+        // === UN CLIC = NAVIGUER VERS LES ENFANTS ===
         div.onclick = (e) => {
-          e.stopPropagation();
-          openPersonDetail(child);
-        };
-
-        // === Double-clic = naviguer vers l'enfant ===
-        div.ondblclick = (e) => {
-          e.stopPropagation();
+          // Ne pas déclencher si on clique sur le bouton détails
+          if (e.target.closest('.detail-btn')) return;
           history.push(person);
           currentPath.push(child);
           displayPerson(child);
@@ -2354,11 +2409,16 @@
         div.appendChild(img);
         div.appendChild(name);
 
-        // Indice : "👆 Détails"
-        const hint = document.createElement("div");
-        hint.className = "detail-hint";
-        hint.textContent = "👆 Détails";
-        div.appendChild(hint);
+        // === BOUTON DÉTAILS EN HAUT À DROITE ===
+        const detailBtn = document.createElement("button");
+        detailBtn.className = "detail-btn";
+        detailBtn.innerHTML = "👤";
+        detailBtn.title = "Voir les détails de " + child.name;
+        detailBtn.onclick = (e) => {
+          e.stopPropagation();
+          openPersonDetail(child);
+        };
+        div.appendChild(detailBtn);
 
         if (child.children && child.children.length > 0) {
           const badge = document.createElement("span");
@@ -2390,13 +2450,9 @@
       const div = document.createElement("div");
       div.className = "person";
 
-      // === NOUVEAU : Un clic = détails de la racine ===
-      div.onclick = () => {
-        openPersonDetail(family);
-      };
-
-      // === Double-clic = naviguer ===
-      div.ondblclick = () => {
+      // === UN CLIC = NAVIGUER VERS LES ENFANTS ===
+      div.onclick = (e) => {
+        if (e.target.closest('.detail-btn')) return;
         history.push(family);
         displayPerson(family);
       };
@@ -2413,10 +2469,16 @@
       div.appendChild(img);
       div.appendChild(name);
 
-      const hint = document.createElement("div");
-      hint.className = "detail-hint";
-      hint.textContent = "👆 Détails";
-      div.appendChild(hint);
+      // === BOUTON DÉTAILS EN HAUT À DROITE ===
+      const detailBtn = document.createElement("button");
+      detailBtn.className = "detail-btn";
+      detailBtn.innerHTML = "👤";
+      detailBtn.title = "Voir les détails de " + family.name;
+      detailBtn.onclick = (e) => {
+        e.stopPropagation();
+        openPersonDetail(family);
+      };
+      div.appendChild(detailBtn);
 
       if (family.children && family.children.length > 0) {
         const badge = document.createElement("span");
@@ -2545,7 +2607,7 @@
       }
     });
 
-    // ===== PERSON DETAIL - NOUVEAU STYLE =====
+    // ===== PERSON DETAIL =====
     window.openPersonDetail = function(person) {
       lastDetailPerson = person;
       
@@ -2576,7 +2638,6 @@
       document.getElementById("personDetailModal").classList.remove("active");
     };
 
-    // Fonction pour naviguer vers la personne depuis le détail
     window.navigateToPerson = function() {
       if (lastDetailPerson) {
         const path = findPathToNode(family, lastDetailPerson.name);
@@ -2827,7 +2888,7 @@
       updateUIForAuth();
       
       setTimeout(() => {
-        showToast("👆 Cliquez sur une personne pour voir ses détails", "info", 4000);
+        showToast("👆 Cliquez sur une personne pour voir ses enfants", "info", 3000);
       }, 500);
     }
 
