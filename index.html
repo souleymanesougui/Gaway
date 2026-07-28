@@ -33,7 +33,6 @@
       --text-light: #7F8C8D;
       --success: #27ae60;
       --danger: #e74c3c;
-      --google-blue: #4285F4;
     }
 
     * {
@@ -145,13 +144,13 @@
       background: rgba(231, 76, 60, 0.5);
     }
 
-    .auth-btn.google-btn {
-      background: rgba(66, 133, 244, 0.3);
-      border-color: rgba(66, 133, 244, 0.5);
+    .auth-btn.login-btn {
+      background: rgba(52, 152, 219, 0.3);
+      border-color: rgba(52, 152, 219, 0.5);
     }
 
-    .auth-btn.google-btn:hover {
-      background: rgba(66, 133, 244, 0.5);
+    .auth-btn.login-btn:hover {
+      background: rgba(52, 152, 219, 0.5);
     }
 
     .auth-btn.logout-btn {
@@ -169,10 +168,6 @@
       padding: 4px 10px;
       border-radius: 20px;
       background: rgba(0,0,0,0.2);
-      max-width: 200px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .auth-status.admin {
@@ -183,20 +178,6 @@
     .auth-status.editor {
       background: rgba(52, 152, 219, 0.3);
       color: #3498db;
-    }
-
-    .auth-status.viewer {
-      background: rgba(149, 165, 166, 0.3);
-      color: #bdc3c7;
-    }
-
-    .user-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.5);
-      object-fit: cover;
-      vertical-align: middle;
     }
 
     #google_translate_element {
@@ -348,7 +329,7 @@
     .modal-content {
       background: white;
       border-radius: 20px;
-      max-width: 600px;
+      max-width: 500px;
       width: 100%;
       max-height: 80vh;
       overflow-y: auto;
@@ -410,7 +391,7 @@
       color: var(--primary);
     }
 
-    .form-group input {
+    .form-group input, .form-group select {
       width: 100%;
       padding: 10px 15px;
       border: 2px solid #ddd;
@@ -419,7 +400,7 @@
       transition: border-color 0.3s;
     }
 
-    .form-group input:focus {
+    .form-group input:focus, .form-group select:focus {
       border-color: var(--accent);
       outline: none;
     }
@@ -483,49 +464,23 @@
       display: block;
     }
 
-    .google-login-container {
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .google-login-container p {
-      text-align: center;
+    .password-hint {
+      font-size: 12px;
       color: var(--text-light);
-      margin-bottom: 20px;
+      margin-top: 5px;
     }
 
-    .g_id_signin {
-      display: flex;
-      justify-content: center;
-    }
-
-    .permission-info {
-      background: #f8f9fa;
-      border-radius: 10px;
-      padding: 15px;
+    .role-selector {
       margin-top: 15px;
-      text-align: left;
+      padding-top: 15px;
+      border-top: 2px solid #eee;
     }
 
-    .permission-info h3 {
-      margin: 0 0 10px 0;
-      color: var(--primary);
+    .role-selector h3 {
       font-size: 16px;
+      color: var(--primary);
+      margin-bottom: 10px;
     }
-
-    .permission-info ul {
-      margin: 5px 0;
-      padding-left: 20px;
-    }
-
-    .permission-info ul li {
-      margin: 5px 0;
-      font-size: 14px;
-    }
-
-    .permission-info .role-admin { color: #27ae60; font-weight: 600; }
-    .permission-info .role-editor { color: #3498db; font-weight: 600; }
-    .permission-info .role-viewer { color: #95a5a6; font-weight: 600; }
 
     @media (max-width: 480px) {
       .person {
@@ -584,17 +539,6 @@
         padding: 20px 15px;
         max-height: 85vh;
       }
-
-      .auth-status {
-        font-size: 10px;
-        padding: 2px 8px;
-        max-width: 150px;
-      }
-
-      .user-avatar {
-        width: 22px;
-        height: 22px;
-      }
     }
 
     @media (max-width: 320px) {
@@ -628,13 +572,13 @@
     <div class="header-left">
       <button class="history-btn" onclick="openHistoryModal()">📖 Histoire</button>
       <button class="action-btn add-btn" onclick="openAddModal()" id="addBtn" style="display:none;">➕ Ajouter</button>
-      <button class="action-btn" onclick="openPermissionsModal()" id="permissionsBtn" style="display:none;">👥 Gérer</button>
+      <button class="action-btn" onclick="openAdminModal()" id="adminBtn" style="display:none;">⚙️ Admin</button>
     </div>
     <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     <div class="header-right">
       <span class="auth-status" id="authStatus">🔒 Non connecté</span>
-      <button class="auth-btn google-btn" id="loginBtn" onclick="handleGoogleLogin()">🔑 Se connecter</button>
-      <button class="auth-btn logout-btn" id="logoutBtn" onclick="handleLogout()" style="display:none;">🚪 Déconnexion</button>
+      <button class="auth-btn login-btn" id="loginBtn" onclick="openAuthModal()">🔑 Connexion</button>
+      <button class="auth-btn logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">🚪 Déconnexion</button>
       <button class="action-btn edit-btn" onclick="openEditModal()" id="editBtn" style="display:none;">✏️ Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal()" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
       <div id="google_translate_element"></div>
@@ -669,75 +613,55 @@
     </div>
   </div>
 
-  <!-- Google Login Modal -->
+  <!-- Auth Modal -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">&times;</button>
-      <h2>🔑 Connexion avec Google</h2>
-      <div class="google-login-container">
-        <p>Connectez-vous avec votre compte Gmail pour accéder aux fonctionnalités d'édition.</p>
-        <div id="g_id_onload"
-             data-client_id="1061998444067-5frh87o160d2mohh52qqhh1jgm2p7c21.apps.googleusercontent.com"
-             data-context="signin"
-             data-ux_mode="popup"
-             data-login_uri="https://souleymanesougui.github.io/Gaway/"
-             data-auto_prompt="false">
+      <h2>🔑 Connexion</h2>
+      <form id="authForm" onsubmit="authenticate(event)">
+        <div class="form-group">
+          <label for="authPassword">Entrez le mot de passe</label>
+          <input type="password" id="authPassword" required placeholder="Mot de passe...">
+          <div class="password-hint">Contactez l'administrateur pour obtenir le mot de passe.</div>
         </div>
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="rectangular"
-             data-theme="outline"
-             data-text="signin_with"
-             data-size="large"
-             data-logo_alignment="left">
+        <div class="auth-error" id="authError">❌ Mot de passe incorrect</div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeAuthModal()">Annuler</button>
+          <button type="submit" class="btn-submit">Se connecter</button>
         </div>
-        <div class="auth-error" id="authError">❌ Erreur de connexion</div>
-        <div class="permission-info">
-          <h3>📋 Vos permissions seront :</h3>
-          <ul>
-            <li><span class="role-admin">👑 Administrateur</span> : Tout faire (ajouter, modifier, supprimer, gérer les permissions)</li>
-            <li><span class="role-editor">✏️ Éditeur</span> : Ajouter et modifier (pas de suppression)</li>
-            <li><span class="role-viewer">👀 Visiteur</span> : Visualiser uniquement</li>
-          </ul>
-          <p style="font-size: 13px; color: var(--text-light); margin-top: 10px;">
-            ⚠️ Les permissions sont gérées par l'administrateur dans la base de données.
-          </p>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- Permissions Management Modal (Admin only) -->
-  <div class="modal-overlay" id="permissionsModal">
+  <!-- Admin Modal (gérer les mots de passe) -->
+  <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closePermissionsModal()">&times;</button>
-      <h2>👥 Gestion des permissions</h2>
+      <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+      <h2>⚙️ Gestion des mots de passe</h2>
       <p style="color: var(--text-light); margin-bottom: 20px;">
-        Ajoutez ou retirez des emails pour leur donner des permissions.
+        Gérez les mots de passe pour chaque rôle.
       </p>
-      <div id="permissionsList">
-        <p style="text-align: center; color: var(--text-light);">Chargement des permissions...</p>
-      </div>
-      <div style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px;">
-        <h3 style="margin-bottom: 15px;">Ajouter un utilisateur</h3>
+      
+      <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
-          <label for="permissionEmail">Email</label>
-          <input type="email" id="permissionEmail" placeholder="exemple@gmail.com">
+          <label for="adminPassword">👑 Mot de passe Administrateur</label>
+          <input type="text" id="adminPassword" placeholder="Nouveau mot de passe admin">
+          <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+            Actuel : <strong id="currentAdminPass">••••••••</strong>
+          </div>
         </div>
         <div class="form-group">
-          <label for="permissionRole">Rôle</label>
-          <select id="permissionRole" style="width: 100%; padding: 10px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px;">
-            <option value="editor">✏️ Éditeur (ajouter/modifier)</option>
-            <option value="viewer">👀 Visiteur (visualiser seulement)</option>
-          </select>
+          <label for="editorPassword">✏️ Mot de passe Éditeur</label>
+          <input type="text" id="editorPassword" placeholder="Nouveau mot de passe éditeur">
+          <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
+            Actuel : <strong id="currentEditorPass">••••••••</strong>
+          </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-submit" onclick="addPermission()">➕ Ajouter</button>
+          <button type="button" class="btn-cancel" onclick="closeAdminModal()">Fermer</button>
+          <button type="submit" class="btn-submit">💾 Mettre à jour</button>
         </div>
-      </div>
-      <div class="form-actions" style="margin-top: 10px;">
-        <button type="button" class="btn-cancel" onclick="closePermissionsModal()">Fermer</button>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -803,8 +727,6 @@
     </div>
   </div>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <script type="importmap">
     {
       "imports": {
@@ -820,12 +742,8 @@
       getFirestore, 
       doc, 
       getDoc, 
-      setDoc,
       updateDoc,
-      deleteDoc,
-      collection,
-      query,
-      getDocs
+      setDoc
     } from "firebase/firestore";
 
     // Configuration Firebase
@@ -841,155 +759,87 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ===== GESTION DES PERMISSIONS DANS FIRESTORE =====
-    // Collection: permissions
-    // Document: par email (ex: "souguisouleymane7@gmail.com")
-    // Champ: role (admin, editor, viewer)
+    // ===== GESTION DES MOTS DE PASSE =====
+    // Les mots de passe sont stockés dans Firestore
+    // Document: "passwords" dans la collection "config"
+    
+    let currentUser = null; // { role: 'admin' | 'editor' | 'viewer' }
+    let passwords = {
+      admin: "admin123",   // Mot de passe par défaut - À CHANGER !
+      editor: "editor123"  // Mot de passe par défaut - À CHANGER !
+    };
 
-    // Votre email administrateur (celui qui peut gérer les permissions)
-    const ADMIN_EMAIL = "souguisouleymane7@gmail.com";
-
-    let currentUser = null; // { email, role, name, picture }
-
-    // Fonction pour charger les permissions d'un utilisateur
-    async function getUserRole(email) {
+    // Charger les mots de passe depuis Firestore
+    async function loadPasswords() {
       try {
-        const docRef = doc(db, "permissions", email);
+        const docRef = doc(db, "config", "passwords");
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          return docSnap.data().role || "viewer";
+          const data = docSnap.data();
+          if (data.admin) passwords.admin = data.admin;
+          if (data.editor) passwords.editor = data.editor;
+        } else {
+          // Créer le document avec les mots de passe par défaut
+          await setDoc(docRef, passwords);
         }
-        // Si l'email n'est pas dans la base, c'est un viewer par défaut
-        return "viewer";
-      } catch (error) {
-        console.error("Erreur lors du chargement des permissions:", error);
-        return "viewer";
-      }
-    }
-
-    // Fonction pour définir les permissions d'un utilisateur (admin uniquement)
-    async function setUserRole(email, role) {
-      try {
-        await setDoc(doc(db, "permissions", email), { role: role });
         return true;
       } catch (error) {
-        console.error("Erreur lors de la mise à jour des permissions:", error);
-        alert("Erreur lors de la mise à jour des permissions.");
+        console.error("Erreur lors du chargement des mots de passe:", error);
         return false;
       }
     }
 
-    // Fonction pour supprimer les permissions d'un utilisateur (admin uniquement)
-    async function removeUserRole(email) {
+    // Sauvegarder les mots de passe dans Firestore
+    async function savePasswords() {
       try {
-        if (email === ADMIN_EMAIL) {
-          alert("❌ Vous ne pouvez pas retirer vos propres permissions d'administrateur.");
-          return false;
-        }
-        await deleteDoc(doc(db, "permissions", email));
+        const docRef = doc(db, "config", "passwords");
+        await setDoc(docRef, passwords);
         return true;
       } catch (error) {
-        console.error("Erreur lors de la suppression des permissions:", error);
-        alert("Erreur lors de la suppression des permissions.");
+        console.error("Erreur lors de la sauvegarde des mots de passe:", error);
+        alert("Erreur lors de la sauvegarde des mots de passe.");
         return false;
       }
     }
 
-    // Fonction pour charger toutes les permissions (admin uniquement)
-    async function loadAllPermissions() {
-      try {
-        const q = query(collection(db, "permissions"));
-        const querySnapshot = await getDocs(q);
-        const permissions = {};
-        querySnapshot.forEach((doc) => {
-          permissions[doc.id] = doc.data().role;
-        });
-        return permissions;
-      } catch (error) {
-        console.error("Erreur lors du chargement des permissions:", error);
-        return {};
+    // ===== FONCTIONS D'AUTHENTIFICATION =====
+    window.authenticate = async function(e) {
+      e.preventDefault();
+      const password = document.getElementById("authPassword").value.trim();
+      const errorEl = document.getElementById("authError");
+      
+      // Charger les mots de passe depuis Firestore
+      await loadPasswords();
+      
+      if (password === passwords.admin) {
+        currentUser = { role: 'admin' };
+        errorEl.classList.remove("show");
+        closeAuthModal();
+        updateUIForAuth();
+        alert("✅ Connecté en tant qu'Administrateur !");
+      } else if (password === passwords.editor) {
+        currentUser = { role: 'editor' };
+        errorEl.classList.remove("show");
+        closeAuthModal();
+        updateUIForAuth();
+        alert("✅ Connecté en tant qu'Éditeur !");
+      } else {
+        errorEl.classList.add("show");
+        setTimeout(() => errorEl.classList.remove("show"), 3000);
       }
-    }
+    };
 
-    // ===== GESTION DE L'AUTHENTIFICATION GOOGLE =====
-    window.handleGoogleLogin = function() {
+    window.openAuthModal = function() {
       document.getElementById("authModal").classList.add("active");
+      document.getElementById("authPassword").value = "";
+      document.getElementById("authError").classList.remove("show");
     };
 
     window.closeAuthModal = function() {
       document.getElementById("authModal").classList.remove("active");
     };
 
-    // Fonction appelée par le SDK Google après authentification
-    window.onGoogleSignIn = async function(response) {
-      try {
-        const payload = parseJwt(response.credential);
-        const email = payload.email;
-        const name = payload.name;
-        const picture = payload.picture;
-
-        // Charger le rôle de l'utilisateur depuis Firestore
-        const role = await getUserRole(email);
-        
-        currentUser = {
-          email: email,
-          role: role,
-          name: name,
-          picture: picture
-        };
-
-        closeAuthModal();
-        updateUIForAuth();
-        
-        const roleText = {
-          'admin': 'Administrateur 👑',
-          'editor': 'Éditeur ✏️',
-          'viewer': 'Visiteur 👀'
-        }[role] || 'Visiteur 👀';
-        
-        alert(`✅ Bienvenue ${name} ! Rôle : ${roleText}`);
-        
-        // Recharger l'arbre pour mettre à jour les boutons
-        if (currentNode) {
-          displayPerson(currentNode);
-        }
-      } catch (e) {
-        console.error("Erreur de décodage du token:", e);
-        document.getElementById("authError").textContent = "❌ Erreur de connexion. Veuillez réessayer.";
-        document.getElementById("authError").classList.add("show");
-        setTimeout(() => {
-          document.getElementById("authError").classList.remove("show");
-        }, 5000);
-      }
-    };
-
-    // Fonction pour décoder un token JWT
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      return JSON.parse(jsonPayload);
-    }
-
-    // Initialiser le SDK Google
-    function initGoogleSignIn() {
-      if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.initialize({
-          client_id: "1061998444067-5frh87o160d2mohh52qqhh1jgm2p7c21.apps.googleusercontent.com",
-          callback: window.onGoogleSignIn,
-          cancel_on_tap_outside: false
-        });
-      }
-    }
-
-    // Déconnexion
-    window.handleLogout = function() {
-      if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.disableAutoSelect();
-        google.accounts.id.revoke(currentUser.email, () => {});
-      }
+    window.logout = function() {
       currentUser = null;
       updateUIForAuth();
       // Recharger l'arbre
@@ -999,102 +849,58 @@
       alert("🔒 Déconnecté avec succès.");
     };
 
-    // ===== GESTION DES PERMISSIONS (Admin) =====
-    window.openPermissionsModal = async function() {
+    // ===== ADMIN : GESTION DES MOTS DE PASSE =====
+    window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut gérer les permissions.");
+        alert("🔒 Seul l'administrateur peut gérer les mots de passe.");
         return;
       }
-      
-      document.getElementById("permissionsModal").classList.add("active");
-      await loadPermissionsList();
+      document.getElementById("adminModal").classList.add("active");
+      document.getElementById("adminPassword").value = "";
+      document.getElementById("editorPassword").value = "";
+      document.getElementById("currentAdminPass").textContent = "••••••••";
+      document.getElementById("currentEditorPass").textContent = "••••••••";
     };
 
-    window.closePermissionsModal = function() {
-      document.getElementById("permissionsModal").classList.remove("active");
+    window.closeAdminModal = function() {
+      document.getElementById("adminModal").classList.remove("active");
     };
 
-    async function loadPermissionsList() {
-      const container = document.getElementById("permissionsList");
-      const permissions = await loadAllPermissions();
-      
-      if (Object.keys(permissions).length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: var(--text-light);">Aucun utilisateur autorisé pour le moment.</p>`;
-        return;
-      }
-      
-      let html = `<div style="margin-bottom: 15px; font-weight: 600; color: var(--primary);">📋 Utilisateurs autorisés :</div>`;
-      html += `<ul style="list-style: none; padding: 0;">`;
-      
-      for (const [email, role] of Object.entries(permissions)) {
-        const roleLabel = {
-          'admin': '👑 Administrateur',
-          'editor': '✏️ Éditeur',
-          'viewer': '👀 Visiteur'
-        }[role] || '👀 Visiteur';
-        
-        const isAdmin = email === ADMIN_EMAIL;
-        const deleteButton = isAdmin ? 
-          '<span style="color: #999; font-size: 12px;">(Vous)</span>' :
-          `<button onclick="removeUser('${email}')" style="background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 2px 10px; cursor: pointer; font-size: 12px;">❌ Retirer</button>`;
-        
-        html += `
-          <li style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #eee;">
-            <span><strong>${email}</strong> - ${roleLabel}</span>
-            <span>${deleteButton}</span>
-          </li>
-        `;
-      }
-      
-      html += `</ul>`;
-      container.innerHTML = html;
-    }
-
-    window.addPermission = async function() {
+    window.updatePasswords = async function(e) {
+      e.preventDefault();
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut ajouter des permissions.");
+        alert("🔒 Seul l'administrateur peut modifier les mots de passe.");
         return;
       }
-      
-      const email = document.getElementById("permissionEmail").value.trim();
-      const role = document.getElementById("permissionRole").value;
-      
-      if (!email) {
-        alert("Veuillez entrer un email.");
-        return;
-      }
-      
-      // Validation simple de l'email
-      if (!email.includes('@') || !email.includes('.')) {
-        alert("Email invalide.");
-        return;
-      }
-      
-      const success = await setUserRole(email, role);
-      if (success) {
-        document.getElementById("permissionEmail").value = "";
-        await loadPermissionsList();
-        alert(`✅ ${email} a été ajouté en tant que ${role === 'editor' ? 'Éditeur' : 'Visiteur'}.`);
-      }
-    };
 
-    window.removeUser = async function(email) {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut retirer des permissions.");
-        return;
-      }
-      
-      if (email === ADMIN_EMAIL) {
-        alert("❌ Vous ne pouvez pas retirer vos propres permissions d'administrateur.");
-        return;
-      }
-      
-      if (confirm(`❌ Êtes-vous sûr de vouloir retirer les permissions de ${email} ?`)) {
-        const success = await removeUserRole(email);
-        if (success) {
-          await loadPermissionsList();
-          alert(`✅ ${email} a été retiré de la liste des utilisateurs autorisés.`);
+      const newAdminPass = document.getElementById("adminPassword").value.trim();
+      const newEditorPass = document.getElementById("editorPassword").value.trim();
+
+      if (newAdminPass) {
+        if (newAdminPass.length < 4) {
+          alert("Le mot de passe administrateur doit faire au moins 4 caractères.");
+          return;
         }
+        passwords.admin = newAdminPass;
+      }
+
+      if (newEditorPass) {
+        if (newEditorPass.length < 4) {
+          alert("Le mot de passe éditeur doit faire au moins 4 caractères.");
+          return;
+        }
+        passwords.editor = newEditorPass;
+      }
+
+      if (!newAdminPass && !newEditorPass) {
+        alert("Veuillez entrer au moins un nouveau mot de passe.");
+        return;
+      }
+
+      const saved = await savePasswords();
+      if (saved) {
+        closeAdminModal();
+        alert("✅ Les mots de passe ont été mis à jour avec succès !");
       }
     };
 
@@ -1108,7 +914,7 @@
       document.getElementById("addBtn").style.display = isEditor ? "inline-block" : "none";
       document.getElementById("editBtn").style.display = isEditor ? "inline-block" : "none";
       document.getElementById("deleteBtn").style.display = isAdmin ? "inline-block" : "none";
-      document.getElementById("permissionsBtn").style.display = isAdmin ? "inline-block" : "none";
+      document.getElementById("adminBtn").style.display = isAdmin ? "inline-block" : "none";
 
       // Boutons d'authentification
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "inline-block";
@@ -1117,16 +923,9 @@
       // Statut
       const statusEl = document.getElementById("authStatus");
       if (isAuthenticated) {
-        const roleText = {
-          'admin': '👑 Admin',
-          'editor': '✏️ Éditeur',
-          'viewer': '👀 Visiteur'
-        }[currentUser.role] || '👀 Visiteur';
-        
-        const avatarHtml = currentUser.picture ? 
-          `<img src="${currentUser.picture}" class="user-avatar" alt="${currentUser.name}"> ` : "";
-        statusEl.innerHTML = `${avatarHtml}${currentUser.name} (${roleText})`;
-        statusEl.className = `auth-status ${currentUser.role}`;
+        const roleText = isAdmin ? "👑 Administrateur" : "✏️ Éditeur";
+        statusEl.textContent = `🔓 ${roleText}`;
+        statusEl.className = `auth-status ${isAdmin ? 'admin' : 'editor'}`;
       } else {
         statusEl.textContent = "🔒 Non connecté";
         statusEl.className = "auth-status";
@@ -1219,7 +1018,6 @@
       const isAdmin = isAuthenticated && currentUser.role === 'admin';
       const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
 
-      // Afficher les boutons d'action pour la personne courante
       const editBtn = document.getElementById('editBtn');
       const deleteBtn = document.getElementById('deleteBtn');
       const addBtn = document.getElementById('addBtn');
@@ -1239,7 +1037,6 @@
         return;
       }
 
-      // Filtrer si recherche active
       const searchQuery = document.getElementById("searchBox").value.toLowerCase();
       let childrenToShow = person.children;
       if (searchQuery) {
@@ -1584,22 +1381,13 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
-    // Initialiser Google Sign-In
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof google !== 'undefined' && google.accounts) {
-        initGoogleSignIn();
-      } else {
-        const checkGoogle = setInterval(() => {
-          if (typeof google !== 'undefined' && google.accounts) {
-            initGoogleSignIn();
-            clearInterval(checkGoogle);
-          }
-        }, 500);
-      }
-    });
+    // ===== INITIALISATION =====
+    async function init() {
+      await loadPasswords();
+      await chargerfamille();
+    }
 
-    // Lancer le chargement
-    chargerfamille();
+    init();
 
     // Exposer les fonctions pour les onclick
     window.findNodeWithParent = findNodeWithParent;
