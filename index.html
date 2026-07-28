@@ -168,16 +168,23 @@
       padding: 4px 10px;
       border-radius: 20px;
       background: rgba(0,0,0,0.2);
+      display: none; /* Caché par défaut */
+    }
+
+    .auth-status.show {
+      display: inline-block;
     }
 
     .auth-status.admin {
       background: rgba(46, 204, 113, 0.3);
       color: #2ecc71;
+      display: inline-block;
     }
 
     .auth-status.editor {
       background: rgba(52, 152, 219, 0.3);
       color: #3498db;
+      display: inline-block;
     }
 
     /* Style pour Google Translate */
@@ -191,7 +198,6 @@
       min-width: 100px;
     }
 
-    /* Cache le message "Powered by Google" */
     .goog-te-gadget {
       color: transparent !important;
     }
@@ -501,18 +507,6 @@
       margin-top: 5px;
     }
 
-    .role-selector {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 2px solid #eee;
-    }
-
-    .role-selector h3 {
-      font-size: 16px;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
     @media (max-width: 480px) {
       .person {
         width: calc(50% - 10px);
@@ -607,7 +601,7 @@
     </div>
     <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     <div class="header-right">
-      <span class="auth-status" id="authStatus">🔒 Non connecté</span>
+      <span class="auth-status" id="authStatus"></span>
       <button class="auth-btn login-btn" id="loginBtn" onclick="openAuthModal()">🔑 Connexion</button>
       <button class="auth-btn logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">🚪 Déconnexion</button>
       <button class="action-btn edit-btn" onclick="openEditModal()" id="editBtn" style="display:none;">✏️ Modifier</button>
@@ -619,7 +613,7 @@
   <div id="breadcrumb" class="breadcrumb"></div>
 
   <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="searchPerson()">
-  <button id="backBtn" onclick="goBack()">⬅ Retour à l'accueil</button>
+  <button id="backBtn" onclick="goBackToRoot()">⬅ Retour à l'accueil</button>
   <div id="tree"></div>
 
   <!-- History Modal -->
@@ -958,10 +952,11 @@
       if (isAuthenticated) {
         const roleText = isAdmin ? "👑 Administrateur" : "✏️ Éditeur";
         statusEl.textContent = `🔓 ${roleText}`;
-        statusEl.className = `auth-status ${isAdmin ? 'admin' : 'editor'}`;
+        statusEl.className = `auth-status show ${isAdmin ? 'admin' : 'editor'}`;
       } else {
-        statusEl.textContent = "🔒 Non connecté";
+        statusEl.textContent = "";
         statusEl.className = "auth-status";
+        statusEl.style.display = "none";
       }
     }
 
@@ -1039,7 +1034,7 @@
     function displayPerson(person) {
       treeEl.innerHTML = "";
       currentNode = person;
-      backBtn.style.display = history.length ? "inline-block" : "none";
+      backBtn.style.display = "inline-block";
       updateBreadcrumb();
 
       const isAuthenticated = currentUser !== null;
@@ -1132,6 +1127,14 @@
       treeEl.appendChild(div);
     }
 
+    // Nouvelle fonction : Retour direct à la racine
+    window.goBackToRoot = function() {
+      history = [];
+      currentPath = [family];
+      displayRoot();
+    };
+
+    // Ancienne fonction goBack conservée pour compatibilité
     window.goBack = function() {
       if (history.length) {
         const prev = history.pop();
