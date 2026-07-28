@@ -286,30 +286,6 @@
       line-height: 1.3;
     }
 
-    .person.pending {
-      opacity: 0.6;
-      border: 2px dashed var(--warning);
-    }
-
-    .person.pending::after {
-      content: '⏳ En attente';
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: var(--warning);
-      color: white;
-      font-size: 9px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
-
-    .person.rejected {
-      opacity: 0.4;
-      border: 2px solid var(--danger);
-      text-decoration: line-through;
-    }
-
     #backBtn {
       margin: 8px 15px;
       padding: 8px 20px;
@@ -587,6 +563,10 @@
       max-width: 600px;
     }
 
+    .modal-content.historique-modal {
+      max-width: 650px;
+    }
+
     @keyframes modalSlide {
       from {
         opacity: 0;
@@ -768,22 +748,24 @@
       transform: translateY(0px);
     }
 
-    /* === JOURNAL DES MODIFICATIONS === */
-    .journal-list {
+    /* === JOURNAL / HISTORIQUE === */
+    .journal-list, .historique-list {
       margin: 16px 0;
       max-height: 400px;
       overflow-y: auto;
     }
 
-    .journal-list::-webkit-scrollbar {
+    .journal-list::-webkit-scrollbar,
+    .historique-list::-webkit-scrollbar {
       width: 4px;
     }
-    .journal-list::-webkit-scrollbar-thumb {
+    .journal-list::-webkit-scrollbar-thumb,
+    .historique-list::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.15);
       border-radius: 10px;
     }
 
-    .journal-item {
+    .journal-item, .historique-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -795,27 +777,28 @@
       transition: all 0.2s ease;
     }
 
-    .journal-item:hover {
+    .journal-item:hover, .historique-item:hover {
       background: rgba(0, 0, 0, 0.04);
     }
 
-    .journal-item.add {
+    .journal-item.add, .historique-item.add {
       border-left-color: var(--success);
     }
 
-    .journal-item.edit {
+    .journal-item.edit, .historique-item.edit {
       border-left-color: var(--warning);
     }
 
-    .journal-item.delete {
+    .journal-item.delete, .historique-item.delete {
       border-left-color: var(--danger);
     }
 
-    .journal-item .info {
+    .journal-item .info, .historique-item .info {
       flex: 1;
     }
 
-    .journal-item .info .action-type {
+    .journal-item .info .action-type,
+    .historique-item .info .action-type {
       font-weight: 600;
       font-size: 14px;
       color: var(--text-dark);
@@ -825,13 +808,15 @@
     .journal-item .info .action-type .type-edit { color: var(--warning); }
     .journal-item .info .action-type .type-delete { color: var(--danger); }
 
-    .journal-item .info .details {
+    .journal-item .info .details,
+    .historique-item .info .details {
       font-size: 13px;
       color: var(--text-light);
       margin-top: 2px;
     }
 
-    .journal-item .info .date {
+    .journal-item .info .date,
+    .historique-item .info .date {
       font-size: 11px;
       color: rgba(0,0,0,0.3);
       margin-top: 2px;
@@ -874,17 +859,41 @@
       transform: scale(1.02);
     }
 
-    .journal-empty {
+    .journal-empty, .historique-empty {
       text-align: center;
       color: var(--text-light);
       padding: 30px 0;
       font-size: 15px;
     }
 
-    .journal-empty .icon {
+    .journal-empty .icon, .historique-empty .icon {
       font-size: 40px;
       margin-bottom: 10px;
       opacity: 0.5;
+    }
+
+    /* Statut badge pour l'historique */
+    .status-badge {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .status-badge.accepted {
+      background: rgba(46, 204, 113, 0.15);
+      color: var(--success);
+    }
+
+    .status-badge.rejected {
+      background: rgba(231, 76, 60, 0.15);
+      color: var(--danger);
+    }
+
+    .status-badge.pending {
+      background: rgba(243, 156, 18, 0.15);
+      color: var(--warning);
     }
 
     .auth-error {
@@ -994,7 +1003,8 @@
         font-size: 19px;
       }
 
-      .modal-content.journal-modal {
+      .modal-content.journal-modal,
+      .modal-content.historique-modal {
         max-width: 100%;
       }
 
@@ -1028,7 +1038,8 @@
         font-size: 14px;
       }
 
-      .journal-item {
+      .journal-item,
+      .historique-item {
         flex-wrap: wrap;
         gap: 8px;
       }
@@ -1111,7 +1122,15 @@
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
+      
+      <!-- Bouton Journal - MIS EN COMMENTAIRE -->
+      <!-- 
       <button class="action-btn" onclick="openJournalModal(); closeMenu();" id="journalBtn" style="display:none;">Journal</button>
+      -->
+      
+      <!-- Nouveau bouton Historique - visible uniquement par le propriétaire -->
+      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
+      
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
@@ -1196,7 +1215,8 @@
     </div>
   </div>
 
-  <!-- Journal Modal -->
+  <!-- Journal Modal - MIS EN COMMENTAIRE -->
+  <!-- 
   <div class="modal-overlay" id="journalModal">
     <div class="modal-content journal-modal">
       <button class="modal-close" onclick="closeJournalModal()">✕</button>
@@ -1204,11 +1224,29 @@
       <p class="subtitle">Toutes les actions effectuées par les Admins. Vous pouvez accepter ou annuler chaque modification.</p>
       
       <div id="journalList" class="journal-list">
-        <!-- Les entrées du journal seront générées ici -->
+        Les entrées du journal seront générées ici
       </div>
       
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeJournalModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+  -->
+
+  <!-- Historique Modal - Consultation uniquement -->
+  <div class="modal-overlay" id="historiqueModal">
+    <div class="modal-content historique-modal">
+      <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
+      <h2>Historique des modifications</h2>
+      <p class="subtitle">Consultez toutes les modifications effectuées sur l'arbre généalogique.</p>
+      
+      <div id="historiqueList" class="historique-list">
+        <!-- Les entrées de l'historique seront générées ici -->
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeHistoriqueModal()">Fermer</button>
       </div>
     </div>
   </div>
@@ -1418,7 +1456,6 @@
     async function executePendingAction(entry) {
       try {
         if (entry.type === 'add') {
-          // Ajouter la personne
           const parentNode = findNodeByName(family, entry.targetData.parentName);
           if (parentNode) {
             if (!parentNode.children) parentNode.children = [];
@@ -1426,7 +1463,6 @@
             await sauvegarderFamille();
           }
         } else if (entry.type === 'edit') {
-          // Modifier la personne
           const result = findNodeWithParent(family, entry.targetData.oldName);
           if (result) {
             result.node.name = entry.targetData.newName;
@@ -1434,7 +1470,6 @@
             await sauvegarderFamille();
           }
         } else if (entry.type === 'delete') {
-          // Supprimer la personne
           const result = findNodeWithParent(family, entry.targetData.name);
           if (result && result.parent) {
             result.parent.children = result.parent.children.filter(c => c !== result.node);
@@ -1506,7 +1541,7 @@
           "Connecté en tant que PROPRIETAIRE\n\n" +
           "Vous pouvez :\n" +
           "   - Valider ou annuler les modifications des Admins\n" +
-          "   - Voir le journal des modifications\n" +
+          "   - Voir l'historique des modifications\n" +
           "   - Gerer les mots de passe"
         );
       } else if (password === passwords.editor) {
@@ -1601,7 +1636,8 @@
       }
     };
 
-    // ===== JOURNAL =====
+    // ===== JOURNAL - MIS EN COMMENTAIRE =====
+    /* 
     window.openJournalModal = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
         alert("Seul le propriétaire peut voir le journal des modifications.");
@@ -1676,13 +1712,11 @@
         return;
       }
 
-      // Exécuter l'action
       const success = await executePendingAction(entry);
       if (success) {
         await updateJournalStatus(entryId, 'accepted');
         await renderJournal();
         alert("✅ Modification acceptée et appliquée.");
-        // Rafraîchir l'affichage
         if (currentNode) {
           displayPerson(currentNode);
         } else {
@@ -1705,6 +1739,72 @@
         alert("❌ Modification annulée.");
       }
     };
+    */
+
+    // ===== HISTORIQUE - Consultation uniquement =====
+    window.openHistoriqueModal = async function() {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("Seul le propriétaire peut voir l'historique des modifications.");
+        return;
+      }
+      document.getElementById("historiqueModal").classList.add("active");
+      await renderHistorique();
+    };
+
+    window.closeHistoriqueModal = function() {
+      document.getElementById("historiqueModal").classList.remove("active");
+    };
+
+    async function renderHistorique() {
+      const container = document.getElementById("historiqueList");
+      await loadJournal();
+      
+      if (journalEntries.length === 0) {
+        container.innerHTML = `
+          <div class="historique-empty">
+            <div class="icon">📭</div>
+            <p>Aucune modification enregistrée.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      journalEntries.forEach(entry => {
+        const typeClass = entry.type;
+        const typeLabel = {
+          add: 'Ajout',
+          edit: 'Modification',
+          delete: 'Suppression'
+        }[entry.type] || entry.type;
+
+        const statusLabel = {
+          pending: 'En attente',
+          accepted: '✅ Accepté',
+          rejected: '❌ Annulé'
+        }[entry.status] || entry.status;
+
+        const statusClass = entry.status || 'pending';
+
+        const date = new Date(entry.date);
+        const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+        html += `
+          <div class="historique-item ${entry.type}">
+            <div class="info">
+              <div class="action-type">
+                <span class="type-${entry.type}">${typeLabel}</span>
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+              <div class="details">${entry.data}</div>
+              <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
 
     // ===== MENU HAMBURGER =====
     window.toggleMenu = function() {
@@ -1731,14 +1831,17 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && currentUser.role === 'admin';
       
-      // Les Admins peuvent proposer des ajouts et modifications
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       
-      // Seul le propriétaire peut supprimer directement et gérer le journal
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
-      document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
+      
+      // Journal - MIS EN COMMENTAIRE
+      // document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
+      
+      // Historique - visible uniquement par le propriétaire
+      document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
       
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
@@ -1858,7 +1961,8 @@
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
-      document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
+      // document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
 
       if (!person.children || person.children.length === 0) {
         treeEl.innerHTML = "<p>La liste des enfants n'est pas encore complète.</p>";
@@ -2031,20 +2135,17 @@
         return;
       }
 
-      // Vérifier si le nom existe déjà (pour éviter les doublons)
       if (currentNode.children && currentNode.children.some(c => c.name === name)) {
         alert(`"${name}" existe déjà dans cette liste.`);
         return;
       }
 
-      // Créer la nouvelle personne
       const newPerson = {
         name: name,
         photo: photo || "",
         children: []
       };
 
-      // Ajouter au journal (en attente de validation)
       const entryData = {
         parentName: currentNode.name,
         person: newPerson
@@ -2126,7 +2227,6 @@
 
       const oldName = editingPerson.name;
 
-      // Vérifier si le nouveau nom existe déjà
       if (name !== oldName && editingParent && editingParent.children) {
         if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
           alert(`"${name}" existe déjà dans cette liste.`);
@@ -2134,7 +2234,6 @@
         }
       }
 
-      // Ajouter au journal (en attente de validation)
       const entryData = {
         oldName: oldName,
         newName: name,
@@ -2201,7 +2300,6 @@
 
       const nameToDelete = deletingPerson.name;
 
-      // Ajouter au journal (le propriétaire supprime directement)
       await addJournalEntry(
         'delete',
         'delete',
@@ -2210,7 +2308,6 @@
         { name: nameToDelete }
       );
 
-      // Exécuter directement la suppression
       if (deletingParent.children) {
         deletingParent.children = deletingParent.children.filter(
           child => child !== deletingPerson
