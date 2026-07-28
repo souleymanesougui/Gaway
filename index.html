@@ -73,7 +73,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 8px;
       box-shadow: 0 4px 30px rgba(0,0,0,0.2);
       position: relative;
@@ -87,18 +87,24 @@
       align-items: center;
       gap: 10px;
       flex-shrink: 0;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      min-width: 60px;
     }
 
     .header-center {
       flex: 1;
       text-align: center;
-      font-size: clamp(16px, 4vw, 28px);
+      font-size: clamp(18px, 4vw, 28px);
       font-weight: 600;
       letter-spacing: 1px;
       color: white;
       text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      min-width: 120px;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: visible;
+      padding: 0 5px;
+      /* Décalage léger vers la droite pour équilibre */
+      transform: translateX(5px);
     }
 
     .header-right {
@@ -106,7 +112,9 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      min-width: 100px;
+      justify-content: flex-end;
     }
 
     .hamburger-btn {
@@ -126,6 +134,7 @@
       justify-content: center;
       line-height: 1;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
     }
 
     .hamburger-btn:hover {
@@ -148,6 +157,7 @@
       display: inline-block;
       min-width: 80px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
     }
 
     .goog-te-gadget {
@@ -483,6 +493,7 @@
       border-radius: 20px;
       background: rgba(0,0,0,0.2);
       display: none;
+      flex-shrink: 0;
     }
 
     .auth-status.show {
@@ -689,23 +700,21 @@
       header {
         padding: 8px 10px;
         min-height: 50px;
-        flex-wrap: wrap;
       }
 
       .header-center {
-        font-size: clamp(14px, 3.5vw, 20px);
-        order: 2;
-        flex: 0 0 100%;
-        text-align: center;
-        margin: 4px 0;
+        font-size: clamp(16px, 4vw, 20px);
+        transform: translateX(3px);
+        white-space: nowrap;
+        overflow: visible;
       }
 
-      .header-left, .header-right {
-        order: 1;
+      .header-left {
+        min-width: 45px;
       }
 
       .header-right {
-        order: 3;
+        min-width: 70px;
       }
 
       #google_translate_element {
@@ -739,28 +748,40 @@
       }
     }
 
+    @media (max-width: 380px) {
+      .header-center {
+        font-size: clamp(14px, 3.5vw, 17px);
+        transform: translateX(2px);
+      }
+      
+      .hamburger-btn {
+        padding: 4px 10px;
+        font-size: 17px;
+      }
+    }
+
     @media (max-width: 320px) {
       .person {
         width: 100%;
         max-width: 130px;
       }
+      
+      .header-center {
+        font-size: 13px;
+        transform: translateX(0px);
+      }
     }
 
     @media (max-width: 600px) {
       header {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        justify-content: space-between;
       }
       .header-center {
-        font-size: clamp(12px, 3vw, 16px);
-        order: 2;
-        flex: 0 0 100%;
-      }
-      .header-left, .header-right {
-        order: 1;
-      }
-      .header-right {
-        order: 3;
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+        padding: 0 3px;
       }
     }
   </style>
@@ -769,8 +790,8 @@
   <header>
     <div class="header-left">
       <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-      <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     </div>
+    <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     <div class="header-right">
       <span class="auth-status" id="authStatus"></span>
       <div id="google_translate_element"></div>
