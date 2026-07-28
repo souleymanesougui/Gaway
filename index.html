@@ -819,7 +819,7 @@
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">⚙️ Propriétaire</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
@@ -878,7 +878,7 @@
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">&times;</button>
-      <h2>⚙️ Propriétaire - Gestion des mots de passe</h2>
+      <h2>Propriétaire - Gestion des mots de passe</h2>
       <p style="color: var(--text-light); margin-bottom: 16px; font-size: 14px;">
         Gérez les mots de passe pour chaque rôle.
       </p>
@@ -1077,13 +1077,13 @@
         closeAuthModal();
         updateUIForAuth();
         alert(
-          "🔓 Connecté en tant que PROPRIÉTAIRE\n\n" +
-          "✅ Vous pouvez :\n" +
-          "   • Ajouter des personnes\n" +
-          "   • Modifier des personnes\n" +
-          "   • Supprimer des personnes\n" +
-          "   • Gérer les mots de passe\n" +
-          "   • Tout modifier sur le site"
+          "Connecté en tant que PROPRIETAIRE\n\n" +
+          "Vous pouvez :\n" +
+          "   - Ajouter des personnes\n" +
+          "   - Modifier des personnes\n" +
+          "   - Supprimer des personnes\n" +
+          "   - Gerer les mots de passe\n" +
+          "   - Tout modifier sur le site"
         );
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
@@ -1091,13 +1091,13 @@
         closeAuthModal();
         updateUIForAuth();
         alert(
-          "🔓 Connecté en tant qu'ADMIN\n\n" +
-          "✅ Vous pouvez :\n" +
-          "   • Ajouter des personnes\n" +
-          "   • Modifier des personnes\n\n" +
-          "❌ Vous ne pouvez pas :\n" +
-          "   • Supprimer des personnes\n" +
-          "   • Gérer les mots de passe"
+          "Connecté en tant qu'ADMIN\n\n" +
+          "Vous pouvez :\n" +
+          "   - Ajouter des personnes\n" +
+          "   - Modifier des personnes\n\n" +
+          "Vous ne pouvez pas :\n" +
+          "   - Supprimer des personnes\n" +
+          "   - Gerer les mots de passe"
         );
       } else {
         errorEl.classList.add("show");
@@ -1121,12 +1121,12 @@
       if (currentNode) {
         displayPerson(currentNode);
       }
-      alert("🔒 Déconnecté avec succès.");
+      alert("Déconnecté avec succès.");
     };
 
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("🔒 Seul le propriétaire peut gérer les mots de passe.");
+        alert("Seul le propriétaire peut gérer les mots de passe.");
         return;
       }
       document.getElementById("adminModal").classList.add("active");
@@ -1143,7 +1143,7 @@
     window.updatePasswords = async function(e) {
       e.preventDefault();
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("🔒 Seul le propriétaire peut modifier les mots de passe.");
+        alert("Seul le propriétaire peut modifier les mots de passe.");
         return;
       }
 
@@ -1174,7 +1174,7 @@
       const saved = await savePasswords();
       if (saved) {
         closeAdminModal();
-        alert("✅ Les mots de passe ont été mis à jour avec succès !");
+        alert("Les mots de passe ont été mis à jour avec succès !");
       }
     };
 
@@ -1457,7 +1457,7 @@
     // ===== AJOUTER =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -1476,7 +1476,7 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
 
@@ -1519,7 +1519,7 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`✅ "${name}" a été ajouté avec succès !`);
+        alert(`"${name}" a été ajouté avec succès !`);
       }
     };
 
@@ -1529,7 +1529,7 @@
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("🔒 Vous n'avez pas les permissions pour modifier.");
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1563,7 +1563,7 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("🔒 Vous n'avez pas les permissions pour modifier.");
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
 
@@ -1605,7 +1605,7 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`✅ "${oldName}" a été modifié en "${name}" avec succès !`);
+        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
       }
     };
 
@@ -1615,7 +1615,7 @@
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("🔒 Seul le propriétaire peut supprimer des données.");
+        alert("Seul le propriétaire peut supprimer des données.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1642,7 +1642,7 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("🔒 Seul le propriétaire peut supprimer des données.");
+        alert("Seul le propriétaire peut supprimer des données.");
         return;
       }
       if (!deletingPerson || !deletingParent) {
@@ -1669,7 +1669,7 @@
         } else {
           displayRoot();
         }
-        alert(`🗑️ "${nameToDelete}" a été supprimé avec succès !`);
+        alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
     };
 
