@@ -286,6 +286,30 @@
       line-height: 1.3;
     }
 
+    .person.pending {
+      opacity: 0.6;
+      border: 2px dashed var(--warning);
+    }
+
+    .person.pending::after {
+      content: '⏳ En attente';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--warning);
+      color: white;
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .person.rejected {
+      opacity: 0.4;
+      border: 2px solid var(--danger);
+      text-decoration: line-through;
+    }
+
     #backBtn {
       margin: 8px 15px;
       padding: 8px 20px;
@@ -1328,14 +1352,20 @@
 
     // ===== GESTION DU JOURNAL =====
     let journalEntries = [];
+    let pendingActions = [];
 
     async function loadJournal() {
       try {
         const q = query(collection(db, "journal"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
         journalEntries = [];
+        pendingActions = [];
         querySnapshot.forEach((doc) => {
-          journalEntries.push({ id: doc.id, ...doc.data() });
+          const data = { id: doc.id, ...doc.data() };
+          journalEntries.push(data);
+          if (data.status === 'pending') {
+            pendingActions.push(data);
+          }
         });
         return journalEntries;
       } catch (error) {
@@ -1344,7 +1374,7 @@
       }
     }
 
-    async function addJournalEntry(action, type, data, userRole) {
+    async function addJournalEntry(action, type, data, userRole, targetData = null) {
       try {
         const entry = {
           action: action,
@@ -1352,7 +1382,8 @@
           data: data,
           user: userRole || "admin",
           date: new Date().toISOString(),
-          status: "pending" // pending, accepted, rejected
+          status: "pending",
+          targetData: targetData || null
         };
         const docRef = await addDoc(collection(db, "journal"), entry);
         return docRef.id;
@@ -1381,6 +1412,50 @@
         console.error("Erreur lors de la suppression du journal:", error);
         return false;
       }
+    }
+
+    // ===== EXÉCUTION DES ACTIONS EN ATTENTE =====
+    async function executePendingAction(entry) {
+      try {
+        if (entry.type === 'add') {
+          // Ajouter la personne
+          const parentNode = findNodeByName(family, entry.targetData.parentName);
+          if (parentNode) {
+            if (!parentNode.children) parentNode.children = [];
+            parentNode.children.push(entry.targetData.person);
+            await sauvegarderFamille();
+          }
+        } else if (entry.type === 'edit') {
+          // Modifier la personne
+          const result = findNodeWithParent(family, entry.targetData.oldName);
+          if (result) {
+            result.node.name = entry.targetData.newName;
+            result.node.photo = entry.targetData.newPhoto || "";
+            await sauvegarderFamille();
+          }
+        } else if (entry.type === 'delete') {
+          // Supprimer la personne
+          const result = findNodeWithParent(family, entry.targetData.name);
+          if (result && result.parent) {
+            result.parent.children = result.parent.children.filter(c => c !== result.node);
+            await sauvegarderFamille();
+          }
+        }
+        return true;
+      } catch (error) {
+        console.error("Erreur lors de l'exécution de l'action:", error);
+        return false;
+      }
+    }
+
+    function findNodeByName(node, targetName) {
+      if (node.name === targetName) return node;
+      if (!node.children) return null;
+      for (let child of node.children) {
+        const result = findNodeByName(child, targetName);
+        if (result) return result;
+      }
+      return null;
     }
 
     // ===== CHARGEMENT DES MOTS DE PASSE =====
@@ -1430,12 +1505,9 @@
         alert(
           "Connecté en tant que PROPRIETAIRE\n\n" +
           "Vous pouvez :\n" +
-          "   - Ajouter des personnes\n" +
-          "   - Modifier des personnes\n" +
-          "   - Supprimer des personnes\n" +
-          "   - Gerer les mots de passe\n" +
+          "   - Valider ou annuler les modifications des Admins\n" +
           "   - Voir le journal des modifications\n" +
-          "   - Accepter ou annuler les modifications des Admins"
+          "   - Gerer les mots de passe"
         );
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
@@ -1445,12 +1517,9 @@
         alert(
           "Connecté en tant qu'ADMIN\n\n" +
           "Vous pouvez :\n" +
-          "   - Ajouter des personnes\n" +
-          "   - Modifier des personnes\n\n" +
-          "Vous ne pouvez pas :\n" +
-          "   - Supprimer des personnes\n" +
-          "   - Gerer les mots de passe\n" +
-          "   - Voir le journal des modifications"
+          "   - Proposer des ajouts\n" +
+          "   - Proposer des modifications\n\n" +
+          "Toutes vos actions doivent être validées par le propriétaire."
         );
       } else {
         errorEl.classList.add("show");
@@ -1548,9 +1617,11 @@
 
     async function renderJournal() {
       const container = document.getElementById("journalList");
-      const entries = await loadJournal();
+      await loadJournal();
       
-      if (entries.length === 0) {
+      const pendingEntries = journalEntries.filter(e => e.status === 'pending');
+      
+      if (pendingEntries.length === 0) {
         container.innerHTML = `
           <div class="journal-empty">
             <div class="icon">📭</div>
@@ -1561,19 +1632,13 @@
       }
 
       let html = '';
-      entries.forEach(entry => {
+      pendingEntries.forEach(entry => {
         const typeClass = entry.type;
         const typeLabel = {
           add: 'Ajout',
           edit: 'Modification',
           delete: 'Suppression'
         }[entry.type] || entry.type;
-
-        const statusLabel = {
-          pending: 'En attente',
-          accepted: '✅ Accepté',
-          rejected: '❌ Annulé'
-        }[entry.status] || entry.status;
 
         const date = new Date(entry.date);
         const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
@@ -1583,17 +1648,15 @@
             <div class="info">
               <div class="action-type">
                 <span class="type-${entry.type}">${typeLabel}</span>
-                <span style="font-weight:400; color:var(--text-light); font-size:12px; margin-left:8px;">${statusLabel}</span>
+                <span style="font-weight:400; color:var(--warning); font-size:12px; margin-left:8px;">⏳ En attente</span>
               </div>
               <div class="details">${entry.data}</div>
               <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
             </div>
-            ${entry.status === 'pending' ? `
-              <div class="actions-journal">
-                <button class="btn-accept" onclick="acceptJournal('${entry.id}')">Accepter</button>
-                <button class="btn-reject" onclick="rejectJournal('${entry.id}')">Annuler</button>
-              </div>
-            ` : ''}
+            <div class="actions-journal">
+              <button class="btn-accept" onclick="acceptJournal('${entry.id}')">Accepter</button>
+              <button class="btn-reject" onclick="rejectJournal('${entry.id}')">Annuler</button>
+            </div>
           </div>
         `;
       });
@@ -1607,10 +1670,26 @@
         return;
       }
       
-      const success = await updateJournalStatus(entryId, 'accepted');
+      const entry = journalEntries.find(e => e.id === entryId);
+      if (!entry) {
+        alert("Entrée introuvable.");
+        return;
+      }
+
+      // Exécuter l'action
+      const success = await executePendingAction(entry);
       if (success) {
-        alert("✅ Modification acceptée.");
+        await updateJournalStatus(entryId, 'accepted');
         await renderJournal();
+        alert("✅ Modification acceptée et appliquée.");
+        // Rafraîchir l'affichage
+        if (currentNode) {
+          displayPerson(currentNode);
+        } else {
+          displayRoot();
+        }
+      } else {
+        alert("❌ Erreur lors de l'application de la modification.");
       }
     };
 
@@ -1621,11 +1700,9 @@
       }
       
       if (confirm("❌ Êtes-vous sûr de vouloir annuler cette modification ?")) {
-        const success = await updateJournalStatus(entryId, 'rejected');
-        if (success) {
-          alert("❌ Modification annulée.");
-          await renderJournal();
-        }
+        await updateJournalStatus(entryId, 'rejected');
+        await renderJournal();
+        alert("❌ Modification annulée.");
       }
     };
 
@@ -1652,13 +1729,17 @@
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
-      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+      const isAdmin = isAuthenticated && currentUser.role === 'admin';
       
+      // Les Admins peuvent proposer des ajouts et modifications
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      
+      // Seul le propriétaire peut supprimer directement et gérer le journal
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
+      
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
 
@@ -1771,7 +1852,7 @@
 
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
-      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+      const isAdmin = isAuthenticated && currentUser.role === 'admin';
 
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
@@ -1910,10 +1991,10 @@
       }
     };
 
-    // ===== AJOUTER =====
+    // ===== AJOUTER (Proposé par Admin, validé par Propriétaire) =====
     window.openAddModal = function() {
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert("Seul un Admin peut proposer un ajout.");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -1931,13 +2012,12 @@
 
     window.addPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert("Seul un Admin peut proposer un ajout.");
         return;
       }
 
       const name = document.getElementById("addName").value.trim();
-      
       const photoInput = document.getElementById("addPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -1951,46 +2031,48 @@
         return;
       }
 
+      // Vérifier si le nom existe déjà (pour éviter les doublons)
       if (currentNode.children && currentNode.children.some(c => c.name === name)) {
         alert(`"${name}" existe déjà dans cette liste.`);
         return;
       }
 
+      // Créer la nouvelle personne
       const newPerson = {
         name: name,
         photo: photo || "",
         children: []
       };
 
-      if (!currentNode.children) {
-        currentNode.children = [];
-      }
-      currentNode.children.push(newPerson);
+      // Ajouter au journal (en attente de validation)
+      const entryData = {
+        parentName: currentNode.name,
+        person: newPerson
+      };
 
-      const saved = await sauvegarderFamille();
-      if (saved) {
+      const entryId = await addJournalEntry(
+        'add',
+        'add',
+        `Ajout de "${name}" chez ${currentNode.name}`,
+        'admin',
+        entryData
+      );
+
+      if (entryId) {
         closeAddModal();
-        if (currentNode === family) {
-          displayRoot();
-        } else {
-          displayPerson(currentNode);
-        }
-        
-        // Ajouter au journal
-        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-        await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
-        
-        alert(`"${name}" a été ajouté avec succès !`);
+        alert(`✅ Proposition d'ajout de "${name}" envoyée au propriétaire pour validation.`);
+      } else {
+        alert("❌ Erreur lors de l'envoi de la proposition.");
       }
     };
 
-    // ===== MODIFIER =====
+    // ===== MODIFIER (Proposé par Admin, validé par Propriétaire) =====
     let editingPerson = null;
     let editingParent = null;
 
     window.openEditModal = function() {
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert("Seul un Admin peut proposer une modification.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2023,13 +2105,12 @@
 
     window.editPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert("Seul un Admin peut proposer une modification.");
         return;
       }
 
       const name = document.getElementById("editName").value.trim();
-      
       const photoInput = document.getElementById("editPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -2043,39 +2124,41 @@
         return;
       }
 
-      if (name !== editingPerson.name && editingParent && editingParent.children) {
+      const oldName = editingPerson.name;
+
+      // Vérifier si le nouveau nom existe déjà
+      if (name !== oldName && editingParent && editingParent.children) {
         if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
           alert(`"${name}" existe déjà dans cette liste.`);
           return;
         }
       }
 
-      const oldName = editingPerson.name;
-      editingPerson.name = name;
-      editingPerson.photo = photo || "";
+      // Ajouter au journal (en attente de validation)
+      const entryData = {
+        oldName: oldName,
+        newName: name,
+        newPhoto: photo,
+        parentName: editingParent ? editingParent.name : null
+      };
 
-      if (oldName !== name && currentNode === editingPerson) {
-        currentNode.name = name;
-      }
+      const entryId = await addJournalEntry(
+        'edit',
+        'edit',
+        `Modification de "${oldName}" → "${name}"`,
+        'admin',
+        entryData
+      );
 
-      const saved = await sauvegarderFamille();
-      if (saved) {
+      if (entryId) {
         closeEditModal();
-        if (currentNode === editingPerson || currentNode.name === name) {
-          displayPerson(editingPerson);
-        } else {
-          displayPerson(currentNode);
-        }
-        
-        // Ajouter au journal
-        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
-        
-        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
+        alert(`✅ Proposition de modification de "${oldName}" envoyée au propriétaire pour validation.`);
+      } else {
+        alert("❌ Erreur lors de l'envoi de la proposition.");
       }
     };
 
-    // ===== SUPPRIMER =====
+    // ===== SUPPRIMER (Seulement Propriétaire - direct) =====
     let deletingPerson = null;
     let deletingParent = null;
 
@@ -2118,6 +2201,16 @@
 
       const nameToDelete = deletingPerson.name;
 
+      // Ajouter au journal (le propriétaire supprime directement)
+      await addJournalEntry(
+        'delete',
+        'delete',
+        `Suppression de "${nameToDelete}" par le propriétaire`,
+        'proprietaire',
+        { name: nameToDelete }
+      );
+
+      // Exécuter directement la suppression
       if (deletingParent.children) {
         deletingParent.children = deletingParent.children.filter(
           child => child !== deletingPerson
@@ -2135,10 +2228,6 @@
         } else {
           displayRoot();
         }
-        
-        // Ajouter au journal
-        await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
-        
         alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
     };
@@ -2156,6 +2245,7 @@
     async function init() {
       await loadPasswords();
       await chargerfamille();
+      await loadJournal();
     }
 
     init();
