@@ -160,9 +160,15 @@
       display: inline-block;
     }
 
-    .auth-status.admin {
+    .auth-status.proprietaire {
       background: rgba(46, 204, 113, 0.3);
       color: #2ecc71;
+      display: inline-block;
+    }
+
+    .auth-status.admin {
+      background: rgba(52, 152, 219, 0.3);
+      color: #3498db;
       display: inline-block;
     }
 
@@ -492,13 +498,13 @@
       letter-spacing: 0.2px;
     }
 
-    .hamburger-menu .auth-status.admin {
+    .hamburger-menu .auth-status.proprietaire {
       background: rgba(46, 204, 113, 0.08);
       border-color: rgba(46, 204, 113, 0.1);
       color: #2ecc71;
     }
 
-    .hamburger-menu .auth-status.editor {
+    .hamburger-menu .auth-status.admin {
       background: rgba(52, 152, 219, 0.08);
       border-color: rgba(52, 152, 219, 0.1);
       color: #3498db;
@@ -813,7 +819,7 @@
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Admin</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">⚙️ Propriétaire</button>
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
@@ -857,7 +863,7 @@
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
           <input type="password" id="authPassword" required placeholder="Entrez le mot de passe...">
-          <div class="password-hint">Contactez l'administrateur pour obtenir le mot de passe.</div>
+          <div class="password-hint">Contactez le propriétaire pour obtenir le mot de passe.</div>
         </div>
         <div class="auth-error" id="authError">Mot de passe incorrect</div>
         <div class="form-actions">
@@ -868,26 +874,26 @@
     </div>
   </div>
 
-  <!-- Admin Modal -->
+  <!-- Admin Modal (Propriétaire) -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">&times;</button>
-      <h2>Admin - Gestion des mots de passe</h2>
+      <h2>⚙️ Propriétaire - Gestion des mots de passe</h2>
       <p style="color: var(--text-light); margin-bottom: 16px; font-size: 14px;">
         Gérez les mots de passe pour chaque rôle.
       </p>
       
       <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
-          <label for="adminPassword">Mot de passe Administrateur</label>
-          <input type="text" id="adminPassword" placeholder="Nouveau mot de passe admin">
+          <label for="adminPassword">Mot de passe Propriétaire</label>
+          <input type="text" id="adminPassword" placeholder="Nouveau mot de passe propriétaire">
           <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">
             Actuel : <strong id="currentAdminPass">••••••••</strong>
           </div>
         </div>
         <div class="form-group">
-          <label for="editorPassword">Mot de passe Éditeur</label>
-          <input type="text" id="editorPassword" placeholder="Nouveau mot de passe éditeur">
+          <label for="editorPassword">Mot de passe Admin</label>
+          <input type="text" id="editorPassword" placeholder="Nouveau mot de passe admin">
           <div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">
             Actuel : <strong id="currentEditorPass">••••••••</strong>
           </div>
@@ -1024,8 +1030,8 @@
 
     let currentUser = null;
     let passwords = {
-      admin: "admin123",
-      editor: "editor123"
+      admin: "admin123",     // Mot de passe Propriétaire
+      editor: "editor123"    // Mot de passe Admin
     };
 
     async function loadPasswords() {
@@ -1066,17 +1072,33 @@
       await loadPasswords();
       
       if (password === passwords.admin) {
+        currentUser = { role: 'proprietaire' };
+        errorEl.classList.remove("show");
+        closeAuthModal();
+        updateUIForAuth();
+        alert(
+          "🔓 Connecté en tant que PROPRIÉTAIRE\n\n" +
+          "✅ Vous pouvez :\n" +
+          "   • Ajouter des personnes\n" +
+          "   • Modifier des personnes\n" +
+          "   • Supprimer des personnes\n" +
+          "   • Gérer les mots de passe\n" +
+          "   • Tout modifier sur le site"
+        );
+      } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        alert("Connecté en tant qu'Administrateur !");
-      } else if (password === passwords.editor) {
-        currentUser = { role: 'editor' };
-        errorEl.classList.remove("show");
-        closeAuthModal();
-        updateUIForAuth();
-        alert("Connecté en tant qu'Éditeur !");
+        alert(
+          "🔓 Connecté en tant qu'ADMIN\n\n" +
+          "✅ Vous pouvez :\n" +
+          "   • Ajouter des personnes\n" +
+          "   • Modifier des personnes\n\n" +
+          "❌ Vous ne pouvez pas :\n" +
+          "   • Supprimer des personnes\n" +
+          "   • Gérer les mots de passe"
+        );
       } else {
         errorEl.classList.add("show");
         setTimeout(() => errorEl.classList.remove("show"), 3000);
@@ -1099,12 +1121,12 @@
       if (currentNode) {
         displayPerson(currentNode);
       }
-      alert("Déconnecté avec succès.");
+      alert("🔒 Déconnecté avec succès.");
     };
 
     window.openAdminModal = function() {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul l'administrateur peut gérer les mots de passe.");
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("🔒 Seul le propriétaire peut gérer les mots de passe.");
         return;
       }
       document.getElementById("adminModal").classList.add("active");
@@ -1120,8 +1142,8 @@
 
     window.updatePasswords = async function(e) {
       e.preventDefault();
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul l'administrateur peut modifier les mots de passe.");
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("🔒 Seul le propriétaire peut modifier les mots de passe.");
         return;
       }
 
@@ -1130,7 +1152,7 @@
 
       if (newAdminPass) {
         if (newAdminPass.length < 4) {
-          alert("Le mot de passe administrateur doit faire au moins 4 caractères.");
+          alert("Le mot de passe propriétaire doit faire au moins 4 caractères.");
           return;
         }
         passwords.admin = newAdminPass;
@@ -1138,7 +1160,7 @@
 
       if (newEditorPass) {
         if (newEditorPass.length < 4) {
-          alert("Le mot de passe éditeur doit faire au moins 4 caractères.");
+          alert("Le mot de passe admin doit faire au moins 4 caractères.");
           return;
         }
         passwords.editor = newEditorPass;
@@ -1152,7 +1174,7 @@
       const saved = await savePasswords();
       if (saved) {
         closeAdminModal();
-        alert("Les mots de passe ont été mis à jour avec succès !");
+        alert("✅ Les mots de passe ont été mis à jour avec succès !");
       }
     };
 
@@ -1176,13 +1198,13 @@
 
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
-      const isAdmin = isAuthenticated && currentUser.role === 'admin';
-      const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
+      const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
+      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
-      document.getElementById("addBtn").style.display = isEditor ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isEditor ? "flex" : "none";
-      document.getElementById("deleteBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("adminBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
 
@@ -1190,11 +1212,12 @@
       const menuStatusEl = document.getElementById("menuAuthStatus");
       
       if (isAuthenticated) {
-        const statusText = isAdmin ? "Admin" : "Éditeur";
+        const statusText = isProprietaire ? "Propriétaire" : "Admin";
+        const statusClass = isProprietaire ? "proprietaire" : "admin";
         statusEl.textContent = statusText;
-        statusEl.className = `auth-status show ${isAdmin ? 'admin' : 'editor'}`;
+        statusEl.className = `auth-status show ${statusClass}`;
         menuStatusEl.textContent = statusText;
-        menuStatusEl.className = `auth-status show ${isAdmin ? 'admin' : 'editor'}`;
+        menuStatusEl.className = `auth-status show ${statusClass}`;
         menuStatusEl.style.display = "block";
       } else {
         statusEl.textContent = "";
@@ -1292,13 +1315,13 @@
       updateBreadcrumb();
 
       const isAuthenticated = currentUser !== null;
-      const isAdmin = isAuthenticated && currentUser.role === 'admin';
-      const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
+      const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
+      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
 
-      document.getElementById("addBtn").style.display = isEditor ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isEditor ? "flex" : "none";
-      document.getElementById("deleteBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("adminBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
 
       if (!person.children || person.children.length === 0) {
         treeEl.innerHTML = "<p>La liste des enfants n'est pas encore complète.</p>";
@@ -1433,14 +1456,13 @@
 
     // ===== AJOUTER =====
     window.openAddModal = function() {
-      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
       document.getElementById("addModal").classList.add("active");
       document.getElementById("addName").value = "";
       
-      // Réinitialiser la photo si le champ existe
       const photoInput = document.getElementById("addPhoto");
       if (photoInput) {
         photoInput.value = "";
@@ -1453,15 +1475,13 @@
 
     window.addPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
 
       const name = document.getElementById("addName").value.trim();
       
-      // La photo est toujours définie à "" par défaut
-      // Si vous décommentez le champ dans le HTML, cette ligne fonctionnera
       const photoInput = document.getElementById("addPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -1499,7 +1519,7 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`"${name}" a été ajouté avec succès !`);
+        alert(`✅ "${name}" a été ajouté avec succès !`);
       }
     };
 
@@ -1508,8 +1528,8 @@
     let editingParent = null;
 
     window.openEditModal = function() {
-      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("🔒 Vous n'avez pas les permissions pour modifier.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1523,7 +1543,6 @@
         editingParent = result.parent;
         document.getElementById("editName").value = editingPerson.name;
         
-        // Récupérer la photo si le champ existe
         const photoInput = document.getElementById("editPhoto");
         if (photoInput) {
           photoInput.value = editingPerson.photo || "";
@@ -1543,14 +1562,13 @@
 
     window.editPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("🔒 Vous n'avez pas les permissions pour modifier.");
         return;
       }
 
       const name = document.getElementById("editName").value.trim();
       
-      // Récupérer la photo si le champ existe
       const photoInput = document.getElementById("editPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -1587,7 +1605,7 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
+        alert(`✅ "${oldName}" a été modifié en "${name}" avec succès !`);
       }
     };
 
@@ -1596,8 +1614,8 @@
     let deletingParent = null;
 
     window.openDeleteModal = function() {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul l'administrateur peut supprimer des données.");
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("🔒 Seul le propriétaire peut supprimer des données.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1623,8 +1641,8 @@
     };
 
     window.confirmDelete = async function() {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul l'administrateur peut supprimer des données.");
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("🔒 Seul le propriétaire peut supprimer des données.");
         return;
       }
       if (!deletingPerson || !deletingParent) {
@@ -1651,7 +1669,7 @@
         } else {
           displayRoot();
         }
-        alert(`"${nameToDelete}" a été supprimé avec succès !`);
+        alert(`🗑️ "${nameToDelete}" a été supprimé avec succès !`);
       }
     };
 
