@@ -180,6 +180,7 @@
       color: #3498db;
     }
 
+    /* Style pour Google Translate */
     #google_translate_element {
       background: rgba(255,255,255,0.12);
       border-radius: 30px;
@@ -188,6 +189,36 @@
       backdrop-filter: blur(4px);
       display: inline-block;
       min-width: 100px;
+    }
+
+    /* Cache le message "Powered by Google" */
+    .goog-te-gadget {
+      color: transparent !important;
+    }
+    .goog-te-gadget .goog-te-combo {
+      color: #333 !important;
+      background: white !important;
+      border-radius: 20px !important;
+      padding: 4px 10px !important;
+      border: none !important;
+      font-size: 13px !important;
+      cursor: pointer !important;
+      min-width: 120px !important;
+    }
+    .goog-te-gadget .goog-te-combo:focus {
+      outline: 2px solid var(--accent) !important;
+    }
+    .goog-te-gadget img {
+      display: none !important;
+    }
+    .goog-te-banner-frame {
+      display: none !important;
+    }
+    #goog-gt-tt {
+      display: none !important;
+    }
+    .goog-tooltip {
+      display: none !important;
     }
 
     .breadcrumb {
@@ -633,7 +664,7 @@
     </div>
   </div>
 
-  <!-- Admin Modal (gérer les mots de passe) -->
+  <!-- Admin Modal -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">&times;</button>
@@ -727,6 +758,19 @@
     </div>
   </div>
 
+  <!-- Google Translate Script -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'fr',
+        includedLanguages: 'en,ar,es,pt,it,de,ru,zh-CN,ja,ko,fr',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <script type="importmap">
     {
       "imports": {
@@ -760,16 +804,12 @@
     const db = getFirestore(app);
 
     // ===== GESTION DES MOTS DE PASSE =====
-    // Les mots de passe sont stockés dans Firestore
-    // Document: "passwords" dans la collection "config"
-    
-    let currentUser = null; // { role: 'admin' | 'editor' | 'viewer' }
+    let currentUser = null;
     let passwords = {
-      admin: "admin123",   // Mot de passe par défaut - À CHANGER !
-      editor: "editor123"  // Mot de passe par défaut - À CHANGER !
+      admin: "admin123",
+      editor: "editor123"
     };
 
-    // Charger les mots de passe depuis Firestore
     async function loadPasswords() {
       try {
         const docRef = doc(db, "config", "passwords");
@@ -779,7 +819,6 @@
           if (data.admin) passwords.admin = data.admin;
           if (data.editor) passwords.editor = data.editor;
         } else {
-          // Créer le document avec les mots de passe par défaut
           await setDoc(docRef, passwords);
         }
         return true;
@@ -789,7 +828,6 @@
       }
     }
 
-    // Sauvegarder les mots de passe dans Firestore
     async function savePasswords() {
       try {
         const docRef = doc(db, "config", "passwords");
@@ -802,13 +840,12 @@
       }
     }
 
-    // ===== FONCTIONS D'AUTHENTIFICATION =====
+    // ===== AUTHENTIFICATION =====
     window.authenticate = async function(e) {
       e.preventDefault();
       const password = document.getElementById("authPassword").value.trim();
       const errorEl = document.getElementById("authError");
       
-      // Charger les mots de passe depuis Firestore
       await loadPasswords();
       
       if (password === passwords.admin) {
@@ -842,14 +879,13 @@
     window.logout = function() {
       currentUser = null;
       updateUIForAuth();
-      // Recharger l'arbre
       if (currentNode) {
         displayPerson(currentNode);
       }
       alert("🔒 Déconnecté avec succès.");
     };
 
-    // ===== ADMIN : GESTION DES MOTS DE PASSE =====
+    // ===== ADMIN =====
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'admin') {
         alert("🔒 Seul l'administrateur peut gérer les mots de passe.");
@@ -910,17 +946,14 @@
       const isAdmin = isAuthenticated && currentUser.role === 'admin';
       const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
       
-      // Boutons d'action
       document.getElementById("addBtn").style.display = isEditor ? "inline-block" : "none";
       document.getElementById("editBtn").style.display = isEditor ? "inline-block" : "none";
       document.getElementById("deleteBtn").style.display = isAdmin ? "inline-block" : "none";
       document.getElementById("adminBtn").style.display = isAdmin ? "inline-block" : "none";
 
-      // Boutons d'authentification
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "inline-block";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "inline-block" : "none";
 
-      // Statut
       const statusEl = document.getElementById("authStatus");
       if (isAuthenticated) {
         const roleText = isAdmin ? "👑 Administrateur" : "✏️ Éditeur";
@@ -944,7 +977,6 @@
     const breadcrumbEl = document.getElementById('breadcrumb');
     const mainHeader = document.getElementById('mainHeader');
 
-    // Charger la famille depuis Firebase
     async function chargerfamille() {
       try {
         const ref = doc(db, "famille", "bollou_oumar");
@@ -963,7 +995,6 @@
       }
     }
 
-    // Sauvegarder la famille dans Firebase
     async function sauvegarderFamille() {
       try {
         const ref = doc(db, "famille", "bollou_oumar");
@@ -981,7 +1012,6 @@
       }
     }
 
-    // Trouver un noeud dans l'arbre avec son parent
     function findNodeWithParent(node, targetName, parent = null) {
       if (node.name === targetName) {
         return { node, parent };
@@ -994,7 +1024,6 @@
       return null;
     }
 
-    // Trouver le chemin vers un noeud
     function findPathToNode(node, targetName, path = []) {
       if (node.name === targetName) {
         return [...path, node];
@@ -1007,7 +1036,6 @@
       return null;
     }
 
-    // Afficher une personne
     function displayPerson(person) {
       treeEl.innerHTML = "";
       currentNode = person;
@@ -1070,7 +1098,6 @@
       });
     }
 
-    // Accueil
     function displayRoot() {
       treeEl.innerHTML = "";
       history = [];
@@ -1105,7 +1132,6 @@
       treeEl.appendChild(div);
     }
 
-    // Retour
     window.goBack = function() {
       if (history.length) {
         const prev = history.pop();
@@ -1116,7 +1142,6 @@
       }
     };
 
-    // Fil d'Ariane
     function updateBreadcrumb() {
       if (currentPath.length <= 1) {
         breadcrumbEl.style.display = "none";
@@ -1133,7 +1158,6 @@
       }
     }
 
-    // Recherche
     window.searchPerson = function() {
       const q = document.getElementById("searchBox").value.toLowerCase();
       if (!q || !family) {
@@ -1166,7 +1190,7 @@
       }
     };
 
-    // ===== AJOUTER UNE PERSONNE =====
+    // ===== AJOUTER =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
         alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
@@ -1229,7 +1253,7 @@
       }
     };
 
-    // ===== MODIFIER UNE PERSONNE =====
+    // ===== MODIFIER =====
     let editingPerson = null;
     let editingParent = null;
 
@@ -1308,7 +1332,7 @@
       }
     };
 
-    // ===== SUPPRIMER UNE PERSONNE =====
+    // ===== SUPPRIMER =====
     let deletingPerson = null;
     let deletingParent = null;
 
@@ -1389,7 +1413,6 @@
 
     init();
 
-    // Exposer les fonctions pour les onclick
     window.findNodeWithParent = findNodeWithParent;
     window.findPathToNode = findPathToNode;
     window.currentNode = () => currentNode;
