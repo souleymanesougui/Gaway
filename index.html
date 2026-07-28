@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="jlqlGzhp6tqTZ-sI6PCuMjZ7FtCsctml2RRX5JizTrM" />
-  <meta name="description" content="Gaway">
+  <meta name="description" content="Gaway - Arbre généalogique des fils Gaïda">
   <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Souleymane Sougui Idriss">
@@ -24,6 +24,7 @@
       --primary: #2C3E50;
       --secondary: #34495E;
       --accent: #8E44AD;
+      --accent-light: #a569bd;
       --light: #ECF0F1;
       --dark: #2C3E50;
       --text-dark: #2C3E50;
@@ -31,11 +32,206 @@
       --success: #27ae60;
       --warning: #f39c12;
       --danger: #e74c3c;
+      --bg: #f5f6fa;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      --border: rgba(255, 255, 255, 0.2);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* === THEME SOMBRE === */
+    [data-theme="dark"] {
+      --primary: #ecf0f1;
+      --secondary: #bdc3c7;
+      --text-dark: #ecf0f1;
+      --text-light: #95a5a6;
+      --bg: #1a1a2e;
+      --card-bg: rgba(30, 30, 50, 0.9);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --border: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] body::before {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    [data-theme="dark"] .person {
+      background: rgba(30, 30, 50, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .person:hover {
+      background: rgba(40, 40, 60, 0.9);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .person-name {
+      background: linear-gradient(to right, rgba(142, 68, 173, 0.15), rgba(52, 73, 94, 0.15));
+      color: #ecf0f1;
+    }
+
+    [data-theme="dark"] #searchBox {
+      background: rgba(30, 30, 50, 0.9);
+      color: #ecf0f1;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] #searchBox:focus {
+      border-color: rgba(142, 68, 173, 0.3);
+      box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
+    }
+
+    [data-theme="dark"] .modal-content {
+      background: rgba(30, 30, 50, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #ecf0f1;
+    }
+
+    [data-theme="dark"] .modal-content h2 {
+      color: #ecf0f1;
+    }
+
+    [data-theme="dark"] .modal-content .subtitle {
+      color: #95a5a6;
+    }
+
+    [data-theme="dark"] .form-group input,
+    [data-theme="dark"] .form-group select {
+      background: rgba(20, 20, 40, 0.8);
+      color: #ecf0f1;
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .form-group input:focus,
+    [data-theme="dark"] .form-group select:focus {
+      border-color: var(--accent);
+      background: rgba(30, 30, 50, 0.9);
+    }
+
+    [data-theme="dark"] .form-group label {
+      color: #bdc3c7;
+    }
+
+    [data-theme="dark"] .hamburger-menu {
+      background: rgba(30, 30, 50, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .hamburger-menu .history-btn,
+    [data-theme="dark"] .hamburger-menu .action-btn,
+    [data-theme="dark"] .hamburger-menu .auth-btn {
+      color: #ecf0f1;
+    }
+
+    [data-theme="dark"] .hamburger-menu .history-btn:hover,
+    [data-theme="dark"] .hamburger-menu .action-btn:hover,
+    [data-theme="dark"] .hamburger-menu .auth-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .historique-item {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    [data-theme="dark"] .historique-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .toast {
+      background: rgba(30, 30, 50, 0.95);
+      color: #ecf0f1;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* === TOASTS === */
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+      width: 100%;
+    }
+
+    .toast {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 14px 20px;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid var(--success);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      transform-origin: right;
+      min-width: 200px;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast.info { border-left-color: var(--accent); }
+
+    .toast .toast-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .toast .toast-close {
+      margin-left: auto;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: inherit;
+    }
+
+    .toast .toast-close:hover {
+      opacity: 1;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(60px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(60px) scale(0.9);
+      }
+    }
+
+    .toast.removing {
+      animation: slideOutRight 0.3s ease forwards;
+    }
+
+    /* === STYLES DE BASE === */
     * {
       box-sizing: border-box;
-      transition: all 0.3s ease;
+      transition: var(--transition);
     }
 
     body {
@@ -52,6 +248,7 @@
       background-position: center;
       background-attachment: fixed;
       background-repeat: no-repeat;
+      background-color: var(--bg);
     }
 
     body::before {
@@ -79,7 +276,8 @@
       flex-wrap: nowrap;
       gap: 8px;
       box-shadow: 0 4px 30px rgba(0,0,0,0.2);
-      position: relative;
+      position: sticky;
+      top: 0;
       min-height: 60px;
       z-index: 100;
       border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -130,7 +328,7 @@
       font-size: 20px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -147,6 +345,30 @@
 
     .hamburger-btn:active {
       transform: scale(0.95);
+    }
+
+    .theme-toggle {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.02);
     }
 
     .auth-status {
@@ -194,14 +416,26 @@
     .breadcrumb span {
       margin: 0 6px;
       color: #9b59b6;
+      cursor: pointer;
+    }
+
+    .breadcrumb span:hover {
+      text-decoration: underline;
+      color: #a569bd;
+    }
+
+    /* === BARRE DE RECHERCHE AVEC SUGGESTIONS === */
+    .search-wrapper {
+      width: 90%;
+      max-width: 450px;
+      margin: 12px 15px 8px;
+      position: relative;
     }
 
     #searchBox {
-      margin: 12px 15px 8px;
+      width: 100%;
       padding: 10px 18px 10px 40px;
       font-size: clamp(13px, 3vw, 15px);
-      width: 90%;
-      max-width: 450px;
       border: none;
       border-radius: 50px;
       outline: none;
@@ -223,6 +457,58 @@
       box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
     }
 
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      margin-top: 6px;
+      max-height: 250px;
+      overflow-y: auto;
+      display: none;
+      z-index: 50;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .search-suggestions.active {
+      display: block;
+    }
+
+    .search-suggestion {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-suggestion:hover {
+      background: rgba(142, 68, 173, 0.06);
+    }
+
+    .search-suggestion .highlight {
+      background: rgba(142, 68, 173, 0.2);
+      padding: 0 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .search-suggestion .suggestion-path {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-left: auto;
+    }
+
+    /* === ARBRE === */
     #tree {
       display: flex;
       flex-wrap: wrap;
@@ -238,22 +524,26 @@
       cursor: pointer;
       padding: 10px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.8);
+      background: var(--card-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
       width: calc(50% - 15px);
       min-width: 120px;
       max-width: 180px;
       position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid var(--border);
     }
 
     .person:hover {
-      transform: translateY(-5px);
+      transform: translateY(-5px) scale(1.02);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] .person:hover {
+      background: rgba(40, 40, 60, 0.9);
     }
 
     .person img {
@@ -286,6 +576,19 @@
       line-height: 1.3;
     }
 
+    .person .badge-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
+    }
+
     #backBtn {
       margin: 8px 15px;
       padding: 8px 20px;
@@ -313,7 +616,7 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - COLLÉ AU MUR GAUCHE === */
+    /* === MENU HAMBURGER === */
     .hamburger-menu {
       display: none;
       position: absolute;
@@ -336,15 +639,8 @@
       max-width: 320px;
     }
 
-    @media (max-width: 480px) {
-      .hamburger-menu {
-        left: 0;
-        transform: none;
-        padding: 10px 14px 14px 14px;
-        min-width: 200px;
-        max-width: 85%;
-        border-radius: 0 14px 14px 0;
-      }
+    .hamburger-menu.open {
+      display: flex;
     }
 
     @keyframes slideDown {
@@ -358,11 +654,6 @@
       }
     }
 
-    .hamburger-menu.open {
-      display: flex;
-    }
-
-    /* Boutons dans le menu - Centrés */
     .hamburger-menu .history-btn,
     .hamburger-menu .action-btn,
     .hamburger-menu .auth-btn {
@@ -392,46 +683,16 @@
       border-radius: 10px;
     }
 
-    .hamburger-menu .history-btn:active,
-    .hamburger-menu .action-btn:active,
-    .hamburger-menu .auth-btn:active {
-      background: rgba(0, 0, 0, 0.08);
-    }
-
-    .hamburger-menu .action-btn.add-btn {
-      background: transparent;
-    }
-    .hamburger-menu .action-btn.add-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .hamburger-menu .action-btn.edit-btn {
-      background: transparent;
-    }
-    .hamburger-menu .action-btn.edit-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .hamburger-menu .action-btn.delete-btn {
-      background: transparent;
-    }
-    .hamburger-menu .action-btn.delete-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .hamburger-menu .auth-btn.login-btn {
-      background: transparent;
-    }
-    .hamburger-menu .auth-btn.login-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .hamburger-menu .auth-btn.logout-btn {
-      background: transparent;
-    }
-    .hamburger-menu .auth-btn.logout-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
+    .hamburger-menu .action-btn.add-btn { background: transparent; }
+    .hamburger-menu .action-btn.add-btn:hover { background: rgba(0, 0, 0, 0.05); }
+    .hamburger-menu .action-btn.edit-btn { background: transparent; }
+    .hamburger-menu .action-btn.edit-btn:hover { background: rgba(0, 0, 0, 0.05); }
+    .hamburger-menu .action-btn.delete-btn { background: transparent; }
+    .hamburger-menu .action-btn.delete-btn:hover { background: rgba(0, 0, 0, 0.05); }
+    .hamburger-menu .auth-btn.login-btn { background: transparent; }
+    .hamburger-menu .auth-btn.login-btn:hover { background: rgba(0, 0, 0, 0.05); }
+    .hamburger-menu .auth-btn.logout-btn { background: transparent; }
+    .hamburger-menu .auth-btn.logout-btn:hover { background: rgba(0, 0, 0, 0.05); }
 
     .menu-divider {
       border: none;
@@ -439,7 +700,6 @@
       margin: 4px 0;
     }
 
-    /* Traduction dans le menu - Centrée */
     .hamburger-menu .translate-container {
       width: 100%;
       padding: 4px 0;
@@ -486,7 +746,6 @@
       display: none !important;
     }
 
-    /* Statut dans le menu - Centré */
     .hamburger-menu .auth-status {
       display: none;
     }
@@ -505,22 +764,7 @@
       letter-spacing: 0.2px;
     }
 
-    .hamburger-menu .auth-status.proprietaire {
-      background: rgba(46, 204, 113, 0.08);
-      border-color: rgba(46, 204, 113, 0.1);
-      color: #2ecc71;
-    }
-
-    .hamburger-menu .auth-status.admin {
-      background: rgba(52, 152, 219, 0.08);
-      border-color: rgba(52, 152, 219, 0.1);
-      color: #3498db;
-    }
-
-    /* ============================================== */
-    /* === MODALS ÉLÉGANTES === */
-    /* ============================================== */
-
+    /* === MODALS === */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -538,17 +782,17 @@
       animation: overlayFade 0.3s ease;
     }
 
+    .modal-overlay.active {
+      display: flex;
+    }
+
     @keyframes overlayFade {
       from { opacity: 0; }
       to { opacity: 1; }
     }
 
-    .modal-overlay.active {
-      display: flex;
-    }
-
     .modal-content {
-      background: rgba(255, 255, 255, 0.92);
+      background: var(--card-bg);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       border-radius: 28px;
@@ -560,11 +804,15 @@
       box-shadow: 0 25px 80px rgba(0, 0, 0, 0.12), 0 10px 30px rgba(0, 0, 0, 0.04);
       position: relative;
       animation: modalSlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid var(--border);
     }
 
     .modal-content.historique-modal {
       max-width: 700px;
+    }
+
+    .modal-content.person-detail-modal {
+      max-width: 500px;
     }
 
     @keyframes modalSlide {
@@ -631,7 +879,6 @@
       font-weight: 400;
     }
 
-    /* === FORMULAIRES ÉLÉGANTS === */
     .form-group {
       margin-bottom: 18px;
     }
@@ -648,7 +895,8 @@
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
       width: 100%;
       padding: 12px 16px;
       border: 1.5px solid rgba(0, 0, 0, 0.06);
@@ -664,22 +912,30 @@
     }
 
     .form-group input:hover,
-    .form-group select:hover {
+    .form-group select:hover,
+    .form-group textarea:hover {
       border-color: rgba(0, 0, 0, 0.1);
       background: rgba(255, 255, 255, 0.7);
     }
 
     .form-group input:focus,
-    .form-group select:focus {
+    .form-group select:focus,
+    .form-group textarea:focus {
       border-color: var(--accent);
       outline: none;
       background: rgba(255, 255, 255, 0.85);
       box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.08), 0 4px 16px rgba(142, 68, 173, 0.06);
     }
 
-    .form-group input::placeholder {
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
       color: rgba(0, 0, 0, 0.25);
       font-weight: 400;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 60px;
     }
 
     .form-actions {
@@ -728,10 +984,6 @@
       transform: translateY(-2px);
     }
 
-    .form-actions .btn-cancel:active {
-      transform: translateY(0px);
-    }
-
     .form-actions .btn-delete-confirm {
       background: #e74c3c;
       color: white;
@@ -742,20 +994,6 @@
       background: #c0392b;
       transform: translateY(-2px);
       box-shadow: 0 8px 28px rgba(231, 76, 60, 0.3);
-    }
-
-    .form-actions .btn-delete-confirm:active {
-      transform: translateY(0px);
-    }
-
-    .form-actions .btn-danger {
-      background: #e74c3c;
-      color: white;
-    }
-
-    .form-actions .btn-danger:hover {
-      background: #c0392b;
-      transform: translateY(-2px);
     }
 
     /* === HISTORIQUE === */
@@ -792,11 +1030,9 @@
     .historique-item.add {
       border-left-color: var(--success);
     }
-
     .historique-item.edit {
       border-left-color: var(--warning);
     }
-
     .historique-item.delete {
       border-left-color: var(--danger);
     }
@@ -877,12 +1113,10 @@
       background: rgba(46, 204, 113, 0.15);
       color: var(--success);
     }
-
     .status-badge.rejected {
       background: rgba(231, 76, 60, 0.15);
       color: var(--danger);
     }
-
     .status-badge.pending {
       background: rgba(243, 156, 18, 0.15);
       color: var(--warning);
@@ -911,37 +1145,79 @@
       font-weight: 400;
     }
 
-    .modal-content.delete-modal {
+    /* === STATISTIQUES === */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 12px;
+      padding: 14px;
       text-align: center;
+      border: 1px solid rgba(0, 0, 0, 0.04);
     }
 
-    .modal-content.delete-modal .delete-icon {
-      font-size: 48px;
-      margin-bottom: 8px;
-      opacity: 0.6;
+    .stat-card .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
     }
 
-    .modal-content.delete-modal p {
-      font-size: 15px;
-      line-height: 1.6;
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* === DETAIL PERSONNE === */
+    .person-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .person-detail-header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+    }
+
+    .person-detail-header .detail-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .person-detail-header .detail-role {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .detail-info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      font-size: 14px;
+    }
+
+    .detail-info-item .label {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .detail-info-item .value {
       color: var(--text-dark);
     }
 
-    .modal-content.delete-modal .delete-name {
-      color: #e74c3c;
-      font-weight: 600;
-    }
-
-    .modal-content.delete-modal .form-actions {
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    #authPassword {
-      font-size: 16px;
-      letter-spacing: 2px;
-    }
-
+    /* === RESPONSIVE === */
     @media (max-width: 480px) {
       .person {
         width: calc(50% - 10px);
@@ -952,9 +1228,12 @@
         max-width: 80px;
       }
       
-      #searchBox {
+      .search-wrapper {
         width: 95%;
         margin: 10px 8px 6px;
+      }
+
+      #searchBox {
         padding: 8px 12px 8px 35px;
         background-size: 14px;
         background-position: 14px center;
@@ -1006,37 +1285,15 @@
         border-radius: 0 14px 14px 0;
       }
 
-      .hamburger-menu .history-btn,
-      .hamburger-menu .action-btn,
-      .hamburger-menu .auth-btn {
-        padding: 6px 12px;
-        font-size: 13px;
-        border-radius: 8px;
+      .toast-container {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        top: 70px;
       }
 
-      .hamburger-menu .translate-container #google_translate_element {
-        min-width: 120px;
-        max-width: 180px;
-      }
-
-      .form-actions button {
-        padding: 8px 18px;
-        font-size: 13px;
-      }
-
-      .form-group input {
-        padding: 10px 14px;
-        font-size: 14px;
-      }
-
-      .historique-item {
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .historique-item .actions-historique {
-        width: 100%;
-        justify-content: flex-end;
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -1051,13 +1308,13 @@
         font-size: 17px;
       }
 
-      .hamburger-menu .translate-container #google_translate_element {
-        min-width: 100px;
-        max-width: 150px;
+      .person {
+        width: calc(50% - 8px);
+        padding: 6px;
       }
 
-      .modal-content {
-        padding: 20px 14px 16px 14px;
+      .person img {
+        max-width: 60px;
       }
     }
 
@@ -1091,17 +1348,16 @@
   <header>
     <div class="header-left">
       <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
     </div>
     <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     <div class="header-right">
       <span class="auth-status" id="authStatus"></span>
     </div>
     
-    <!-- Menu hamburger - Collé au mur gauche -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
-      <!-- Traduction dans le menu - Centrée -->
       <div class="translate-container">
         <div id="google_translate_element"></div>
       </div>
@@ -1113,6 +1369,7 @@
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
+      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn" style="display:none;">📊 Statistiques</button>
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
@@ -1121,15 +1378,22 @@
 
   <div id="breadcrumb" class="breadcrumb"></div>
 
-  <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="searchPerson()">
-  <button id="backBtn" onclick="goBack()">Retour</button>
+  <div class="search-wrapper">
+    <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
+    <div class="search-suggestions" id="searchSuggestions"></div>
+  </div>
+  
+  <button id="backBtn" onclick="goBack()">← Retour</button>
   <div id="tree"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <!-- History Modal -->
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
-      <h2>Histoire</h2>
+      <h2>📖 Histoire</h2>
       <p>
         La lignée des <strong>fils Gaïda</strong> est une famille dont les racines plongent 
         au cœur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
@@ -1147,11 +1411,43 @@
     </div>
   </div>
 
-  <!-- Auth Modal - Connexion -->
+  <!-- Stats Modal -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeStatsModal()">✕</button>
+      <h2>📊 Statistiques</h2>
+      <p class="subtitle">Aperçu de l'arbre généalogique</p>
+      
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-number" id="statTotal">0</div>
+          <div class="stat-label">Total personnes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statGenerations">0</div>
+          <div class="stat-label">Générations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statRoots">0</div>
+          <div class="stat-label">Branches principales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statMaxChildren">0</div>
+          <div class="stat-label">Max enfants</div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      <h2>Connexion</h2>
+      <h2>🔑 Connexion</h2>
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
@@ -1167,11 +1463,11 @@
     </div>
   </div>
 
-  <!-- Admin Modal - Propriétaire -->
+  <!-- Admin Modal -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">✕</button>
-      <h2>Gestion des mots de passe</h2>
+      <h2>👑 Gestion des mots de passe</h2>
       <p class="subtitle">Gérez les accès pour chaque rôle.</p>
       
       <form id="adminForm" onsubmit="updatePasswords(event)">
@@ -1201,12 +1497,10 @@
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
-      <h2>Historique des modifications</h2>
+      <h2>📋 Historique des modifications</h2>
       <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
       
-      <div id="historiqueList" class="historique-list">
-        <!-- Les entrées de l'historique seront générées ici -->
-      </div>
+      <div id="historiqueList" class="historique-list"></div>
       
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeHistoriqueModal()">Fermer</button>
@@ -1218,24 +1512,24 @@
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">✕</button>
-      <h2>Ajouter une personne</h2>
+      <h2>➕ Ajouter une personne</h2>
       <form id="addForm" onsubmit="addPerson(event)">
         <div class="form-group">
-          <label for="addName">Nom complet</label>
+          <label for="addName">Nom complet *</label>
           <input type="text" id="addName" required placeholder="Entrez le nom complet">
         </div>
-        
-        <!-- 
-        ═══════════════════════════════════════════════════════════
-        CHAMP PHOTO - Caché par défaut
-        Pour activer, supprimez les commentaires ci-dessous
-        ═══════════════════════════════════════════════════════════
         <div class="form-group">
-          <label for="addPhoto">Nom de la photo</label>
+          <label for="addPhoto">Photo (nom du fichier)</label>
           <input type="text" id="addPhoto" placeholder="ex: nom.jpg">
         </div>
-        -->
-        
+        <div class="form-group">
+          <label for="addBirth">Date de naissance</label>
+          <input type="date" id="addBirth">
+        </div>
+        <div class="form-group">
+          <label for="addBio">Biographie</label>
+          <textarea id="addBio" placeholder="Courte biographie..." rows="2"></textarea>
+        </div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeAddModal()">Annuler</button>
           <button type="submit" class="btn-submit">Ajouter</button>
@@ -1248,24 +1542,24 @@
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
-      <h2>Modifier une personne</h2>
+      <h2>✏️ Modifier une personne</h2>
       <form id="editForm" onsubmit="editPerson(event)">
         <div class="form-group">
-          <label for="editName">Nom complet</label>
+          <label for="editName">Nom complet *</label>
           <input type="text" id="editName" required placeholder="Entrez le nom complet">
         </div>
-        
-        <!-- 
-        ═══════════════════════════════════════════════════════════
-        CHAMP PHOTO - Caché par défaut
-        Pour activer, supprimez les commentaires ci-dessous
-        ═══════════════════════════════════════════════════════════
         <div class="form-group">
-          <label for="editPhoto">Nom de la photo</label>
+          <label for="editPhoto">Photo (nom du fichier)</label>
           <input type="text" id="editPhoto" placeholder="ex: nom.jpg">
         </div>
-        -->
-        
+        <div class="form-group">
+          <label for="editBirth">Date de naissance</label>
+          <input type="date" id="editBirth">
+        </div>
+        <div class="form-group">
+          <label for="editBio">Biographie</label>
+          <textarea id="editBio" placeholder="Courte biographie..." rows="2"></textarea>
+        </div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeEditModal()">Annuler</button>
           <button type="submit" class="btn-submit">Modifier</button>
@@ -1279,7 +1573,7 @@
     <div class="modal-content delete-modal">
       <button class="modal-close" onclick="closeDeleteModal()">✕</button>
       <div class="delete-icon">⚠️</div>
-      <h2>Supprimer une personne</h2>
+      <h2>🗑️ Supprimer une personne</h2>
       <p>
         Êtes-vous sûr de vouloir supprimer<br>
         <span class="delete-name" id="deleteName"></span> ?
@@ -1294,7 +1588,38 @@
     </div>
   </div>
 
-  <!-- Google Translate Script -->
+  <!-- Person Detail Modal -->
+  <div class="modal-overlay" id="personDetailModal">
+    <div class="modal-content person-detail-modal">
+      <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
+      <div class="person-detail-header" id="detailHeader">
+        <img id="detailAvatar" src="ssi.jpg" alt="Photo">
+        <div>
+          <div class="detail-name" id="detailName">Nom</div>
+          <div class="detail-role" id="detailRole">Membre</div>
+        </div>
+      </div>
+      <div id="detailInfo">
+        <div class="detail-info-item">
+          <span class="label">Naissance</span>
+          <span class="value" id="detailBirth">Non renseigné</span>
+        </div>
+        <div class="detail-info-item">
+          <span class="label">Biographie</span>
+          <span class="value" id="detailBio">Non renseignée</span>
+        </div>
+        <div class="detail-info-item">
+          <span class="label">Enfants</span>
+          <span class="value" id="detailChildren">0</span>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closePersonDetailModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -1329,8 +1654,7 @@
       getDocs,
       deleteDoc,
       query,
-      orderBy,
-      where
+      orderBy
     } from "firebase/firestore";
 
     const firebaseConfig = {
@@ -1351,21 +1675,72 @@
       editor: "editor123"
     };
 
-    // ===== GESTION DU JOURNAL POUR L'HISTORIQUE =====
     let journalEntries = [];
+    let family = null;
+    let history = [];
+    let currentPath = [];
+    let currentNode = null;
+    let currentParent = null;
 
+    // ===== TOAST SYSTEM =====
+    function showToast(message, type = 'success', duration = 3500) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+      };
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    window.showToast = showToast;
+
+    // ===== THEME TOGGLE =====
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    window.toggleTheme = toggleTheme;
+
+    function initTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+    initTheme();
+
+    // ===== LOAD JOURNAL =====
     async function loadJournal() {
       try {
         const q = query(collection(db, "journal"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
         journalEntries = [];
         querySnapshot.forEach((doc) => {
-          const data = { id: doc.id, ...doc.data() };
-          journalEntries.push(data);
+          journalEntries.push({ id: doc.id, ...doc.data() });
         });
         return journalEntries;
       } catch (error) {
-        console.error("Erreur lors du chargement du journal:", error);
+        console.error("Erreur journal:", error);
         return [];
       }
     }
@@ -1373,9 +1748,9 @@
     async function addJournalEntry(action, type, data, userRole, targetData = null) {
       try {
         const entry = {
-          action: action,
-          type: type,
-          data: data,
+          action,
+          type,
+          data,
           user: userRole || "admin",
           date: new Date().toISOString(),
           status: "accepted",
@@ -1384,7 +1759,7 @@
         const docRef = await addDoc(collection(db, "journal"), entry);
         return docRef.id;
       } catch (error) {
-        console.error("Erreur lors de l'ajout au journal:", error);
+        console.error("Erreur ajout journal:", error);
         return null;
       }
     }
@@ -1394,12 +1769,12 @@
         await deleteDoc(doc(db, "journal", entryId));
         return true;
       } catch (error) {
-        console.error("Erreur lors de la suppression du journal:", error);
+        console.error("Erreur suppression journal:", error);
         return false;
       }
     }
 
-    // ===== CHARGEMENT DES MOTS DE PASSE =====
+    // ===== LOAD PASSWORDS =====
     async function loadPasswords() {
       try {
         const docRef = doc(db, "config", "passwords");
@@ -1413,7 +1788,7 @@
         }
         return true;
       } catch (error) {
-        console.error("Erreur lors du chargement des mots de passe:", error);
+        console.error("Erreur chargement mots de passe:", error);
         return false;
       }
     }
@@ -1424,13 +1799,13 @@
         await setDoc(docRef, passwords);
         return true;
       } catch (error) {
-        console.error("Erreur lors de la sauvegarde des mots de passe:", error);
-        alert("Erreur lors de la sauvegarde des mots de passe.");
+        console.error("Erreur sauvegarde mots de passe:", error);
+        showToast("Erreur lors de la sauvegarde des mots de passe", "error");
         return false;
       }
     }
 
-    // ===== AUTHENTIFICATION =====
+    // ===== AUTHENTICATION =====
     window.authenticate = async function(e) {
       e.preventDefault();
       const password = document.getElementById("authPassword").value.trim();
@@ -1443,33 +1818,17 @@
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        alert(
-          "Connecté en tant que PROPRIETAIRE\n\n" +
-          "Vous pouvez :\n" +
-          "   - Ajouter des personnes\n" +
-          "   - Modifier des personnes\n" +
-          "   - Supprimer des personnes\n" +
-          "   - Gerer les mots de passe\n" +
-          "   - Voir et supprimer l'historique"
-        );
+        showToast("Connecté en tant que Propriétaire", "success");
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        alert(
-          "Connecté en tant qu'ADMIN\n\n" +
-          "Vous pouvez :\n" +
-          "   - Ajouter des personnes\n" +
-          "   - Modifier des personnes\n\n" +
-          "Vous ne pouvez pas :\n" +
-          "   - Supprimer des personnes\n" +
-          "   - Gerer les mots de passe\n" +
-          "   - Voir l'historique"
-        );
+        showToast("Connecté en tant qu'Admin", "success");
       } else {
         errorEl.classList.add("show");
         setTimeout(() => errorEl.classList.remove("show"), 3000);
+        showToast("Mot de passe incorrect", "error");
       }
     };
 
@@ -1486,16 +1845,14 @@
     window.logout = function() {
       currentUser = null;
       updateUIForAuth();
-      if (currentNode) {
-        displayPerson(currentNode);
-      }
-      alert("Déconnecté avec succès.");
+      if (currentNode) displayPerson(currentNode);
+      showToast("Déconnecté", "info");
     };
 
-    // ===== ADMIN / PROPRIETAIRE =====
+    // ===== ADMIN =====
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut gérer les mots de passe.");
+        showToast("Seul le propriétaire peut gérer les mots de passe", "error");
         return;
       }
       document.getElementById("adminModal").classList.add("active");
@@ -1512,45 +1869,97 @@
     window.updatePasswords = async function(e) {
       e.preventDefault();
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut modifier les mots de passe.");
+        showToast("Seul le propriétaire peut modifier les mots de passe", "error");
         return;
       }
 
       const newAdminPass = document.getElementById("adminPassword").value.trim();
       const newEditorPass = document.getElementById("editorPassword").value.trim();
 
-      if (newAdminPass) {
-        if (newAdminPass.length < 4) {
-          alert("Le mot de passe propriétaire doit faire au moins 4 caractères.");
-          return;
-        }
-        passwords.admin = newAdminPass;
-      }
-
-      if (newEditorPass) {
-        if (newEditorPass.length < 4) {
-          alert("Le mot de passe admin doit faire au moins 4 caractères.");
-          return;
-        }
-        passwords.editor = newEditorPass;
-      }
-
-      if (!newAdminPass && !newEditorPass) {
-        alert("Veuillez entrer au moins un nouveau mot de passe.");
+      if (newAdminPass && newAdminPass.length < 4) {
+        showToast("Le mot de passe propriétaire doit faire au moins 4 caractères", "error");
         return;
       }
+      if (newEditorPass && newEditorPass.length < 4) {
+        showToast("Le mot de passe admin doit faire au moins 4 caractères", "error");
+        return;
+      }
+      if (!newAdminPass && !newEditorPass) {
+        showToast("Veuillez entrer au moins un nouveau mot de passe", "warning");
+        return;
+      }
+
+      if (newAdminPass) passwords.admin = newAdminPass;
+      if (newEditorPass) passwords.editor = newEditorPass;
 
       const saved = await savePasswords();
       if (saved) {
         closeAdminModal();
-        alert("Les mots de passe ont été mis à jour avec succès !");
+        showToast("Les mots de passe ont été mis à jour !", "success");
       }
     };
+
+    // ===== STATISTIQUES =====
+    window.openStatsModal = function() {
+      if (!family) {
+        showToast("Les données ne sont pas encore chargées", "warning");
+        return;
+      }
+      document.getElementById("statsModal").classList.add("active");
+      calculateStats();
+    };
+
+    window.closeStatsModal = function() {
+      document.getElementById("statsModal").classList.remove("active");
+    };
+
+    function countNodes(node) {
+      let count = 1;
+      if (node.children) {
+        for (const child of node.children) {
+          count += countNodes(child);
+        }
+      }
+      return count;
+    }
+
+    function getMaxDepth(node, depth = 1) {
+      if (!node.children || node.children.length === 0) return depth;
+      let max = depth;
+      for (const child of node.children) {
+        const d = getMaxDepth(child, depth + 1);
+        if (d > max) max = d;
+      }
+      return max;
+    }
+
+    function getMaxChildren(node) {
+      let max = node.children ? node.children.length : 0;
+      if (node.children) {
+        for (const child of node.children) {
+          const m = getMaxChildren(child);
+          if (m > max) max = m;
+        }
+      }
+      return max;
+    }
+
+    function calculateStats() {
+      const total = countNodes(family);
+      const generations = getMaxDepth(family);
+      const maxChildren = getMaxChildren(family);
+      const roots = family.children ? family.children.length : 0;
+      
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statGenerations').textContent = generations;
+      document.getElementById('statRoots').textContent = roots;
+      document.getElementById('statMaxChildren').textContent = maxChildren;
+    }
 
     // ===== HISTORIQUE =====
     window.openHistoriqueModal = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut voir l'historique des modifications.");
+        showToast("Seul le propriétaire peut voir l'historique", "error");
         return;
       }
       document.getElementById("historiqueModal").classList.add("active");
@@ -1577,21 +1986,8 @@
 
       let html = '';
       journalEntries.forEach(entry => {
-        const typeClass = entry.type;
-        const typeLabel = {
-          add: 'Ajout',
-          edit: 'Modification',
-          delete: 'Suppression'
-        }[entry.type] || entry.type;
-
-        const statusLabel = {
-          pending: 'En attente',
-          accepted: 'Accepté',
-          rejected: 'Annulé'
-        }[entry.status] || entry.status;
-
+        const typeLabel = { add: 'Ajout', edit: 'Modification', delete: 'Suppression' }[entry.type] || entry.type;
         const statusClass = entry.status || 'pending';
-
         const date = new Date(entry.date);
         const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
@@ -1600,7 +1996,7 @@
             <div class="info">
               <div class="action-type">
                 <span class="type-${entry.type}">${typeLabel}</span>
-                <span class="status-badge ${statusClass}">${statusLabel}</span>
+                <span class="status-badge ${statusClass}">${entry.status || 'Accepté'}</span>
               </div>
               <div class="details">${entry.data}</div>
               <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
@@ -1617,30 +2013,27 @@
 
     window.deleteHistoriqueEntry = async function(entryId) {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut supprimer des entrées de l'historique.");
+        showToast("Seul le propriétaire peut supprimer des entrées", "error");
         return;
       }
-
-      if (confirm("❌ Êtes-vous sûr de vouloir supprimer cette entrée de l'historique ?")) {
+      if (confirm("❌ Êtes-vous sûr de vouloir supprimer cette entrée ?")) {
         const success = await deleteJournalEntry(entryId);
         if (success) {
-          alert("✅ Entrée supprimée de l'historique.");
+          showToast("Entrée supprimée de l'historique", "success");
           await renderHistorique();
         } else {
-          alert("❌ Erreur lors de la suppression.");
+          showToast("Erreur lors de la suppression", "error");
         }
       }
     };
 
-    // ===== MENU HAMBURGER =====
+    // ===== MENU =====
     window.toggleMenu = function() {
-      const menu = document.getElementById("hamburgerMenu");
-      menu.classList.toggle("open");
+      document.getElementById("hamburgerMenu").classList.toggle("open");
     };
 
     window.closeMenu = function() {
-      const menu = document.getElementById("hamburgerMenu");
-      menu.classList.remove("open");
+      document.getElementById("hamburgerMenu").classList.remove("open");
     };
 
     document.addEventListener('click', function(event) {
@@ -1651,7 +2044,7 @@
       }
     });
 
-    // ===== MISE À JOUR DE L'INTERFACE =====
+    // ===== UPDATE UI =====
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
@@ -1661,9 +2054,8 @@
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
-      
-      // Historique - visible uniquement par le propriétaire
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("statsBtn").style.display = isAuthenticated ? "flex" : "none";
       
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
@@ -1698,13 +2090,7 @@
       }
     }
 
-    // ===== DONNÉES FAMILLE =====
-    let family = null;
-    let history = [];
-    let currentPath = [];
-    let currentNode = null;
-    let currentParent = null;
-
+    // ===== FAMILY DATA =====
     const treeEl = document.getElementById('tree');
     const backBtn = document.getElementById('backBtn');
     const breadcrumbEl = document.getElementById('breadcrumb');
@@ -1734,13 +2120,14 @@
         await updateDoc(ref, {
           name: family.name,
           children: family.children || [],
-          photo: family.photo || ""
+          photo: family.photo || "",
+          birth: family.birth || "",
+          bio: family.bio || ""
         });
-        console.log("Données sauvegardées avec succès !");
         return true;
       } catch (error) {
-        console.error("Erreur lors de la sauvegarde :", error);
-        alert("Erreur lors de la sauvegarde des données.");
+        console.error("Erreur sauvegarde:", error);
+        showToast("Erreur lors de la sauvegarde", "error");
         return false;
       }
     }
@@ -1769,6 +2156,17 @@
       return null;
     }
 
+    function getAllNames(node, path = '') {
+      const results = [{ name: node.name, path: path || node.name }];
+      if (node.children) {
+        for (const child of node.children) {
+          results.push(...getAllNames(child, path ? `${path} → ${child.name}` : child.name));
+        }
+      }
+      return results;
+    }
+
+    // ===== DISPLAY FUNCTIONS =====
     function displayPerson(person) {
       treeEl.innerHTML = "";
       currentNode = person;
@@ -1784,9 +2182,10 @@
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("statsBtn").style.display = isAuthenticated ? "flex" : "none";
 
       if (!person.children || person.children.length === 0) {
-        treeEl.innerHTML = "<p>La liste des enfants n'est pas encore complète.</p>";
+        treeEl.innerHTML = "<p>📭 La liste des enfants n'est pas encore complète.</p>";
         return;
       }
 
@@ -1802,10 +2201,17 @@
         const div = document.createElement("div");
         div.className = "person";
 
-        div.onclick = () => {
+        div.onclick = (e) => {
+          e.stopPropagation();
           history.push(person);
           currentPath.push(child);
           displayPerson(child);
+        };
+
+        // Double-click pour voir les détails
+        div.ondblclick = (e) => {
+          e.stopPropagation();
+          openPersonDetail(child);
         };
 
         const img = document.createElement("img");
@@ -1819,6 +2225,15 @@
 
         div.appendChild(img);
         div.appendChild(name);
+
+        // Badge nombre d'enfants
+        if (child.children && child.children.length > 0) {
+          const badge = document.createElement("span");
+          badge.className = "badge-count";
+          badge.textContent = child.children.length;
+          div.appendChild(badge);
+        }
+
         treeEl.appendChild(div);
       });
     }
@@ -1846,8 +2261,14 @@
         displayPerson(family);
       };
 
+      div.ondblclick = () => {
+        openPersonDetail(family);
+      };
+
       const img = document.createElement("img");
-      img.src = "ssi.jpg";
+      img.src = family.photo ? "photos/" + family.photo : "ssi.jpg";
+      img.alt = family.name;
+      img.onerror = () => { img.src = "ssi.jpg"; };
 
       const name = document.createElement("div");
       name.className = "person-name";
@@ -1855,6 +2276,14 @@
 
       div.appendChild(img);
       div.appendChild(name);
+
+      if (family.children && family.children.length > 0) {
+        const badge = document.createElement("span");
+        badge.className = "badge-count";
+        badge.textContent = family.children.length;
+        div.appendChild(badge);
+      }
+
       treeEl.appendChild(div);
     }
 
@@ -1875,60 +2304,138 @@
       } else {
         mainHeader.style.display = "none";
         breadcrumbEl.style.display = "block";
-        breadcrumbEl.innerHTML = "Enfants de ";
+        breadcrumbEl.innerHTML = "👤 ";
         currentPath.forEach((p, i) => {
           if (i > 0) {
-            breadcrumbEl.innerHTML += " ➜ " + p.name;
+            breadcrumbEl.innerHTML += " ➜ ";
+            const span = document.createElement("span");
+            span.textContent = p.name;
+            span.onclick = () => {
+              const newPath = currentPath.slice(0, i + 1);
+              history = newPath.slice(0, -1);
+              currentPath = newPath;
+              displayPerson(p);
+            };
+            breadcrumbEl.appendChild(span);
           }
         });
       }
     }
 
-    window.searchPerson = function() {
-      const q = document.getElementById("searchBox").value.toLowerCase();
-      if (!q || !family) {
-        if (currentNode) {
-          displayPerson(currentNode);
-        } else {
-          displayRoot();
-        }
+    // ===== SEARCH WITH SUGGESTIONS =====
+    let searchTimeout = null;
+    let allNames = [];
+
+    function buildNameIndex() {
+      if (family) {
+        allNames = getAllNames(family);
+      }
+    }
+
+    window.handleSearchInput = function(value) {
+      const suggestions = document.getElementById("searchSuggestions");
+      const trimmed = value.trim().toLowerCase();
+      
+      if (!trimmed) {
+        suggestions.classList.remove("active");
+        if (currentNode) displayPerson(currentNode);
+        else displayRoot();
         return;
       }
 
-      const result = findPathToNode(family, q);
-      if (result) {
-        history = result.slice(0, -1);
-        currentPath = result;
-        displayPerson(result[result.length - 1]);
-      } else {
-        if (currentNode && currentNode !== family) {
-          const localResult = findPathToNode(currentNode, q);
-          if (localResult) {
-            history = [...history.slice(0, -1), ...localResult.slice(0, -1)];
-            currentPath = [...currentPath.slice(0, -1), ...localResult];
-            displayPerson(localResult[localResult.length - 1]);
-            return;
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const results = allNames.filter(item => 
+          item.name.toLowerCase().includes(trimmed)
+        ).slice(0, 8);
+
+        if (results.length === 0) {
+          suggestions.classList.remove("active");
+          return;
+        }
+
+        suggestions.innerHTML = '';
+        results.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "search-suggestion";
+          const idx = item.name.toLowerCase().indexOf(trimmed);
+          let displayName = item.name;
+          if (idx !== -1) {
+            displayName = item.name.slice(0, idx) + 
+              `<span class="highlight">${item.name.slice(idx, idx + trimmed.length)}</span>` + 
+              item.name.slice(idx + trimmed.length);
           }
-        }
-        if (currentNode) {
-          displayPerson(currentNode);
-        }
-      }
+          div.innerHTML = `
+            <span>${displayName}</span>
+            <span class="suggestion-path">${item.path}</span>
+          `;
+          div.onclick = () => {
+            suggestions.classList.remove("active");
+            const result = findPathToNode(family, item.name);
+            if (result) {
+              history = result.slice(0, -1);
+              currentPath = result;
+              displayPerson(result[result.length - 1]);
+              document.getElementById("searchBox").value = item.name;
+            }
+          };
+          suggestions.appendChild(div);
+        });
+        suggestions.classList.add("active");
+      }, 200);
     };
 
-    // ===== AJOUTER =====
+    document.addEventListener('click', function(e) {
+      const suggestions = document.getElementById("searchSuggestions");
+      const searchBox = document.getElementById("searchBox");
+      if (!suggestions.contains(e.target) && e.target !== searchBox) {
+        suggestions.classList.remove("active");
+      }
+    });
+
+    // Keyboard shortcut: Ctrl+F or Cmd+F
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        document.getElementById("searchBox").focus();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById("searchSuggestions").classList.remove("active");
+        document.getElementById("searchBox").blur();
+      }
+    });
+
+    // ===== PERSON DETAIL =====
+    window.openPersonDetail = function(person) {
+      document.getElementById("detailName").textContent = person.name || "Nom inconnu";
+      document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
+      document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
+      document.getElementById("detailBirth").textContent = person.birth || "Non renseigné";
+      document.getElementById("detailBio").textContent = person.bio || "Non renseignée";
+      document.getElementById("detailChildren").textContent = (person.children && person.children.length) || 0;
+      
+      const isProprietaire = currentUser && currentUser.role === 'proprietaire';
+      document.getElementById("detailRole").textContent = person === family ? "Racine" : 
+        (isProprietaire ? "Membre" : "Membre");
+      
+      document.getElementById("personDetailModal").classList.add("active");
+    };
+
+    window.closePersonDetailModal = function() {
+      document.getElementById("personDetailModal").classList.remove("active");
+    };
+
+    // ===== ADD PERSON =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+        showToast("Vous n'avez pas les permissions pour ajouter", "error");
         return;
       }
       document.getElementById("addModal").classList.add("active");
       document.getElementById("addName").value = "";
-      
-      const photoInput = document.getElementById("addPhoto");
-      if (photoInput) {
-        photoInput.value = "";
-      }
+      document.getElementById("addPhoto").value = "";
+      document.getElementById("addBirth").value = "";
+      document.getElementById("addBio").value = "";
     };
 
     window.closeAddModal = function() {
@@ -1938,69 +2445,66 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
+        showToast("Vous n'avez pas les permissions pour ajouter", "error");
         return;
       }
 
       const name = document.getElementById("addName").value.trim();
-      
-      const photoInput = document.getElementById("addPhoto");
-      const photo = photoInput ? photoInput.value.trim() : "";
+      const photo = document.getElementById("addPhoto").value.trim();
+      const birth = document.getElementById("addBirth").value;
+      const bio = document.getElementById("addBio").value.trim();
 
       if (!name) {
-        alert("Veuillez entrer un nom.");
+        showToast("Veuillez entrer un nom", "warning");
         return;
       }
 
       if (!currentNode) {
-        alert("Aucun noeud sélectionné.");
+        showToast("Aucun noeud sélectionné", "error");
         return;
       }
 
       if (currentNode.children && currentNode.children.some(c => c.name === name)) {
-        alert(`"${name}" existe déjà dans cette liste.`);
+        showToast(`"${name}" existe déjà`, "warning");
         return;
       }
 
       const newPerson = {
-        name: name,
+        name,
         photo: photo || "",
+        birth: birth || "",
+        bio: bio || "",
         children: []
       };
 
-      if (!currentNode.children) {
-        currentNode.children = [];
-      }
+      if (!currentNode.children) currentNode.children = [];
       currentNode.children.push(newPerson);
 
       const saved = await sauvegarderFamille();
       if (saved) {
         closeAddModal();
-        if (currentNode === family) {
-          displayRoot();
-        } else {
-          displayPerson(currentNode);
-        }
+        buildNameIndex();
+        if (currentNode === family) displayRoot();
+        else displayPerson(currentNode);
         
-        // Ajouter à l'historique
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
         await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
         
-        alert(`"${name}" a été ajouté avec succès !`);
+        showToast(`"${name}" a été ajouté !`, "success");
       }
     };
 
-    // ===== MODIFIER =====
+    // ===== EDIT PERSON =====
     let editingPerson = null;
     let editingParent = null;
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+        showToast("Vous n'avez pas les permissions pour modifier", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
-        alert("Sélectionnez une personne à modifier.");
+        showToast("Sélectionnez une personne à modifier", "warning");
         return;
       }
 
@@ -2009,15 +2513,12 @@
         editingPerson = result.node;
         editingParent = result.parent;
         document.getElementById("editName").value = editingPerson.name;
-        
-        const photoInput = document.getElementById("editPhoto");
-        if (photoInput) {
-          photoInput.value = editingPerson.photo || "";
-        }
-        
+        document.getElementById("editPhoto").value = editingPerson.photo || "";
+        document.getElementById("editBirth").value = editingPerson.birth || "";
+        document.getElementById("editBio").value = editingPerson.bio || "";
         document.getElementById("editModal").classList.add("active");
       } else {
-        alert("Erreur : personne non trouvée dans l'arbre.");
+        showToast("Erreur : personne non trouvée", "error");
       }
     };
 
@@ -2030,28 +2531,28 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        alert("Vous n'avez pas les permissions pour modifier.");
+        showToast("Vous n'avez pas les permissions pour modifier", "error");
         return;
       }
 
       const name = document.getElementById("editName").value.trim();
-      
-      const photoInput = document.getElementById("editPhoto");
-      const photo = photoInput ? photoInput.value.trim() : "";
+      const photo = document.getElementById("editPhoto").value.trim();
+      const birth = document.getElementById("editBirth").value;
+      const bio = document.getElementById("editBio").value.trim();
 
       if (!name) {
-        alert("Veuillez entrer un nom.");
+        showToast("Veuillez entrer un nom", "warning");
         return;
       }
 
       if (!editingPerson) {
-        alert("Erreur : aucune personne à modifier.");
+        showToast("Erreur : aucune personne à modifier", "error");
         return;
       }
 
       if (name !== editingPerson.name && editingParent && editingParent.children) {
         if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
-          alert(`"${name}" existe déjà dans cette liste.`);
+          showToast(`"${name}" existe déjà`, "warning");
           return;
         }
       }
@@ -2059,6 +2560,8 @@
       const oldName = editingPerson.name;
       editingPerson.name = name;
       editingPerson.photo = photo || "";
+      editingPerson.birth = birth || "";
+      editingPerson.bio = bio || "";
 
       if (oldName !== name && currentNode === editingPerson) {
         currentNode.name = name;
@@ -2067,31 +2570,31 @@
       const saved = await sauvegarderFamille();
       if (saved) {
         closeEditModal();
+        buildNameIndex();
         if (currentNode === editingPerson || currentNode.name === name) {
           displayPerson(editingPerson);
         } else {
           displayPerson(currentNode);
         }
         
-        // Ajouter à l'historique
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
         await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
         
-        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
+        showToast(`"${oldName}" modifié en "${name}"`, "success");
       }
     };
 
-    // ===== SUPPRIMER =====
+    // ===== DELETE PERSON =====
     let deletingPerson = null;
     let deletingParent = null;
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut supprimer des données.");
+        showToast("Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
-        alert("Sélectionnez une personne à supprimer.");
+        showToast("Sélectionnez une personne à supprimer", "warning");
         return;
       }
 
@@ -2102,7 +2605,7 @@
         document.getElementById("deleteName").textContent = deletingPerson.name;
         document.getElementById("deleteModal").classList.add("active");
       } else {
-        alert("Erreur : personne non trouvée dans l'arbre.");
+        showToast("Erreur : personne non trouvée", "error");
       }
     };
 
@@ -2114,11 +2617,11 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut supprimer des données.");
+        showToast("Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!deletingPerson || !deletingParent) {
-        alert("Erreur : aucune personne à supprimer.");
+        showToast("Erreur : aucune personne à supprimer", "error");
         return;
       }
 
@@ -2133,6 +2636,7 @@
       const saved = await sauvegarderFamille();
       if (saved) {
         closeDeleteModal();
+        buildNameIndex();
         currentPath = [family];
         const newPath = findPathToNode(family, deletingParent.name);
         if (newPath) {
@@ -2142,14 +2646,12 @@
           displayRoot();
         }
         
-        // Ajouter à l'historique
         await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
-        
-        alert(`"${nameToDelete}" a été supprimé avec succès !`);
+        showToast(`"${nameToDelete}" a été supprimé`, "success");
       }
     };
 
-    // ===== HISTOIRE =====
+    // ===== HISTORY MODAL =====
     window.openHistoryModal = function() {
       document.getElementById("historyModal").classList.add("active");
     };
@@ -2158,18 +2660,27 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
-    // ===== INITIALISATION =====
+    // ===== INIT =====
     async function init() {
       await loadPasswords();
       await chargerfamille();
       await loadJournal();
+      buildNameIndex();
+      updateUIForAuth();
+      
+      // Afficher un toast de bienvenue
+      setTimeout(() => {
+        showToast("Bienvenue sur l'arbre généalogique des fils Gaïda 🌳", "info", 4000);
+      }, 500);
     }
 
     init();
 
+    // Exposer les fonctions globales
     window.findNodeWithParent = findNodeWithParent;
     window.findPathToNode = findPathToNode;
-    window.currentNode = () => currentNode;
+    window.buildNameIndex = buildNameIndex;
+
   </script>
 </body>
 </html>
