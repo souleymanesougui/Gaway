@@ -559,10 +559,6 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    .modal-content.journal-modal {
-      max-width: 600px;
-    }
-
     .modal-content.historique-modal {
       max-width: 650px;
     }
@@ -748,24 +744,22 @@
       transform: translateY(0px);
     }
 
-    /* === JOURNAL / HISTORIQUE === */
-    .journal-list, .historique-list {
+    /* === HISTORIQUE === */
+    .historique-list {
       margin: 16px 0;
       max-height: 400px;
       overflow-y: auto;
     }
 
-    .journal-list::-webkit-scrollbar,
     .historique-list::-webkit-scrollbar {
       width: 4px;
     }
-    .journal-list::-webkit-scrollbar-thumb,
     .historique-list::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.15);
       border-radius: 10px;
     }
 
-    .journal-item, .historique-item {
+    .historique-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -777,102 +771,61 @@
       transition: all 0.2s ease;
     }
 
-    .journal-item:hover, .historique-item:hover {
+    .historique-item:hover {
       background: rgba(0, 0, 0, 0.04);
     }
 
-    .journal-item.add, .historique-item.add {
+    .historique-item.add {
       border-left-color: var(--success);
     }
 
-    .journal-item.edit, .historique-item.edit {
+    .historique-item.edit {
       border-left-color: var(--warning);
     }
 
-    .journal-item.delete, .historique-item.delete {
+    .historique-item.delete {
       border-left-color: var(--danger);
     }
 
-    .journal-item .info, .historique-item .info {
+    .historique-item .info {
       flex: 1;
     }
 
-    .journal-item .info .action-type,
     .historique-item .info .action-type {
       font-weight: 600;
       font-size: 14px;
       color: var(--text-dark);
     }
 
-    .journal-item .info .action-type .type-add { color: var(--success); }
-    .journal-item .info .action-type .type-edit { color: var(--warning); }
-    .journal-item .info .action-type .type-delete { color: var(--danger); }
+    .historique-item .info .action-type .type-add { color: var(--success); }
+    .historique-item .info .action-type .type-edit { color: var(--warning); }
+    .historique-item .info .action-type .type-delete { color: var(--danger); }
 
-    .journal-item .info .details,
     .historique-item .info .details {
       font-size: 13px;
       color: var(--text-light);
       margin-top: 2px;
     }
 
-    .journal-item .info .date,
     .historique-item .info .date {
       font-size: 11px;
       color: rgba(0,0,0,0.3);
       margin-top: 2px;
     }
 
-    .journal-item .actions-journal {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .journal-item .actions-journal button {
-      padding: 4px 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .journal-item .actions-journal .btn-accept {
-      background: var(--success);
-      color: white;
-    }
-
-    .journal-item .actions-journal .btn-accept:hover {
-      background: #219a52;
-      transform: scale(1.02);
-    }
-
-    .journal-item .actions-journal .btn-reject {
-      background: var(--danger);
-      color: white;
-    }
-
-    .journal-item .actions-journal .btn-reject:hover {
-      background: #c0392b;
-      transform: scale(1.02);
-    }
-
-    .journal-empty, .historique-empty {
+    .historique-empty {
       text-align: center;
       color: var(--text-light);
       padding: 30px 0;
       font-size: 15px;
     }
 
-    .journal-empty .icon, .historique-empty .icon {
+    .historique-empty .icon {
       font-size: 40px;
       margin-bottom: 10px;
       opacity: 0.5;
     }
 
-    /* Statut badge pour l'historique */
     .status-badge {
       font-size: 11px;
       padding: 2px 10px;
@@ -1003,7 +956,6 @@
         font-size: 19px;
       }
 
-      .modal-content.journal-modal,
       .modal-content.historique-modal {
         max-width: 100%;
       }
@@ -1038,15 +990,9 @@
         font-size: 14px;
       }
 
-      .journal-item,
       .historique-item {
         flex-wrap: wrap;
         gap: 8px;
-      }
-
-      .journal-item .actions-journal {
-        width: 100%;
-        justify-content: flex-end;
       }
     }
 
@@ -1122,11 +1068,6 @@
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
-      
-      <!-- Bouton Journal - MIS EN COMMENTAIRE -->
-      <!-- 
-      <button class="action-btn" onclick="openJournalModal(); closeMenu();" id="journalBtn" style="display:none;">Journal</button>
-      -->
       
       <!-- Nouveau bouton Historique - visible uniquement par le propriétaire -->
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
@@ -1214,25 +1155,6 @@
       </form>
     </div>
   </div>
-
-  <!-- Journal Modal - MIS EN COMMENTAIRE -->
-  <!-- 
-  <div class="modal-overlay" id="journalModal">
-    <div class="modal-content journal-modal">
-      <button class="modal-close" onclick="closeJournalModal()">✕</button>
-      <h2>Journal des modifications</h2>
-      <p class="subtitle">Toutes les actions effectuées par les Admins. Vous pouvez accepter ou annuler chaque modification.</p>
-      
-      <div id="journalList" class="journal-list">
-        Les entrées du journal seront générées ici
-      </div>
-      
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="closeJournalModal()">Fermer</button>
-      </div>
-    </div>
-  </div>
-  -->
 
   <!-- Historique Modal - Consultation uniquement -->
   <div class="modal-overlay" id="historiqueModal">
@@ -1388,22 +1310,17 @@
       editor: "editor123"
     };
 
-    // ===== GESTION DU JOURNAL =====
+    // ===== GESTION DU JOURNAL POUR L'HISTORIQUE =====
     let journalEntries = [];
-    let pendingActions = [];
 
     async function loadJournal() {
       try {
         const q = query(collection(db, "journal"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
         journalEntries = [];
-        pendingActions = [];
         querySnapshot.forEach((doc) => {
           const data = { id: doc.id, ...doc.data() };
           journalEntries.push(data);
-          if (data.status === 'pending') {
-            pendingActions.push(data);
-          }
         });
         return journalEntries;
       } catch (error) {
@@ -1420,7 +1337,7 @@
           data: data,
           user: userRole || "admin",
           date: new Date().toISOString(),
-          status: "pending",
+          status: "accepted",
           targetData: targetData || null
         };
         const docRef = await addDoc(collection(db, "journal"), entry);
@@ -1429,68 +1346,6 @@
         console.error("Erreur lors de l'ajout au journal:", error);
         return null;
       }
-    }
-
-    async function updateJournalStatus(entryId, status) {
-      try {
-        const ref = doc(db, "journal", entryId);
-        await updateDoc(ref, { status: status });
-        return true;
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour du journal:", error);
-        return false;
-      }
-    }
-
-    async function deleteJournalEntry(entryId) {
-      try {
-        await deleteDoc(doc(db, "journal", entryId));
-        return true;
-      } catch (error) {
-        console.error("Erreur lors de la suppression du journal:", error);
-        return false;
-      }
-    }
-
-    // ===== EXÉCUTION DES ACTIONS EN ATTENTE =====
-    async function executePendingAction(entry) {
-      try {
-        if (entry.type === 'add') {
-          const parentNode = findNodeByName(family, entry.targetData.parentName);
-          if (parentNode) {
-            if (!parentNode.children) parentNode.children = [];
-            parentNode.children.push(entry.targetData.person);
-            await sauvegarderFamille();
-          }
-        } else if (entry.type === 'edit') {
-          const result = findNodeWithParent(family, entry.targetData.oldName);
-          if (result) {
-            result.node.name = entry.targetData.newName;
-            result.node.photo = entry.targetData.newPhoto || "";
-            await sauvegarderFamille();
-          }
-        } else if (entry.type === 'delete') {
-          const result = findNodeWithParent(family, entry.targetData.name);
-          if (result && result.parent) {
-            result.parent.children = result.parent.children.filter(c => c !== result.node);
-            await sauvegarderFamille();
-          }
-        }
-        return true;
-      } catch (error) {
-        console.error("Erreur lors de l'exécution de l'action:", error);
-        return false;
-      }
-    }
-
-    function findNodeByName(node, targetName) {
-      if (node.name === targetName) return node;
-      if (!node.children) return null;
-      for (let child of node.children) {
-        const result = findNodeByName(child, targetName);
-        if (result) return result;
-      }
-      return null;
     }
 
     // ===== CHARGEMENT DES MOTS DE PASSE =====
@@ -1540,9 +1395,11 @@
         alert(
           "Connecté en tant que PROPRIETAIRE\n\n" +
           "Vous pouvez :\n" +
-          "   - Valider ou annuler les modifications des Admins\n" +
-          "   - Voir l'historique des modifications\n" +
-          "   - Gerer les mots de passe"
+          "   - Ajouter des personnes\n" +
+          "   - Modifier des personnes\n" +
+          "   - Supprimer des personnes\n" +
+          "   - Gerer les mots de passe\n" +
+          "   - Voir l'historique des modifications"
         );
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
@@ -1552,9 +1409,12 @@
         alert(
           "Connecté en tant qu'ADMIN\n\n" +
           "Vous pouvez :\n" +
-          "   - Proposer des ajouts\n" +
-          "   - Proposer des modifications\n\n" +
-          "Toutes vos actions doivent être validées par le propriétaire."
+          "   - Ajouter des personnes\n" +
+          "   - Modifier des personnes\n\n" +
+          "Vous ne pouvez pas :\n" +
+          "   - Supprimer des personnes\n" +
+          "   - Gerer les mots de passe\n" +
+          "   - Voir l'historique"
         );
       } else {
         errorEl.classList.add("show");
@@ -1636,112 +1496,7 @@
       }
     };
 
-    // ===== JOURNAL - MIS EN COMMENTAIRE =====
-    /* 
-    window.openJournalModal = async function() {
-      if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut voir le journal des modifications.");
-        return;
-      }
-      document.getElementById("journalModal").classList.add("active");
-      await renderJournal();
-    };
-
-    window.closeJournalModal = function() {
-      document.getElementById("journalModal").classList.remove("active");
-    };
-
-    async function renderJournal() {
-      const container = document.getElementById("journalList");
-      await loadJournal();
-      
-      const pendingEntries = journalEntries.filter(e => e.status === 'pending');
-      
-      if (pendingEntries.length === 0) {
-        container.innerHTML = `
-          <div class="journal-empty">
-            <div class="icon">📭</div>
-            <p>Aucune modification en attente.</p>
-          </div>
-        `;
-        return;
-      }
-
-      let html = '';
-      pendingEntries.forEach(entry => {
-        const typeClass = entry.type;
-        const typeLabel = {
-          add: 'Ajout',
-          edit: 'Modification',
-          delete: 'Suppression'
-        }[entry.type] || entry.type;
-
-        const date = new Date(entry.date);
-        const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-
-        html += `
-          <div class="journal-item ${entry.type}">
-            <div class="info">
-              <div class="action-type">
-                <span class="type-${entry.type}">${typeLabel}</span>
-                <span style="font-weight:400; color:var(--warning); font-size:12px; margin-left:8px;">⏳ En attente</span>
-              </div>
-              <div class="details">${entry.data}</div>
-              <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
-            </div>
-            <div class="actions-journal">
-              <button class="btn-accept" onclick="acceptJournal('${entry.id}')">Accepter</button>
-              <button class="btn-reject" onclick="rejectJournal('${entry.id}')">Annuler</button>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    window.acceptJournal = async function(entryId) {
-      if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut accepter les modifications.");
-        return;
-      }
-      
-      const entry = journalEntries.find(e => e.id === entryId);
-      if (!entry) {
-        alert("Entrée introuvable.");
-        return;
-      }
-
-      const success = await executePendingAction(entry);
-      if (success) {
-        await updateJournalStatus(entryId, 'accepted');
-        await renderJournal();
-        alert("✅ Modification acceptée et appliquée.");
-        if (currentNode) {
-          displayPerson(currentNode);
-        } else {
-          displayRoot();
-        }
-      } else {
-        alert("❌ Erreur lors de l'application de la modification.");
-      }
-    };
-
-    window.rejectJournal = async function(entryId) {
-      if (!currentUser || currentUser.role !== 'proprietaire') {
-        alert("Seul le propriétaire peut annuler les modifications.");
-        return;
-      }
-      
-      if (confirm("❌ Êtes-vous sûr de vouloir annuler cette modification ?")) {
-        await updateJournalStatus(entryId, 'rejected');
-        await renderJournal();
-        alert("❌ Modification annulée.");
-      }
-    };
-    */
-
-    // ===== HISTORIQUE - Consultation uniquement =====
+    // ===== HISTORIQUE =====
     window.openHistoriqueModal = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
         alert("Seul le propriétaire peut voir l'historique des modifications.");
@@ -1829,16 +1584,12 @@
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
-      const isAdmin = isAuthenticated && currentUser.role === 'admin';
+      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
-      
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
-      
-      // Journal - MIS EN COMMENTAIRE
-      // document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
       
       // Historique - visible uniquement par le propriétaire
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -1955,13 +1706,12 @@
 
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
-      const isAdmin = isAuthenticated && currentUser.role === 'admin';
+      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
 
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
-      // document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
 
       if (!person.children || person.children.length === 0) {
@@ -2095,10 +1845,10 @@
       }
     };
 
-    // ===== AJOUTER (Proposé par Admin, validé par Propriétaire) =====
+    // ===== AJOUTER =====
     window.openAddModal = function() {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul un Admin peut proposer un ajout.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -2116,12 +1866,13 @@
 
     window.addPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul un Admin peut proposer un ajout.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
 
       const name = document.getElementById("addName").value.trim();
+      
       const photoInput = document.getElementById("addPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -2146,34 +1897,35 @@
         children: []
       };
 
-      const entryData = {
-        parentName: currentNode.name,
-        person: newPerson
-      };
+      if (!currentNode.children) {
+        currentNode.children = [];
+      }
+      currentNode.children.push(newPerson);
 
-      const entryId = await addJournalEntry(
-        'add',
-        'add',
-        `Ajout de "${name}" chez ${currentNode.name}`,
-        'admin',
-        entryData
-      );
-
-      if (entryId) {
+      const saved = await sauvegarderFamille();
+      if (saved) {
         closeAddModal();
-        alert(`✅ Proposition d'ajout de "${name}" envoyée au propriétaire pour validation.`);
-      } else {
-        alert("❌ Erreur lors de l'envoi de la proposition.");
+        if (currentNode === family) {
+          displayRoot();
+        } else {
+          displayPerson(currentNode);
+        }
+        
+        // Ajouter à l'historique
+        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
+        await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
+        
+        alert(`"${name}" a été ajouté avec succès !`);
       }
     };
 
-    // ===== MODIFIER (Proposé par Admin, validé par Propriétaire) =====
+    // ===== MODIFIER =====
     let editingPerson = null;
     let editingParent = null;
 
     window.openEditModal = function() {
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul un Admin peut proposer une modification.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2206,12 +1958,13 @@
 
     window.editPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || currentUser.role !== 'admin') {
-        alert("Seul un Admin peut proposer une modification.");
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
 
       const name = document.getElementById("editName").value.trim();
+      
       const photoInput = document.getElementById("editPhoto");
       const photo = photoInput ? photoInput.value.trim() : "";
 
@@ -2225,39 +1978,39 @@
         return;
       }
 
-      const oldName = editingPerson.name;
-
-      if (name !== oldName && editingParent && editingParent.children) {
+      if (name !== editingPerson.name && editingParent && editingParent.children) {
         if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
           alert(`"${name}" existe déjà dans cette liste.`);
           return;
         }
       }
 
-      const entryData = {
-        oldName: oldName,
-        newName: name,
-        newPhoto: photo,
-        parentName: editingParent ? editingParent.name : null
-      };
+      const oldName = editingPerson.name;
+      editingPerson.name = name;
+      editingPerson.photo = photo || "";
 
-      const entryId = await addJournalEntry(
-        'edit',
-        'edit',
-        `Modification de "${oldName}" → "${name}"`,
-        'admin',
-        entryData
-      );
+      if (oldName !== name && currentNode === editingPerson) {
+        currentNode.name = name;
+      }
 
-      if (entryId) {
+      const saved = await sauvegarderFamille();
+      if (saved) {
         closeEditModal();
-        alert(`✅ Proposition de modification de "${oldName}" envoyée au propriétaire pour validation.`);
-      } else {
-        alert("❌ Erreur lors de l'envoi de la proposition.");
+        if (currentNode === editingPerson || currentNode.name === name) {
+          displayPerson(editingPerson);
+        } else {
+          displayPerson(currentNode);
+        }
+        
+        // Ajouter à l'historique
+        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
+        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
+        
+        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
       }
     };
 
-    // ===== SUPPRIMER (Seulement Propriétaire - direct) =====
+    // ===== SUPPRIMER =====
     let deletingPerson = null;
     let deletingParent = null;
 
@@ -2300,14 +2053,6 @@
 
       const nameToDelete = deletingPerson.name;
 
-      await addJournalEntry(
-        'delete',
-        'delete',
-        `Suppression de "${nameToDelete}" par le propriétaire`,
-        'proprietaire',
-        { name: nameToDelete }
-      );
-
       if (deletingParent.children) {
         deletingParent.children = deletingParent.children.filter(
           child => child !== deletingPerson
@@ -2325,6 +2070,10 @@
         } else {
           displayRoot();
         }
+        
+        // Ajouter à l'historique
+        await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
+        
         alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
     };
