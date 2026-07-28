@@ -28,6 +28,9 @@
       --dark: #2C3E50;
       --text-dark: #2C3E50;
       --text-light: #7F8C8D;
+      --success: #27ae60;
+      --warning: #f39c12;
+      --danger: #e74c3c;
     }
 
     * {
@@ -511,7 +514,7 @@
     }
 
     /* ============================================== */
-    /* === MODALS ÉLÉGANTES - DESIGN NATUREL === */
+    /* === MODALS ÉLÉGANTES === */
     /* ============================================== */
 
     .modal-overlay {
@@ -556,6 +559,10 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
+    .modal-content.journal-modal {
+      max-width: 600px;
+    }
+
     @keyframes modalSlide {
       from {
         opacity: 0;
@@ -567,7 +574,6 @@
       }
     }
 
-    /* Scrollbar élégante */
     .modal-content::-webkit-scrollbar {
       width: 4px;
     }
@@ -607,12 +613,10 @@
     .modal-content h2 {
       color: var(--primary);
       margin-top: 0;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       font-size: 22px;
       font-weight: 600;
       letter-spacing: -0.3px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid rgba(142, 68, 173, 0.15);
     }
 
     .modal-content .subtitle {
@@ -674,7 +678,6 @@
       font-weight: 400;
     }
 
-    /* === BOUTONS ÉLÉGANTS === */
     .form-actions {
       display: flex;
       gap: 10px;
@@ -741,7 +744,125 @@
       transform: translateY(0px);
     }
 
-    /* === MESSAGE D'ERREUR === */
+    /* === JOURNAL DES MODIFICATIONS === */
+    .journal-list {
+      margin: 16px 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .journal-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .journal-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
+
+    .journal-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .journal-item:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .journal-item.add {
+      border-left-color: var(--success);
+    }
+
+    .journal-item.edit {
+      border-left-color: var(--warning);
+    }
+
+    .journal-item.delete {
+      border-left-color: var(--danger);
+    }
+
+    .journal-item .info {
+      flex: 1;
+    }
+
+    .journal-item .info .action-type {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-dark);
+    }
+
+    .journal-item .info .action-type .type-add { color: var(--success); }
+    .journal-item .info .action-type .type-edit { color: var(--warning); }
+    .journal-item .info .action-type .type-delete { color: var(--danger); }
+
+    .journal-item .info .details {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .journal-item .info .date {
+      font-size: 11px;
+      color: rgba(0,0,0,0.3);
+      margin-top: 2px;
+    }
+
+    .journal-item .actions-journal {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .journal-item .actions-journal button {
+      padding: 4px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .journal-item .actions-journal .btn-accept {
+      background: var(--success);
+      color: white;
+    }
+
+    .journal-item .actions-journal .btn-accept:hover {
+      background: #219a52;
+      transform: scale(1.02);
+    }
+
+    .journal-item .actions-journal .btn-reject {
+      background: var(--danger);
+      color: white;
+    }
+
+    .journal-item .actions-journal .btn-reject:hover {
+      background: #c0392b;
+      transform: scale(1.02);
+    }
+
+    .journal-empty {
+      text-align: center;
+      color: var(--text-light);
+      padding: 30px 0;
+      font-size: 15px;
+    }
+
+    .journal-empty .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
     .auth-error {
       color: #e74c3c;
       font-size: 13px;
@@ -765,7 +886,6 @@
       font-weight: 400;
     }
 
-    /* === MODAL SUPPRESSION SPÉCIALE === */
     .modal-content.delete-modal {
       text-align: center;
     }
@@ -792,7 +912,6 @@
       margin-top: 20px;
     }
 
-    /* === MOT DE PASSE - STYLE SPÉCIAL === */
     #authPassword {
       font-size: 16px;
       letter-spacing: 2px;
@@ -851,6 +970,10 @@
         font-size: 19px;
       }
 
+      .modal-content.journal-modal {
+        max-width: 100%;
+      }
+
       .hamburger-menu {
         padding: 8px 10px 10px 10px;
         left: 6px;
@@ -879,6 +1002,16 @@
       .form-group input {
         padding: 10px 14px;
         font-size: 14px;
+      }
+
+      .journal-item {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .journal-item .actions-journal {
+        width: 100%;
+        justify-content: flex-end;
       }
     }
 
@@ -954,6 +1087,7 @@
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
+      <button class="action-btn" onclick="openJournalModal(); closeMenu();" id="journalBtn" style="display:none;">Journal</button>
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
@@ -1035,6 +1169,23 @@
           <button type="submit" class="btn-submit">Mettre à jour</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Journal Modal -->
+  <div class="modal-overlay" id="journalModal">
+    <div class="modal-content journal-modal">
+      <button class="modal-close" onclick="closeJournalModal()">✕</button>
+      <h2>Journal des modifications</h2>
+      <p class="subtitle">Toutes les actions effectuées par les Admins. Vous pouvez accepter ou annuler chaque modification.</p>
+      
+      <div id="journalList" class="journal-list">
+        <!-- Les entrées du journal seront générées ici -->
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeJournalModal()">Fermer</button>
+      </div>
     </div>
   </div>
 
@@ -1147,7 +1298,14 @@
       doc, 
       getDoc, 
       updateDoc,
-      setDoc
+      setDoc,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      query,
+      orderBy,
+      where
     } from "firebase/firestore";
 
     const firebaseConfig = {
@@ -1168,6 +1326,64 @@
       editor: "editor123"
     };
 
+    // ===== GESTION DU JOURNAL =====
+    let journalEntries = [];
+
+    async function loadJournal() {
+      try {
+        const q = query(collection(db, "journal"), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        journalEntries = [];
+        querySnapshot.forEach((doc) => {
+          journalEntries.push({ id: doc.id, ...doc.data() });
+        });
+        return journalEntries;
+      } catch (error) {
+        console.error("Erreur lors du chargement du journal:", error);
+        return [];
+      }
+    }
+
+    async function addJournalEntry(action, type, data, userRole) {
+      try {
+        const entry = {
+          action: action,
+          type: type,
+          data: data,
+          user: userRole || "admin",
+          date: new Date().toISOString(),
+          status: "pending" // pending, accepted, rejected
+        };
+        const docRef = await addDoc(collection(db, "journal"), entry);
+        return docRef.id;
+      } catch (error) {
+        console.error("Erreur lors de l'ajout au journal:", error);
+        return null;
+      }
+    }
+
+    async function updateJournalStatus(entryId, status) {
+      try {
+        const ref = doc(db, "journal", entryId);
+        await updateDoc(ref, { status: status });
+        return true;
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du journal:", error);
+        return false;
+      }
+    }
+
+    async function deleteJournalEntry(entryId) {
+      try {
+        await deleteDoc(doc(db, "journal", entryId));
+        return true;
+      } catch (error) {
+        console.error("Erreur lors de la suppression du journal:", error);
+        return false;
+      }
+    }
+
+    // ===== CHARGEMENT DES MOTS DE PASSE =====
     async function loadPasswords() {
       try {
         const docRef = doc(db, "config", "passwords");
@@ -1198,6 +1414,7 @@
       }
     }
 
+    // ===== AUTHENTIFICATION =====
     window.authenticate = async function(e) {
       e.preventDefault();
       const password = document.getElementById("authPassword").value.trim();
@@ -1217,7 +1434,8 @@
           "   - Modifier des personnes\n" +
           "   - Supprimer des personnes\n" +
           "   - Gerer les mots de passe\n" +
-          "   - Tout modifier sur le site"
+          "   - Voir le journal des modifications\n" +
+          "   - Accepter ou annuler les modifications des Admins"
         );
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
@@ -1231,7 +1449,8 @@
           "   - Modifier des personnes\n\n" +
           "Vous ne pouvez pas :\n" +
           "   - Supprimer des personnes\n" +
-          "   - Gerer les mots de passe"
+          "   - Gerer les mots de passe\n" +
+          "   - Voir le journal des modifications"
         );
       } else {
         errorEl.classList.add("show");
@@ -1258,6 +1477,7 @@
       alert("Déconnecté avec succès.");
     };
 
+    // ===== ADMIN / PROPRIETAIRE =====
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
         alert("Seul le propriétaire peut gérer les mots de passe.");
@@ -1312,6 +1532,104 @@
       }
     };
 
+    // ===== JOURNAL =====
+    window.openJournalModal = async function() {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("Seul le propriétaire peut voir le journal des modifications.");
+        return;
+      }
+      document.getElementById("journalModal").classList.add("active");
+      await renderJournal();
+    };
+
+    window.closeJournalModal = function() {
+      document.getElementById("journalModal").classList.remove("active");
+    };
+
+    async function renderJournal() {
+      const container = document.getElementById("journalList");
+      const entries = await loadJournal();
+      
+      if (entries.length === 0) {
+        container.innerHTML = `
+          <div class="journal-empty">
+            <div class="icon">📭</div>
+            <p>Aucune modification en attente.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      entries.forEach(entry => {
+        const typeClass = entry.type;
+        const typeLabel = {
+          add: 'Ajout',
+          edit: 'Modification',
+          delete: 'Suppression'
+        }[entry.type] || entry.type;
+
+        const statusLabel = {
+          pending: 'En attente',
+          accepted: '✅ Accepté',
+          rejected: '❌ Annulé'
+        }[entry.status] || entry.status;
+
+        const date = new Date(entry.date);
+        const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+        html += `
+          <div class="journal-item ${entry.type}">
+            <div class="info">
+              <div class="action-type">
+                <span class="type-${entry.type}">${typeLabel}</span>
+                <span style="font-weight:400; color:var(--text-light); font-size:12px; margin-left:8px;">${statusLabel}</span>
+              </div>
+              <div class="details">${entry.data}</div>
+              <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
+            </div>
+            ${entry.status === 'pending' ? `
+              <div class="actions-journal">
+                <button class="btn-accept" onclick="acceptJournal('${entry.id}')">Accepter</button>
+                <button class="btn-reject" onclick="rejectJournal('${entry.id}')">Annuler</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    window.acceptJournal = async function(entryId) {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("Seul le propriétaire peut accepter les modifications.");
+        return;
+      }
+      
+      const success = await updateJournalStatus(entryId, 'accepted');
+      if (success) {
+        alert("✅ Modification acceptée.");
+        await renderJournal();
+      }
+    };
+
+    window.rejectJournal = async function(entryId) {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("Seul le propriétaire peut annuler les modifications.");
+        return;
+      }
+      
+      if (confirm("❌ Êtes-vous sûr de vouloir annuler cette modification ?")) {
+        const success = await updateJournalStatus(entryId, 'rejected');
+        if (success) {
+          alert("❌ Modification annulée.");
+          await renderJournal();
+        }
+      }
+    };
+
+    // ===== MENU HAMBURGER =====
     window.toggleMenu = function() {
       const menu = document.getElementById("hamburgerMenu");
       menu.classList.toggle("open");
@@ -1330,6 +1648,7 @@
       }
     });
 
+    // ===== MISE À JOUR DE L'INTERFACE =====
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
@@ -1339,6 +1658,7 @@
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
 
@@ -1372,6 +1692,7 @@
       }
     }
 
+    // ===== DONNÉES FAMILLE =====
     let family = null;
     let history = [];
     let currentPath = [];
@@ -1456,6 +1777,7 @@
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("journalBtn").style.display = isProprietaire ? "flex" : "none";
 
       if (!person.children || person.children.length === 0) {
         treeEl.innerHTML = "<p>La liste des enfants n'est pas encore complète.</p>";
@@ -1653,6 +1975,11 @@
         } else {
           displayPerson(currentNode);
         }
+        
+        // Ajouter au journal
+        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
+        await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
+        
         alert(`"${name}" a été ajouté avec succès !`);
       }
     };
@@ -1739,6 +2066,11 @@
         } else {
           displayPerson(currentNode);
         }
+        
+        // Ajouter au journal
+        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
+        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
+        
         alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
       }
     };
@@ -1803,6 +2135,10 @@
         } else {
           displayRoot();
         }
+        
+        // Ajouter au journal
+        await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
+        
         alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
     };
