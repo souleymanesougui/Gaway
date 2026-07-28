@@ -51,6 +51,40 @@
       --border: rgba(255, 255, 255, 0.05);
     }
 
+    /* === THÈMES PERSONNALISÉS === */
+    [data-theme="nature"] {
+      --primary: #2E7D32;
+      --secondary: #388E3C;
+      --accent: #43A047;
+      --bg: #E8F5E9;
+      --card-bg: rgba(255, 255, 255, 0.92);
+    }
+
+    [data-theme="vintage"] {
+      --primary: #5D4037;
+      --secondary: #795548;
+      --accent: #8D6E63;
+      --bg: #EFEBE9;
+      --card-bg: rgba(255, 248, 225, 0.9);
+    }
+
+    [data-theme="accessibility"] {
+      --primary: #000000;
+      --secondary: #1A237E;
+      --accent: #D32F2F;
+      --bg: #FFFFFF;
+      --card-bg: rgba(255, 255, 255, 0.98);
+      font-size: 120%;
+    }
+
+    [data-theme="modern"] {
+      --primary: #0D47A1;
+      --secondary: #1565C0;
+      --accent: #42A5F5;
+      --bg: #E3F2FD;
+      --card-bg: rgba(255, 255, 255, 0.9);
+    }
+
     [data-theme="dark"] body::before {
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(8px);
@@ -453,7 +487,7 @@
       color: #a569bd;
     }
 
-    /* === BARRE DE RECHERCHE === */
+    /* === BARRE DE RECHERCHE AMÉLIORÉE === */
     .search-wrapper {
       width: 90%;
       max-width: 450px;
@@ -484,6 +518,34 @@
     #searchBox:focus {
       border-color: rgba(142, 68, 173, 0.3);
       box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
+    }
+
+    /* Filtres de recherche */
+    .search-filters {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .search-filters select,
+    .search-filters button {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: var(--text-dark);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    [data-theme="dark"] .search-filters select,
+    [data-theme="dark"] .search-filters button {
+      background: rgba(30,30,50,0.5);
+      color: #ecf0f1;
     }
 
     .search-suggestions {
@@ -537,7 +599,7 @@
       margin-left: auto;
     }
 
-    /* === ARBRE === */
+    /* === ARBRE AVEC VUE GRAPHIQUE === */
     #tree {
       display: flex;
       flex-wrap: wrap;
@@ -546,6 +608,19 @@
       padding: 12px;
       max-width: 1400px;
       width: 100%;
+    }
+
+    #tree.tree-view {
+      padding: 0;
+      overflow: auto;
+    }
+
+    #tree.tree-view canvas {
+      width: 100%;
+      height: auto;
+      background: transparent;
+      border-radius: 16px;
+      cursor: pointer;
     }
 
     .person {
@@ -569,6 +644,11 @@
       transform: translateY(-5px) scale(1.02);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
       background: rgba(255, 255, 255, 0.95);
+    }
+
+    .person.dragging {
+      opacity: 0.5;
+      transform: scale(0.9);
     }
 
     [data-theme="dark"] .person:hover {
@@ -603,6 +683,20 @@
       background: linear-gradient(to right, rgba(142, 68, 173, 0.1), rgba(52, 73, 94, 0.1));
       word-wrap: break-word;
       line-height: 1.3;
+      transition: all 0.2s ease;
+    }
+
+    .person-name input {
+      width: 100%;
+      font-size: inherit;
+      font-weight: inherit;
+      text-align: center;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 4px 8px;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
     }
 
     .person .badge-count {
@@ -618,7 +712,7 @@
       box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
     }
 
-    /* === BOUTON DÉTAILS EN HAUT À DROITE === */
+    /* === BOUTON DÉTAILS === */
     .detail-btn {
       position: absolute;
       top: 6px;
@@ -655,7 +749,6 @@
       box-shadow: 0 4px 20px rgba(142, 68, 173, 0.3);
     }
 
-    /* Sur mobile, toujours visible */
     @media (max-width: 600px) {
       .detail-btn {
         opacity: 1;
@@ -781,17 +874,6 @@
       border-radius: 10px;
     }
 
-    .hamburger-menu .action-btn.add-btn { background: transparent; }
-    .hamburger-menu .action-btn.add-btn:hover { background: rgba(0, 0, 0, 0.05); }
-    .hamburger-menu .action-btn.edit-btn { background: transparent; }
-    .hamburger-menu .action-btn.edit-btn:hover { background: rgba(0, 0, 0, 0.05); }
-    .hamburger-menu .action-btn.delete-btn { background: transparent; }
-    .hamburger-menu .action-btn.delete-btn:hover { background: rgba(0, 0, 0, 0.05); }
-    .hamburger-menu .auth-btn.login-btn { background: transparent; }
-    .hamburger-menu .auth-btn.login-btn:hover { background: rgba(0, 0, 0, 0.05); }
-    .hamburger-menu .auth-btn.logout-btn { background: transparent; }
-    .hamburger-menu .auth-btn.logout-btn:hover { background: rgba(0, 0, 0, 0.05); }
-
     .menu-divider {
       border: none;
       border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -836,30 +918,6 @@
       width: 100% !important;
       box-shadow: none !important;
       text-align: center !important;
-    }
-    .hamburger-menu .translate-container .goog-te-gadget .goog-te-combo:focus {
-      outline: 2px solid rgba(142, 68, 173, 0.3) !important;
-    }
-    .hamburger-menu .translate-container .goog-te-gadget img {
-      display: none !important;
-    }
-
-    .hamburger-menu .auth-status {
-      display: none;
-    }
-
-    .hamburger-menu .auth-status.show {
-      display: block;
-      text-align: center;
-      padding: 6px 10px;
-      margin-bottom: 4px;
-      font-size: 13px;
-      color: #1a1a1a;
-      background: rgba(0, 0, 0, 0.03);
-      border-radius: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      font-weight: 500;
-      letter-spacing: 0.2px;
     }
 
     /* === MODALS === */
@@ -1100,10 +1158,6 @@
       background: #c0392b;
       transform: translateY(-2px);
       box-shadow: 0 8px 28px rgba(231, 76, 60, 0.3);
-    }
-
-    .form-actions .btn-delete-confirm:active {
-      transform: translateY(0px);
     }
 
     /* === HISTORIQUE === */
@@ -1587,6 +1641,21 @@
       </div>
       
       <hr class="menu-divider">
+      
+      <!-- Nouveaux boutons pour l'export/import -->
+      <button class="action-btn" onclick="exportFamily(); closeMenu();">💾 Exporter l'arbre</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();">📥 Importer un arbre</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
+      <button class="action-btn" onclick="shareFamily(); closeMenu();">🔗 Partager l'arbre</button>
+      <button class="action-btn" onclick="printFamily(); closeMenu();">🖨️ Imprimer</button>
+      
+      <hr class="menu-divider">
+      
+      <!-- Nouveau bouton pour la vue arbre -->
+      <button class="action-btn" onclick="toggleView(); closeMenu();" id="viewToggleBtn">👁️ Vue arbre</button>
+      
+      <hr class="menu-divider">
+      
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
@@ -1594,7 +1663,9 @@
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
       <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
+      
       <hr class="menu-divider">
+      
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
     </div>
@@ -1605,6 +1676,16 @@
   <div class="search-wrapper">
     <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
     <div class="search-suggestions" id="searchSuggestions"></div>
+    
+    <!-- Filtres de recherche -->
+    <div class="search-filters">
+      <select id="filterType" onchange="applyFilters()">
+        <option value="all">Tous</option>
+        <option value="hasChildren">Avec enfants</option>
+        <option value="noChildren">Sans enfants</option>
+      </select>
+      <button onclick="clearSearch()">✕ Effacer</button>
+    </div>
   </div>
   
   <button id="backBtn" onclick="goBack()">← Retour</button>
@@ -1647,6 +1728,21 @@
         <div class="stat-number-big" id="statTotal">0</div>
         <div class="stat-label-big">personnes dans l'arbre</div>
       </div>
+      
+      <!-- Statistiques avancées -->
+      <div id="advancedStats" style="margin-top: 20px; display: none;">
+        <div class="detail-card">
+          <div class="detail-label">📅 Générations</div>
+          <div class="detail-value" id="statGenerations">-</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">👨‍👦 Plus grande branche</div>
+          <div class="detail-value" id="statLargestBranch">-</div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="toggleAdvancedStats()" style="margin-top: 10px; width: 100%; padding: 8px; border: none; border-radius: 10px; background: var(--accent); color: white; cursor: pointer;">
+        📈 Plus de statistiques
+      </button>
       
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
@@ -1896,6 +1992,8 @@
     let currentNode = null;
     let currentParent = null;
     let lastDetailPerson = null;
+    let treeViewActive = false;
+    let filterType = 'all';
 
     // ===== TOAST SYSTEM =====
     function showToast(message, type = 'success', duration = 3500) {
@@ -1927,9 +2025,19 @@
     function toggleTheme() {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
+      const themes = ['light', 'dark', 'nature', 'vintage', 'modern', 'accessibility'];
+      let newTheme = 'light';
+      
+      if (current === 'light') newTheme = 'dark';
+      else if (current === 'dark') newTheme = 'nature';
+      else if (current === 'nature') newTheme = 'vintage';
+      else if (current === 'vintage') newTheme = 'modern';
+      else if (current === 'modern') newTheme = 'accessibility';
+      else newTheme = 'light';
+      
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
+      showToast(`🎨 Thème : ${newTheme}`, 'info', 2000);
     }
 
     window.toggleTheme = toggleTheme;
@@ -2114,7 +2222,9 @@
       }
     };
 
-    // ===== STATISTIQUES =====
+    // ===== STATISTIQUES AVANCÉES =====
+    let advancedStatsVisible = false;
+
     window.openStatsModal = function() {
       if (!family) {
         showToast("Les données ne sont pas encore chargées", "warning");
@@ -2128,6 +2238,12 @@
       document.getElementById("statsModal").classList.remove("active");
     };
 
+    window.toggleAdvancedStats = function() {
+      advancedStatsVisible = !advancedStatsVisible;
+      document.getElementById('advancedStats').style.display = advancedStatsVisible ? 'block' : 'none';
+      if (advancedStatsVisible) calculateAdvancedStats();
+    };
+
     function countNodes(node) {
       let count = 1;
       if (node.children) {
@@ -2138,9 +2254,37 @@
       return count;
     }
 
+    function getTreeHeight(node) {
+      if (!node.children || node.children.length === 0) return 1;
+      return 1 + Math.max(...node.children.map(getTreeHeight));
+    }
+
+    function getLargestBranch(node) {
+      let maxSize = countNodes(node);
+      let maxName = node.name;
+      if (node.children) {
+        for (const child of node.children) {
+          const childSize = countNodes(child);
+          if (childSize > maxSize) {
+            maxSize = childSize;
+            maxName = child.name;
+          }
+        }
+      }
+      return { name: maxName, size: maxSize };
+    }
+
     function calculateStats() {
       const total = countNodes(family);
       document.getElementById('statTotal').textContent = total;
+    }
+
+    function calculateAdvancedStats() {
+      const generations = getTreeHeight(family);
+      const largest = getLargestBranch(family);
+      
+      document.getElementById('statGenerations').textContent = `${generations} génération${generations > 1 ? 's' : ''}`;
+      document.getElementById('statLargestBranch').textContent = `${largest.name} (${largest.size} personnes)`;
     }
 
     // ===== HISTORIQUE =====
@@ -2344,7 +2488,7 @@
     }
 
     function getAllNames(node, path = '') {
-      const results = [{ name: node.name, path: path || node.name }];
+      const results = [{ name: node.name, path: path || node.name, hasChildren: (node.children && node.children.length > 0) }];
       if (node.children) {
         for (const child of node.children) {
           results.push(...getAllNames(child, path ? `${path} → ${child.name}` : child.name));
@@ -2353,9 +2497,366 @@
       return results;
     }
 
+    // ===== VUE ARBRE GRAPHIQUE =====
+    window.toggleView = function() {
+      treeViewActive = !treeViewActive;
+      const btn = document.getElementById('viewToggleBtn');
+      btn.textContent = treeViewActive ? '🌳 Vue normale' : '👁️ Vue arbre';
+      
+      if (treeViewActive) {
+        drawTreeView();
+      } else {
+        if (currentNode) displayPerson(currentNode);
+        else displayRoot();
+      }
+    };
+
+    function drawTreeView() {
+      const container = document.getElementById('tree');
+      container.innerHTML = '';
+      container.className = 'tree-view';
+      
+      const canvas = document.createElement('canvas');
+      const rect = container.getBoundingClientRect();
+      canvas.width = Math.max(800, window.innerWidth * 0.9);
+      canvas.height = Math.max(600, window.innerHeight * 0.7);
+      container.appendChild(canvas);
+      
+      const ctx = canvas.getContext('2d');
+      const root = family;
+      
+      function getTreeHeight(node) {
+        if (!node.children || node.children.length === 0) return 1;
+        return 1 + Math.max(...node.children.map(getTreeHeight));
+      }
+      
+      function drawNode(node, x, y, level, totalLevels, parentX = null, parentY = null) {
+        const radius = Math.min(35, canvas.width / 20);
+        const spacingX = Math.min(80, canvas.width / 10);
+        const spacingY = Math.min(80, canvas.height / 10);
+        
+        // Lien vers le parent
+        if (parentX !== null && parentY !== null) {
+          ctx.beginPath();
+          ctx.moveTo(parentX, parentY + radius);
+          ctx.lineTo(x, y - radius);
+          ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        
+        // Cercle avec dégradé
+        const gradient = ctx.createRadialGradient(x-10, y-10, 0, x, y, radius);
+        const isRoot = node === root;
+        const isSelected = node === currentNode;
+        
+        if (isRoot) {
+          gradient.addColorStop(0, '#8E44AD');
+          gradient.addColorStop(1, '#2C3E50');
+        } else if (isSelected) {
+          gradient.addColorStop(0, '#27ae60');
+          gradient.addColorStop(1, '#2C3E50');
+        } else {
+          gradient.addColorStop(0, '#3498db');
+          gradient.addColorStop(1, '#2C3E50');
+        }
+        
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Ombre portée
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Nom
+        ctx.fillStyle = '#fff';
+        ctx.font = `${Math.min(12, radius * 0.4)}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        let displayName = node.name;
+        if (displayName.length > 12) displayName = displayName.slice(0, 10) + '...';
+        ctx.fillText(displayName, x, y);
+        
+        // Nombre d'enfants
+        if (node.children && node.children.length > 0) {
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.font = '10px Inter, sans-serif';
+          ctx.fillText(`👨‍👦 ${node.children.length}`, x, y + radius + 15);
+        }
+        
+        // Dessiner les enfants
+        if (node.children && node.children.length > 0) {
+          const childrenCount = node.children.length;
+          const startX = x - ((childrenCount - 1) * spacingX) / 2;
+          
+          node.children.forEach((child, i) => {
+            const childX = startX + i * spacingX;
+            const childY = y + spacingY;
+            drawNode(child, childX, childY, level + 1, totalLevels, x, y);
+          });
+        }
+      }
+      
+      const height = getTreeHeight(root);
+      const startY = 50;
+      
+      // Fond transparent
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Dessiner l'arbre
+      drawNode(root, canvas.width/2, startY, 0, height);
+      
+      // Ajouter un événement de clic pour naviguer
+      canvas.addEventListener('click', async (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+        
+        // Recherche simple du nœud le plus proche
+        function findClosestNode(node, px, py, level = 0) {
+          const radius = Math.min(35, canvas.width / 20);
+          const spacingY = Math.min(80, canvas.height / 10);
+          
+          // Vérifier si le clic est sur ce nœud
+          const nodeX = px;
+          const nodeY = py;
+          const distance = Math.sqrt((x - nodeX) ** 2 + (y - nodeY) ** 2);
+          
+          if (distance < radius + 10) {
+            return node;
+          }
+          
+          if (node.children && node.children.length > 0) {
+            const childrenCount = node.children.length;
+            const spacingX = Math.min(80, canvas.width / 10);
+            const startX = px - ((childrenCount - 1) * spacingX) / 2;
+            
+            for (let i = 0; i < node.children.length; i++) {
+              const childX = startX + i * spacingX;
+              const childY = py + spacingY;
+              const result = findClosestNode(node.children[i], childX, childY, level + 1);
+              if (result) return result;
+            }
+          }
+          return null;
+        }
+        
+        const clickedNode = findClosestNode(root, canvas.width/2, startY);
+        if (clickedNode) {
+          const path = findPathToNode(family, clickedNode.name);
+          if (path) {
+            history = path.slice(0, -1);
+            currentPath = path;
+            currentNode = clickedNode;
+            displayPerson(clickedNode);
+            // Revenir à la vue normale
+            treeViewActive = false;
+            document.getElementById('viewToggleBtn').textContent = '👁️ Vue arbre';
+          }
+        }
+      });
+      
+      // Adapter la taille
+      canvas.style.width = '100%';
+      canvas.style.height = 'auto';
+    }
+
+    // ===== EXPORT/IMPORT =====
+    window.exportFamily = function() {
+      if (!family) {
+        showToast("Aucune donnée à exporter", "warning");
+        return;
+      }
+      
+      const data = JSON.stringify(family, null, 2);
+      const blob = new Blob([data], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `arbre_gaway_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("📦 Arbre exporté avec succès !", "success");
+    };
+
+    window.importFamily = function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.name || !data.children) {
+            showToast("❌ Fichier invalide", "error");
+            return;
+          }
+          
+          const count = countNodes(data);
+          if (confirm(`Voulez-vous importer "${data.name}" (${count} personnes) ?\nCela remplacera l'arbre actuel.`)) {
+            family = data;
+            await sauvegarderFamille();
+            buildNameIndex();
+            currentPath = [family];
+            currentNode = family;
+            displayRoot();
+            showToast(`📥 Arbre importé avec succès (${count} personnes) !`, "success");
+          }
+        } catch (error) {
+          showToast("❌ Fichier JSON invalide", "error");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    };
+
+    window.shareFamily = function() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: '🌳 Arbre généalogique Gaway',
+          text: 'Découvrez l\'arbre généalogique des fils Gaïda',
+          url: url
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast("🔗 Lien copié dans le presse-papier !", "success");
+        }).catch(() => {
+          showToast("🔗 URL : " + url, "info", 5000);
+        });
+      }
+    };
+
+    window.printFamily = function() {
+      window.print();
+    };
+
+    // ===== RECHERCHE AMÉLIORÉE =====
+    let searchTimeout = null;
+    let allNames = [];
+
+    function buildNameIndex() {
+      if (family) {
+        allNames = getAllNames(family);
+      }
+    }
+
+    window.handleSearchInput = function(value) {
+      const suggestions = document.getElementById("searchSuggestions");
+      const trimmed = value.trim().toLowerCase();
+      
+      if (!trimmed) {
+        suggestions.classList.remove("active");
+        applyFilters();
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        let results = allNames.filter(item => 
+          item.name.toLowerCase().includes(trimmed)
+        );
+        
+        // Appliquer les filtres
+        if (filterType === 'hasChildren') {
+          results = results.filter(item => item.hasChildren);
+        } else if (filterType === 'noChildren') {
+          results = results.filter(item => !item.hasChildren);
+        }
+        
+        results = results.slice(0, 8);
+
+        if (results.length === 0) {
+          suggestions.classList.remove("active");
+          return;
+        }
+
+        suggestions.innerHTML = '';
+        results.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "search-suggestion";
+          const idx = item.name.toLowerCase().indexOf(trimmed);
+          let displayName = item.name;
+          if (idx !== -1) {
+            displayName = item.name.slice(0, idx) + 
+              `<span class="highlight">${item.name.slice(idx, idx + trimmed.length)}</span>` + 
+              item.name.slice(idx + trimmed.length);
+          }
+          div.innerHTML = `
+            <span>${displayName}</span>
+            <span class="suggestion-path">${item.path}</span>
+            ${item.hasChildren ? '👨‍👦' : ''}
+          `;
+          div.onclick = () => {
+            suggestions.classList.remove("active");
+            const result = findPathToNode(family, item.name);
+            if (result) {
+              history = result.slice(0, -1);
+              currentPath = result;
+              currentNode = result[result.length - 1];
+              displayPerson(currentNode);
+              document.getElementById("searchBox").value = item.name;
+            }
+          };
+          suggestions.appendChild(div);
+        });
+        suggestions.classList.add("active");
+      }, 200);
+    };
+
+    window.applyFilters = function() {
+      filterType = document.getElementById('filterType').value;
+      const searchValue = document.getElementById('searchBox').value.trim();
+      if (searchValue) {
+        handleSearchInput(searchValue);
+      } else {
+        if (currentNode) displayPerson(currentNode);
+        else displayRoot();
+      }
+    };
+
+    window.clearSearch = function() {
+      document.getElementById('searchBox').value = '';
+      document.getElementById('filterType').value = 'all';
+      filterType = 'all';
+      document.getElementById('searchSuggestions').classList.remove('active');
+      if (currentNode) displayPerson(currentNode);
+      else displayRoot();
+    };
+
+    document.addEventListener('click', function(e) {
+      const suggestions = document.getElementById("searchSuggestions");
+      const searchBox = document.getElementById("searchBox");
+      if (!suggestions.contains(e.target) && e.target !== searchBox) {
+        suggestions.classList.remove("active");
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        document.getElementById("searchBox").focus();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById("searchSuggestions").classList.remove("active");
+        document.getElementById("searchBox").blur();
+      }
+    });
+
     // ===== DISPLAY FUNCTIONS =====
     function displayPerson(person) {
       treeEl.innerHTML = "";
+      treeEl.className = '';
       currentNode = person;
       backBtn.style.display = "inline-block";
       updateBreadcrumb();
@@ -2378,24 +2879,76 @@
 
       const searchQuery = document.getElementById("searchBox").value.toLowerCase();
       let childrenToShow = person.children;
+      
       if (searchQuery) {
         childrenToShow = person.children.filter(child => 
           child.name.toLowerCase().includes(searchQuery)
         );
       }
+      
+      // Appliquer les filtres
+      if (filterType === 'hasChildren') {
+        childrenToShow = childrenToShow.filter(child => child.children && child.children.length > 0);
+      } else if (filterType === 'noChildren') {
+        childrenToShow = childrenToShow.filter(child => !child.children || child.children.length === 0);
+      }
 
-      childrenToShow.forEach(child => {
+      childrenToShow.forEach((child, index) => {
         const div = document.createElement("div");
         div.className = "person";
+        div.draggable = true;
+        div.dataset.index = index;
 
         // === UN CLIC = NAVIGUER VERS LES ENFANTS ===
         div.onclick = (e) => {
-          // Ne pas déclencher si on clique sur le bouton détails
           if (e.target.closest('.detail-btn')) return;
+          if (e.target.tagName === 'INPUT') return;
           history.push(person);
           currentPath.push(child);
           displayPerson(child);
         };
+
+        // === GLISSER-DÉPOSER POUR RÉORGANISER ===
+        let dragIndex = null;
+        
+        div.addEventListener('dragstart', (e) => {
+          dragIndex = index;
+          e.dataTransfer.effectAllowed = 'move';
+          div.classList.add('dragging');
+        });
+
+        div.addEventListener('dragend', () => {
+          div.classList.remove('dragging');
+        });
+
+        div.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          div.style.transform = 'scale(1.05)';
+        });
+
+        div.addEventListener('dragleave', () => {
+          div.style.transform = '';
+        });
+
+        div.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          div.style.transform = '';
+          if (dragIndex === null || dragIndex === index) return;
+          
+          const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+          if (!isAdmin) {
+            showToast("🔒 Permission refusée", "error");
+            return;
+          }
+          
+          const [moved] = person.children.splice(dragIndex, 1);
+          person.children.splice(index, 0, moved);
+          await sauvegarderFamille();
+          displayPerson(person);
+          showToast("🔄 Ordre modifié !", "success");
+          dragIndex = null;
+        });
 
         const img = document.createElement("img");
         img.src = child.photo ? "photos/" + child.photo : "ssi.jpg";
@@ -2406,10 +2959,73 @@
         name.className = "person-name";
         name.textContent = child.name;
 
+        // === DOUBLE-CLICS POUR ÉDITION RAPIDE ===
+        name.addEventListener('dblclick', (e) => {
+          e.stopPropagation();
+          const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+          if (!isAdmin) {
+            showToast("🔒 Permission refusée", "error");
+            return;
+          }
+          
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = child.name;
+          input.style.cssText = `
+            width: 100%;
+            font-size: inherit;
+            font-weight: inherit;
+            text-align: center;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 4px 8px;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+          `;
+          
+          name.replaceWith(input);
+          input.focus();
+          input.select();
+          
+          const saveEdit = async () => {
+            const newName = input.value.trim();
+            if (newName && newName !== child.name) {
+              if (person.children.some(c => c.name === newName && c !== child)) {
+                showToast(`"${newName}" existe déjà`, "warning");
+                input.replaceWith(name);
+                return;
+              }
+              
+              const oldName = child.name;
+              child.name = newName;
+              await sauvegarderFamille();
+              buildNameIndex();
+              displayPerson(person);
+              const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
+              await addJournalEntry('edit', 'edit', `${oldName} → ${newName} (édition rapide)`, userRole);
+              showToast(`✅ "${oldName}" → "${newName}"`, "success");
+            } else {
+              input.replaceWith(name);
+            }
+          };
+          
+          input.addEventListener('blur', saveEdit);
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              input.blur();
+            }
+            if (e.key === 'Escape') {
+              input.replaceWith(name);
+            }
+          });
+        });
+
         div.appendChild(img);
         div.appendChild(name);
 
-        // === BOUTON DÉTAILS EN HAUT À DROITE ===
+        // === BOUTON DÉTAILS ===
         const detailBtn = document.createElement("button");
         detailBtn.className = "detail-btn";
         detailBtn.innerHTML = "👤";
@@ -2433,6 +3049,7 @@
 
     function displayRoot() {
       treeEl.innerHTML = "";
+      treeEl.className = '';
       history = [];
       currentPath = [family];
       currentNode = family;
@@ -2450,7 +3067,6 @@
       const div = document.createElement("div");
       div.className = "person";
 
-      // === UN CLIC = NAVIGUER VERS LES ENFANTS ===
       div.onclick = (e) => {
         if (e.target.closest('.detail-btn')) return;
         history.push(family);
@@ -2469,7 +3085,6 @@
       div.appendChild(img);
       div.appendChild(name);
 
-      // === BOUTON DÉTAILS EN HAUT À DROITE ===
       const detailBtn = document.createElement("button");
       detailBtn.className = "detail-btn";
       detailBtn.innerHTML = "👤";
@@ -2491,6 +3106,10 @@
     }
 
     window.goBack = function() {
+      if (treeViewActive) {
+        treeViewActive = false;
+        document.getElementById('viewToggleBtn').textContent = '👁️ Vue arbre';
+      }
       if (history.length) {
         const prev = history.pop();
         currentPath.pop();
@@ -2524,88 +3143,6 @@
         });
       }
     }
-
-    // ===== SEARCH =====
-    let searchTimeout = null;
-    let allNames = [];
-
-    function buildNameIndex() {
-      if (family) {
-        allNames = getAllNames(family);
-      }
-    }
-
-    window.handleSearchInput = function(value) {
-      const suggestions = document.getElementById("searchSuggestions");
-      const trimmed = value.trim().toLowerCase();
-      
-      if (!trimmed) {
-        suggestions.classList.remove("active");
-        if (currentNode) displayPerson(currentNode);
-        else displayRoot();
-        return;
-      }
-
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        const results = allNames.filter(item => 
-          item.name.toLowerCase().includes(trimmed)
-        ).slice(0, 8);
-
-        if (results.length === 0) {
-          suggestions.classList.remove("active");
-          return;
-        }
-
-        suggestions.innerHTML = '';
-        results.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "search-suggestion";
-          const idx = item.name.toLowerCase().indexOf(trimmed);
-          let displayName = item.name;
-          if (idx !== -1) {
-            displayName = item.name.slice(0, idx) + 
-              `<span class="highlight">${item.name.slice(idx, idx + trimmed.length)}</span>` + 
-              item.name.slice(idx + trimmed.length);
-          }
-          div.innerHTML = `
-            <span>${displayName}</span>
-            <span class="suggestion-path">${item.path}</span>
-          `;
-          div.onclick = () => {
-            suggestions.classList.remove("active");
-            const result = findPathToNode(family, item.name);
-            if (result) {
-              history = result.slice(0, -1);
-              currentPath = result;
-              displayPerson(result[result.length - 1]);
-              document.getElementById("searchBox").value = item.name;
-            }
-          };
-          suggestions.appendChild(div);
-        });
-        suggestions.classList.add("active");
-      }, 200);
-    };
-
-    document.addEventListener('click', function(e) {
-      const suggestions = document.getElementById("searchSuggestions");
-      const searchBox = document.getElementById("searchBox");
-      if (!suggestions.contains(e.target) && e.target !== searchBox) {
-        suggestions.classList.remove("active");
-      }
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-        e.preventDefault();
-        document.getElementById("searchBox").focus();
-      }
-      if (e.key === 'Escape') {
-        document.getElementById("searchSuggestions").classList.remove("active");
-        document.getElementById("searchBox").blur();
-      }
-    });
 
     // ===== PERSON DETAIL =====
     window.openPersonDetail = function(person) {
@@ -2879,6 +3416,64 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
+    // ===== NOTIFICATIONS =====
+    // Simuler des notifications pour les modifications
+    function checkForUpdates() {
+      // Cette fonction serait appelée périodiquement
+      // Pour l'instant, on simule juste une notification
+    }
+
+    // ===== MODE HORS-LIGNE =====
+    const CACHE_KEY = 'gaway_family_cache';
+    let isOnline = navigator.onLine;
+
+    window.addEventListener('online', () => {
+      isOnline = true;
+      showToast('📶 Retour en ligne - Synchronisation...', 'info', 2000);
+      syncData();
+    });
+
+    window.addEventListener('offline', () => {
+      isOnline = false;
+      showToast('📶 Mode hors-ligne - Modifications locales', 'warning', 3000);
+    });
+
+    async function syncData() {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          // Vérifier si les données locales sont plus récentes
+          if (data.timestamp > Date.now() - 3600000) { // Moins d'1 heure
+            if (confirm('📶 Des données locales ont été trouvées. Les utiliser ?')) {
+              family = data.family;
+              await sauvegarderFamille();
+              buildNameIndex();
+              displayRoot();
+              showToast('📶 Données synchronisées depuis le cache', 'success');
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    function saveToCache(data) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        family: data,
+        timestamp: Date.now()
+      }));
+    }
+
+    // Surcharger sauvegarderFamille pour sauvegarder en cache
+    const originalSave = sauvegarderFamille;
+    sauvegarderFamille = async function() {
+      const result = await originalSave();
+      if (result) {
+        saveToCache(family);
+      }
+      return result;
+    };
+
     // ===== INIT =====
     async function init() {
       await loadPasswords();
@@ -2887,17 +3482,26 @@
       buildNameIndex();
       updateUIForAuth();
       
+      // Vérifier le cache
+      syncData();
+      
       setTimeout(() => {
         showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
+        if (!isOnline) {
+          showToast('📶 Mode hors-ligne actif', 'warning', 3000);
+        }
       }, 500);
     }
 
     init();
 
+    // Exposer les fonctions nécessaires
     window.findNodeWithParent = findNodeWithParent;
     window.findPathToNode = findPathToNode;
     window.buildNameIndex = buildNameIndex;
     window.countNodes = countNodes;
+    window.sauvegarderFamille = sauvegarderFamille;
+    window.family = family;
 
   </script>
 </body>
