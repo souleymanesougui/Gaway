@@ -313,13 +313,13 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - STYLE CENTRÉ === */
+    /* === MENU HAMBURGER - STYLE CENTRÉ AVEC TRÈS FORT DÉCALAGE GAUCHE === */
     .hamburger-menu {
       display: none;
       position: absolute;
       top: 100%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-90%);
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
@@ -339,7 +339,7 @@
     @media (max-width: 480px) {
       .hamburger-menu {
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-95%);
         padding: 10px 14px 14px 14px;
         min-width: 200px;
         max-width: 90%;
@@ -350,11 +350,11 @@
     @keyframes slideDown {
       from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-10px) scale(0.97);
+        transform: translateX(-90%) translateY(-10px) scale(0.97);
       }
       to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
+        transform: translateX(-90%) translateY(0) scale(1);
       }
     }
 
@@ -1097,7 +1097,7 @@
       <span class="auth-status" id="authStatus"></span>
     </div>
     
-    <!-- Menu hamburger - Centré -->
+    <!-- Menu hamburger - Centré avec décalage gauche -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
