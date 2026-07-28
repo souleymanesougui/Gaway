@@ -560,7 +560,7 @@
     }
 
     .modal-content.historique-modal {
-      max-width: 650px;
+      max-width: 700px;
     }
 
     @keyframes modalSlide {
@@ -744,6 +744,16 @@
       transform: translateY(0px);
     }
 
+    .form-actions .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .form-actions .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+    }
+
     /* === HISTORIQUE === */
     .historique-list {
       margin: 16px 0;
@@ -811,6 +821,31 @@
       font-size: 11px;
       color: rgba(0,0,0,0.3);
       margin-top: 2px;
+    }
+
+    .historique-item .actions-historique {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .historique-item .actions-historique .btn-delete-entry {
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      color: var(--danger);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .historique-item .actions-historique .btn-delete-entry:hover {
+      background: var(--danger);
+      color: white;
+      transform: scale(1.02);
     }
 
     .historique-empty {
@@ -994,6 +1029,11 @@
         flex-wrap: wrap;
         gap: 8px;
       }
+
+      .historique-item .actions-historique {
+        width: 100%;
+        justify-content: flex-end;
+      }
     }
 
     @media (max-width: 380px) {
@@ -1068,10 +1108,7 @@
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
-      
-      <!-- Nouveau bouton Historique - visible uniquement par le propriétaire -->
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
-      
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
@@ -1161,7 +1198,7 @@
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
       <h2>Historique des modifications</h2>
-      <p class="subtitle">Consultez toutes les modifications effectuées sur l'arbre généalogique.</p>
+      <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
       
       <div id="historiqueList" class="historique-list">
         <!-- Les entrées de l'historique seront générées ici -->
@@ -1348,6 +1385,16 @@
       }
     }
 
+    async function deleteJournalEntry(entryId) {
+      try {
+        await deleteDoc(doc(db, "journal", entryId));
+        return true;
+      } catch (error) {
+        console.error("Erreur lors de la suppression du journal:", error);
+        return false;
+      }
+    }
+
     // ===== CHARGEMENT DES MOTS DE PASSE =====
     async function loadPasswords() {
       try {
@@ -1399,7 +1446,7 @@
           "   - Modifier des personnes\n" +
           "   - Supprimer des personnes\n" +
           "   - Gerer les mots de passe\n" +
-          "   - Voir l'historique des modifications"
+          "   - Voir et supprimer l'historique"
         );
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
@@ -1535,8 +1582,8 @@
 
         const statusLabel = {
           pending: 'En attente',
-          accepted: '✅ Accepté',
-          rejected: '❌ Annulé'
+          accepted: 'Accepté',
+          rejected: 'Annulé'
         }[entry.status] || entry.status;
 
         const statusClass = entry.status || 'pending';
@@ -1554,12 +1601,32 @@
               <div class="details">${entry.data}</div>
               <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
             </div>
+            <div class="actions-historique">
+              <button class="btn-delete-entry" onclick="deleteHistoriqueEntry('${entry.id}')">🗑️</button>
+            </div>
           </div>
         `;
       });
 
       container.innerHTML = html;
     }
+
+    window.deleteHistoriqueEntry = async function(entryId) {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        alert("Seul le propriétaire peut supprimer des entrées de l'historique.");
+        return;
+      }
+
+      if (confirm("❌ Êtes-vous sûr de vouloir supprimer cette entrée de l'historique ?")) {
+        const success = await deleteJournalEntry(entryId);
+        if (success) {
+          alert("✅ Entrée supprimée de l'historique.");
+          await renderHistorique();
+        } else {
+          alert("❌ Erreur lors de la suppression.");
+        }
+      }
+    };
 
     // ===== MENU HAMBURGER =====
     window.toggleMenu = function() {
