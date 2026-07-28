@@ -44,7 +44,6 @@
       align-items: center;
       padding-bottom: 40px;
       position: relative;
-      /* Image de fond */
       background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&q=80');
       background-size: cover;
       background-position: center;
@@ -52,7 +51,6 @@
       background-repeat: no-repeat;
     }
 
-    /* Overlay pour rendre le fond plus lisible */
     body::before {
       content: '';
       position: fixed;
@@ -111,7 +109,6 @@
       flex-wrap: wrap;
     }
 
-    /* Bouton hamburger - Style vitré iPhone */
     .hamburger-btn {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
@@ -141,7 +138,6 @@
       transform: scale(0.95);
     }
 
-    /* Style pour Google Translate - Vitré */
     #google_translate_element {
       background: rgba(255,255,255,0.1);
       backdrop-filter: blur(20px);
@@ -324,7 +320,7 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - STYLE VITRÉ IPHONE (en dessous des bars) === */
+    /* === MENU HAMBURGER === */
     .hamburger-menu {
       display: none;
       position: absolute;
@@ -372,7 +368,7 @@
       display: flex;
     }
 
-    /* Boutons dans le menu - Style vitré sans couleur */
+    /* Boutons dans le menu - Sans emoji */
     .hamburger-menu .history-btn,
     .hamburger-menu .action-btn,
     .hamburger-menu .auth-btn {
@@ -392,7 +388,7 @@
       justify-content: center;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       letter-spacing: 0.3px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -413,7 +409,7 @@
       transform: scale(0.97);
     }
 
-    /* Suppression des couleurs des boutons spécifiques */
+    /* Suppression des couleurs spécifiques */
     .hamburger-menu .action-btn.add-btn {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(255, 255, 255, 0.08);
@@ -454,14 +450,12 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    /* Séparateur dans le menu */
     .menu-divider {
       border: none;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
       margin: 4px 0;
     }
 
-    /* Statut dans le menu */
     .hamburger-menu .auth-status {
       display: none;
     }
@@ -513,13 +507,7 @@
       display: inline-block;
     }
 
-    .auth-status.editor {
-      background: rgba(52, 152, 219, 0.3);
-      color: #3498db;
-      display: inline-block;
-    }
-
-    /* Modal Styles - Version vitrée */
+    /* Modal Styles */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -796,32 +784,32 @@
       <div id="google_translate_element"></div>
     </div>
     
-    <!-- Menu hamburger déroulant - Style vitré (en dessous des bars) -->
+    <!-- Menu hamburger - Sans emoji -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       <hr class="menu-divider">
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
-      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
-      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
-      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
+      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
+      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
+      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
+      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">⚙️ Admin</button>
       <hr class="menu-divider">
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
+      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
+      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
     </div>
   </header>
 
   <div id="breadcrumb" class="breadcrumb"></div>
 
   <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="searchPerson()">
-  <button id="backBtn" onclick="goBack()">⬅ Retour à l'accueil</button>
+  <button id="backBtn" onclick="goBack()">Retour</button>
   <div id="tree"></div>
 
   <!-- History Modal -->
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
-      <h2>📖 L'histoire des fils Gaïda</h2>
+      <h2>Histoire</h2>
       <p>
         La lignée des <strong>fils Gaïda</strong> est une famille dont les racines plongent 
         au cœur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
@@ -843,14 +831,14 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">&times;</button>
-      <h2>🔑 Connexion</h2>
+      <h2>Connexion</h2>
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
-          <label for="authPassword">Entrez le mot de passe</label>
-          <input type="password" id="authPassword" required placeholder="Mot de passe...">
+          <label for="authPassword">Mot de passe</label>
+          <input type="password" id="authPassword" required placeholder="Entrez le mot de passe...">
           <div class="password-hint">Contactez l'administrateur pour obtenir le mot de passe.</div>
         </div>
-        <div class="auth-error" id="authError">❌ Mot de passe incorrect</div>
+        <div class="auth-error" id="authError">Mot de passe incorrect</div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeAuthModal()">Annuler</button>
           <button type="submit" class="btn-submit">Se connecter</button>
@@ -863,21 +851,21 @@
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">&times;</button>
-      <h2>⚙️ Gestion des mots de passe</h2>
+      <h2>⚙️ Admin - Gestion des mots de passe</h2>
       <p style="color: var(--text-light); margin-bottom: 20px;">
         Gérez les mots de passe pour chaque rôle.
       </p>
       
       <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
-          <label for="adminPassword">👑 Mot de passe Administrateur</label>
+          <label for="adminPassword">Mot de passe Administrateur</label>
           <input type="text" id="adminPassword" placeholder="Nouveau mot de passe admin">
           <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
             Actuel : <strong id="currentAdminPass">••••••••</strong>
           </div>
         </div>
         <div class="form-group">
-          <label for="editorPassword">✏️ Mot de passe Éditeur</label>
+          <label for="editorPassword">Mot de passe Éditeur</label>
           <input type="text" id="editorPassword" placeholder="Nouveau mot de passe éditeur">
           <div style="font-size: 12px; color: var(--text-light); margin-top: 5px;">
             Actuel : <strong id="currentEditorPass">••••••••</strong>
@@ -885,7 +873,7 @@
         </div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeAdminModal()">Fermer</button>
-          <button type="submit" class="btn-submit">💾 Mettre à jour</button>
+          <button type="submit" class="btn-submit">Mettre à jour</button>
         </div>
       </form>
     </div>
@@ -895,7 +883,7 @@
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">&times;</button>
-      <h2>➕ Ajouter une personne</h2>
+      <h2>Ajouter une personne</h2>
       <form id="addForm" onsubmit="addPerson(event)">
         <div class="form-group">
           <label for="addName">Nom complet *</label>
@@ -917,7 +905,7 @@
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">&times;</button>
-      <h2>✏️ Modifier une personne</h2>
+      <h2>Modifier une personne</h2>
       <form id="editForm" onsubmit="editPerson(event)">
         <div class="form-group">
           <label for="editName">Nom complet *</label>
@@ -939,7 +927,7 @@
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
-      <h2>🗑️ Supprimer une personne</h2>
+      <h2>Supprimer une personne</h2>
       <p style="text-align: center; font-size: 18px; color: #e74c3c;">
         ⚠️ Êtes-vous sûr de vouloir supprimer <strong id="deleteName"></strong> ?
       </p>
@@ -948,7 +936,7 @@
       </p>
       <div class="form-actions" style="justify-content: center;">
         <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Annuler</button>
-        <button type="button" class="btn-delete-confirm" onclick="confirmDelete()">🗑️ Supprimer</button>
+        <button type="button" class="btn-delete-confirm" onclick="confirmDelete()">Supprimer</button>
       </div>
     </div>
   </div>
@@ -985,7 +973,6 @@
       setDoc
     } from "firebase/firestore";
 
-    // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDh1sYrwm5dTG3ktVHprKzE3Gr7fRmxOzfQ",
       authDomain: "gaway-290bc.firebaseapp.com",
@@ -998,7 +985,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ===== GESTION DES MOTS DE PASSE =====
     let currentUser = null;
     let passwords = {
       admin: "admin123",
@@ -1035,7 +1021,6 @@
       }
     }
 
-    // ===== AUTHENTIFICATION =====
     window.authenticate = async function(e) {
       e.preventDefault();
       const password = document.getElementById("authPassword").value.trim();
@@ -1048,13 +1033,13 @@
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        alert("✅ Connecté en tant qu'Administrateur !");
+        alert("Connecté en tant qu'Administrateur !");
       } else if (password === passwords.editor) {
         currentUser = { role: 'editor' };
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        alert("✅ Connecté en tant qu'Éditeur !");
+        alert("Connecté en tant qu'Éditeur !");
       } else {
         errorEl.classList.add("show");
         setTimeout(() => errorEl.classList.remove("show"), 3000);
@@ -1077,13 +1062,12 @@
       if (currentNode) {
         displayPerson(currentNode);
       }
-      alert("🔒 Déconnecté avec succès.");
+      alert("Déconnecté avec succès.");
     };
 
-    // ===== ADMIN =====
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut gérer les mots de passe.");
+        alert("Seul l'administrateur peut gérer les mots de passe.");
         return;
       }
       document.getElementById("adminModal").classList.add("active");
@@ -1100,7 +1084,7 @@
     window.updatePasswords = async function(e) {
       e.preventDefault();
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut modifier les mots de passe.");
+        alert("Seul l'administrateur peut modifier les mots de passe.");
         return;
       }
 
@@ -1131,11 +1115,10 @@
       const saved = await savePasswords();
       if (saved) {
         closeAdminModal();
-        alert("✅ Les mots de passe ont été mis à jour avec succès !");
+        alert("Les mots de passe ont été mis à jour avec succès !");
       }
     };
 
-    // ===== MENU HAMBURGER =====
     window.toggleMenu = function() {
       const menu = document.getElementById("hamburgerMenu");
       menu.classList.toggle("open");
@@ -1146,7 +1129,6 @@
       menu.classList.remove("open");
     };
 
-    // Fermer le menu en cliquant ailleurs
     document.addEventListener('click', function(event) {
       const menu = document.getElementById("hamburgerMenu");
       const btn = document.querySelector(".hamburger-btn");
@@ -1155,13 +1137,11 @@
       }
     });
 
-    // ===== MISE À JOUR DE L'INTERFACE =====
     function updateUIForAuth() {
       const isAuthenticated = currentUser !== null;
       const isAdmin = isAuthenticated && currentUser.role === 'admin';
       const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
       
-      // Mettre à jour les boutons dans le menu hamburger
       document.getElementById("addBtn").style.display = isEditor ? "flex" : "none";
       document.getElementById("editBtn").style.display = isEditor ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isAdmin ? "flex" : "none";
@@ -1169,13 +1149,11 @@
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
 
-      // Statut dans le header
       const statusEl = document.getElementById("authStatus");
       const menuStatusEl = document.getElementById("menuAuthStatus");
       
       if (isAuthenticated) {
-        const roleText = isAdmin ? "👑 Administrateur" : "✏️ Éditeur";
-        const statusText = `🔓 ${roleText}`;
+        const statusText = isAdmin ? "Admin" : "Éditeur";
         statusEl.textContent = statusText;
         statusEl.className = `auth-status show ${isAdmin ? 'admin' : 'editor'}`;
         menuStatusEl.textContent = statusText;
@@ -1185,7 +1163,7 @@
         statusEl.textContent = "";
         statusEl.className = "auth-status";
         statusEl.style.display = "none";
-        menuStatusEl.textContent = "🔒 Non connecté";
+        menuStatusEl.textContent = "Non connecté";
         menuStatusEl.className = "auth-status show";
         menuStatusEl.style.display = "block";
         menuStatusEl.style.textAlign = "center";
@@ -1201,7 +1179,6 @@
       }
     }
 
-    // ===== DONNÉES FAMILLE =====
     let family = null;
     let history = [];
     let currentPath = [];
@@ -1282,7 +1259,6 @@
       const isAdmin = isAuthenticated && currentUser.role === 'admin';
       const isEditor = isAuthenticated && (currentUser.role === 'admin' || currentUser.role === 'editor');
 
-      // Mettre à jour les boutons dans le menu
       document.getElementById("addBtn").style.display = isEditor ? "flex" : "none";
       document.getElementById("editBtn").style.display = isEditor ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isAdmin ? "flex" : "none";
@@ -1336,7 +1312,6 @@
       breadcrumbEl.style.display = "none";
       mainHeader.textContent = "🌳 Les fils Gaïda";
       
-      // Cacher les boutons d'édition dans le menu
       document.getElementById("editBtn").style.display = "none";
       document.getElementById("deleteBtn").style.display = "none";
 
@@ -1362,7 +1337,6 @@
       treeEl.appendChild(div);
     }
 
-    // Retour à l'étape précédente
     window.goBack = function() {
       if (history.length) {
         const prev = history.pop();
@@ -1421,10 +1395,9 @@
       }
     };
 
-    // ===== AJOUTER =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -1439,7 +1412,7 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("🔒 Vous n'avez pas les permissions pour ajouter des personnes.");
+        alert("Vous n'avez pas les permissions pour ajouter des personnes.");
         return;
       }
 
@@ -1480,17 +1453,16 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`✅ "${name}" a été ajouté avec succès !`);
+        alert(`"${name}" a été ajouté avec succès !`);
       }
     };
 
-    // ===== MODIFIER =====
     let editingPerson = null;
     let editingParent = null;
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("🔒 Vous n'avez pas les permissions pour modifier.");
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1519,7 +1491,7 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'editor')) {
-        alert("🔒 Vous n'avez pas les permissions pour modifier.");
+        alert("Vous n'avez pas les permissions pour modifier.");
         return;
       }
 
@@ -1559,17 +1531,16 @@
         } else {
           displayPerson(currentNode);
         }
-        alert(`✅ "${oldName}" a été modifié en "${name}" avec succès !`);
+        alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
       }
     };
 
-    // ===== SUPPRIMER =====
     let deletingPerson = null;
     let deletingParent = null;
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut supprimer des données.");
+        alert("Seul l'administrateur peut supprimer des données.");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -1596,7 +1567,7 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'admin') {
-        alert("🔒 Seul l'administrateur peut supprimer des données.");
+        alert("Seul l'administrateur peut supprimer des données.");
         return;
       }
       if (!deletingPerson || !deletingParent) {
@@ -1623,11 +1594,10 @@
         } else {
           displayRoot();
         }
-        alert(`🗑️ "${nameToDelete}" a été supprimé avec succès !`);
+        alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
     };
 
-    // ===== HISTOIRE =====
     window.openHistoryModal = function() {
       document.getElementById("historyModal").classList.add("active");
     };
@@ -1636,7 +1606,6 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
-    // ===== INITIALISATION =====
     async function init() {
       await loadPasswords();
       await chargerfamille();
