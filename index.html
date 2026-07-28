@@ -313,47 +313,48 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER === */
+    /* === MENU HAMBURGER - STYLE CENTRÉ === */
     .hamburger-menu {
       display: none;
       position: absolute;
       top: 100%;
-      left: 8px;
-      right: 8px;
+      left: 50%;
+      transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
-      border-radius: 14px;
-      padding: 10px 14px 14px 14px;
+      border-radius: 16px;
+      padding: 12px 18px 16px 18px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.1);
       flex-direction: column;
       gap: 4px;
       z-index: 200;
-      margin-top: 4px;
+      margin-top: 6px;
       animation: slideDown 0.25s ease;
+      min-width: 240px;
       max-width: 320px;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     @media (max-width: 480px) {
       .hamburger-menu {
-        left: 6px;
-        right: 6px;
-        padding: 8px 10px 12px 10px;
-        max-width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 14px 14px 14px;
+        min-width: 200px;
+        max-width: 90%;
+        border-radius: 14px;
       }
     }
 
     @keyframes slideDown {
       from {
         opacity: 0;
-        transform: translateY(-8px) scale(0.97);
+        transform: translateX(-50%) translateY(-10px) scale(0.97);
       }
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateX(-50%) translateY(0) scale(1);
       }
     }
 
@@ -361,25 +362,27 @@
       display: flex;
     }
 
+    /* Boutons dans le menu - Centrés */
     .hamburger-menu .history-btn,
     .hamburger-menu .action-btn,
     .hamburger-menu .auth-btn {
       background: transparent;
       border: none;
       color: #1a1a1a;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border-radius: 10px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
       transition: all 0.15s ease;
       width: 100%;
-      justify-content: flex-start;
+      justify-content: center;
       display: flex;
       align-items: center;
       gap: 8px;
       letter-spacing: 0.2px;
+      text-align: center;
     }
 
     .hamburger-menu .history-btn:hover,
@@ -433,10 +436,10 @@
     .menu-divider {
       border: none;
       border-top: 1px solid rgba(0, 0, 0, 0.06);
-      margin: 3px 0;
+      margin: 4px 0;
     }
 
-    /* Traduction dans le menu */
+    /* Traduction dans le menu - Centrée */
     .hamburger-menu .translate-container {
       width: 100%;
       padding: 4px 0;
@@ -452,9 +455,9 @@
       padding: 3px 8px;
       border: 1px solid rgba(0, 0, 0, 0.06);
       display: inline-block;
-      min-width: 140px;
+      min-width: 160px;
       width: 100%;
-      max-width: 200px;
+      max-width: 220px;
       box-shadow: none;
     }
 
@@ -471,9 +474,10 @@
       border: 1px solid rgba(0, 0, 0, 0.08) !important;
       font-size: 12px !important;
       cursor: pointer !important;
-      min-width: 100px !important;
+      min-width: 120px !important;
       width: 100% !important;
       box-shadow: none !important;
+      text-align: center !important;
     }
     .hamburger-menu .translate-container .goog-te-gadget .goog-te-combo:focus {
       outline: 2px solid rgba(142, 68, 173, 0.3) !important;
@@ -482,7 +486,7 @@
       display: none !important;
     }
 
-    /* Statut dans le menu */
+    /* Statut dans le menu - Centré */
     .hamburger-menu .auth-status {
       display: none;
     }
@@ -492,7 +496,7 @@
       text-align: center;
       padding: 6px 10px;
       margin-bottom: 4px;
-      font-size: 12px;
+      font-size: 13px;
       color: #1a1a1a;
       background: rgba(0, 0, 0, 0.03);
       border-radius: 10px;
@@ -996,23 +1000,23 @@
       }
 
       .hamburger-menu {
-        padding: 8px 10px 10px 10px;
-        left: 6px;
-        right: 6px;
-        border-radius: 12px;
+        padding: 10px 14px 14px 14px;
+        min-width: 200px;
+        max-width: 90%;
+        border-radius: 14px;
       }
 
       .hamburger-menu .history-btn,
       .hamburger-menu .action-btn,
       .hamburger-menu .auth-btn {
-        padding: 6px 10px;
-        font-size: 12px;
+        padding: 6px 12px;
+        font-size: 13px;
         border-radius: 8px;
       }
 
       .hamburger-menu .translate-container #google_translate_element {
-        min-width: 100px;
-        max-width: 160px;
+        min-width: 120px;
+        max-width: 180px;
       }
 
       .form-actions button {
@@ -1048,8 +1052,8 @@
       }
 
       .hamburger-menu .translate-container #google_translate_element {
-        min-width: 80px;
-        max-width: 130px;
+        min-width: 100px;
+        max-width: 150px;
       }
 
       .modal-content {
@@ -1093,25 +1097,25 @@
       <span class="auth-status" id="authStatus"></span>
     </div>
     
-    <!-- Menu hamburger -->
+    <!-- Menu hamburger - Centré -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
-      <!-- Traduction dans le menu -->
+      <!-- Traduction dans le menu - Centrée -->
       <div class="translate-container">
         <div id="google_translate_element"></div>
       </div>
       
       <hr class="menu-divider">
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
-      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
-      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
-      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Propriétaire</button>
-      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
+      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
+      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
+      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
+      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
+      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
       <hr class="menu-divider">
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion</button>
+      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
+      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
     </div>
   </header>
 
@@ -1193,7 +1197,7 @@
     </div>
   </div>
 
-  <!-- Historique Modal - Consultation uniquement -->
+  <!-- Historique Modal -->
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
