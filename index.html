@@ -313,17 +313,17 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - STYLE CENTRÉ AVEC TRÈS FORT DÉCALAGE GAUCHE === */
+    /* === MENU HAMBURGER - COLLÉ AU MUR GAUCHE === */
     .hamburger-menu {
       display: none;
       position: absolute;
       top: 100%;
-      left: 50%;
-      transform: translateX(-90%);
+      left: 0;
+      transform: none;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
-      border-radius: 16px;
+      border-radius: 0 16px 16px 0;
       padding: 12px 18px 16px 18px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -338,23 +338,23 @@
 
     @media (max-width: 480px) {
       .hamburger-menu {
-        left: 50%;
-        transform: translateX(-95%);
+        left: 0;
+        transform: none;
         padding: 10px 14px 14px 14px;
         min-width: 200px;
-        max-width: 90%;
-        border-radius: 14px;
+        max-width: 85%;
+        border-radius: 0 14px 14px 0;
       }
     }
 
     @keyframes slideDown {
       from {
         opacity: 0;
-        transform: translateX(-90%) translateY(-10px) scale(0.97);
+        transform: translateY(-10px) scale(0.97);
       }
       to {
         opacity: 1;
-        transform: translateX(-90%) translateY(0) scale(1);
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -1002,8 +1002,8 @@
       .hamburger-menu {
         padding: 10px 14px 14px 14px;
         min-width: 200px;
-        max-width: 90%;
-        border-radius: 14px;
+        max-width: 85%;
+        border-radius: 0 14px 14px 0;
       }
 
       .hamburger-menu .history-btn,
@@ -1097,7 +1097,7 @@
       <span class="auth-status" id="authStatus"></span>
     </div>
     
-    <!-- Menu hamburger - Centré avec décalage gauche -->
+    <!-- Menu hamburger - Collé au mur gauche -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
