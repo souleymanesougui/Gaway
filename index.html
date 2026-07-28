@@ -26,13 +26,8 @@
       --accent: #8E44AD;
       --light: #ECF0F1;
       --dark: #2C3E50;
-      --background: linear-gradient(135deg, #F8F9FA, #E9ECEF, #F8F9FA);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
       --text-dark: #2C3E50;
       --text-light: #7F8C8D;
-      --success: #27ae60;
-      --danger: #e74c3c;
     }
 
     * {
@@ -43,18 +38,38 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--background);
-      color: var(--text-dark);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
       padding-bottom: 40px;
       position: relative;
+      /* Image de fond */
+      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+
+    /* Overlay pour rendre le fond plus lisible */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: -1;
     }
 
     header {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: rgba(44, 62, 80, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       width: 100%;
       padding: 12px 15px;
       display: flex;
@@ -62,10 +77,11 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.2);
       position: relative;
       min-height: 60px;
       z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .header-left {
@@ -82,8 +98,8 @@
       font-size: clamp(16px, 4vw, 28px);
       font-weight: 600;
       letter-spacing: 1px;
-      color: var(--light);
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
       min-width: 120px;
     }
 
@@ -97,10 +113,10 @@
 
     /* Bouton hamburger - Style vitré iPhone */
     .hamburger-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       padding: 8px 14px;
       border-radius: 12px;
@@ -112,11 +128,11 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     }
 
     .hamburger-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.25);
       transform: scale(1.02);
       border-color: rgba(255, 255, 255, 0.3);
     }
@@ -135,7 +151,7 @@
       border: 1px solid rgba(255,255,255,0.15);
       display: inline-block;
       min-width: 100px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .goog-te-gadget {
@@ -171,16 +187,19 @@
     }
 
     .breadcrumb {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: rgba(44, 62, 80, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       width: 100%;
       padding: 12px 15px;
       font-size: clamp(13px, 3vw, 16px);
-      color: var(--light);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      color: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       margin-bottom: 10px;
       text-align: center;
       word-wrap: break-word;
       display: none;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
 
     .breadcrumb span {
@@ -197,11 +216,11 @@
       border: none;
       border-radius: 50px;
       outline: none;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       color: var(--text-dark);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.3);
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%238E44AD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
       background-repeat: no-repeat;
@@ -212,7 +231,7 @@
 
     #searchBox:focus {
       border-color: rgba(142, 68, 173, 0.3);
-      box-shadow: 0 8px 32px rgba(142, 68, 173, 0.1);
+      box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
     }
 
     #tree {
@@ -229,19 +248,23 @@
       text-align: center;
       cursor: pointer;
       padding: 12px;
-      border-radius: 15px;
-      background: var(--card-bg);
-      box-shadow: var(--shadow);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
       width: calc(50% - 20px);
       min-width: 140px;
       max-width: 200px;
       position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .person:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(44, 62, 80, 0.2);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .person img {
@@ -283,45 +306,65 @@
       border: none;
       border-radius: 50px;
       outline: none;
-      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      background: rgba(44, 62, 80, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: white;
-      box-shadow: var(--shadow);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       cursor: pointer;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       font-weight: 600;
       letter-spacing: 0.5px;
       display: none;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* === MENU HAMBURGER - STYLE VITRÉ IPHONE === */
+    #backBtn:hover {
+      background: rgba(44, 62, 80, 0.95);
+      transform: translateY(-2px);
+    }
+
+    /* === MENU HAMBURGER - STYLE VITRÉ IPHONE (en dessous des bars) === */
     .hamburger-menu {
       display: none;
       position: absolute;
       top: 100%;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.08);
+      left: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
-      border-radius: 0 0 20px 20px;
-      padding: 15px 20px 20px 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 15px 18px 20px 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       z-index: 200;
-      margin-top: 0;
+      margin-top: 5px;
       animation: slideDown 0.3s ease;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (max-width: 480px) {
+      .hamburger-menu {
+        left: 8px;
+        right: 8px;
+        padding: 12px 14px 16px 14px;
+        max-width: 100%;
+      }
     }
 
     @keyframes slideDown {
       from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-10px) scale(0.98);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -337,7 +380,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.95);
       padding: 12px 18px;
       border-radius: 14px;
       font-size: 15px;
@@ -440,13 +483,13 @@
     }
 
     .hamburger-menu .auth-status.admin {
-      background: rgba(46, 204, 113, 0.1);
+      background: rgba(46, 204, 113, 0.15);
       border-color: rgba(46, 204, 113, 0.1);
       color: #2ecc71;
     }
 
     .hamburger-menu .auth-status.editor {
-      background: rgba(52, 152, 219, 0.1);
+      background: rgba(52, 152, 219, 0.15);
       border-color: rgba(52, 152, 219, 0.1);
       color: #3498db;
     }
@@ -702,7 +745,9 @@
       }
 
       .hamburger-menu {
-        padding: 12px 15px 16px 15px;
+        padding: 12px 14px 16px 14px;
+        left: 8px;
+        right: 8px;
       }
 
       .hamburger-menu .history-btn,
@@ -751,7 +796,7 @@
       <div id="google_translate_element"></div>
     </div>
     
-    <!-- Menu hamburger déroulant - Style vitré -->
+    <!-- Menu hamburger déroulant - Style vitré (en dessous des bars) -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       <hr class="menu-divider">
