@@ -98,14 +98,16 @@
     }
 
     [data-theme="dark"] .form-group input,
-    [data-theme="dark"] .form-group select {
+    [data-theme="dark"] .form-group select,
+    [data-theme="dark"] .form-group textarea {
       background: rgba(20, 20, 40, 0.8);
       color: #ecf0f1;
       border: 1.5px solid rgba(255, 255, 255, 0.05);
     }
 
     [data-theme="dark"] .form-group input:focus,
-    [data-theme="dark"] .form-group select:focus {
+    [data-theme="dark"] .form-group select:focus,
+    [data-theme="dark"] .form-group textarea:focus {
       border-color: var(--accent);
       background: rgba(30, 30, 50, 0.9);
     }
@@ -143,6 +145,15 @@
       background: rgba(30, 30, 50, 0.95);
       color: #ecf0f1;
       border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .stat-card .stat-label {
+      color: #95a5a6;
     }
 
     /* === TOASTS === */
@@ -815,6 +826,10 @@
       max-width: 500px;
     }
 
+    .modal-content.stats-modal {
+      max-width: 400px;
+    }
+
     @keyframes modalSlide {
       from {
         opacity: 0;
@@ -879,6 +894,7 @@
       font-weight: 400;
     }
 
+    /* === FORMULAIRES === */
     .form-group {
       margin-bottom: 18px;
     }
@@ -994,6 +1010,10 @@
       background: #c0392b;
       transform: translateY(-2px);
       box-shadow: 0 8px 28px rgba(231, 76, 60, 0.3);
+    }
+
+    .form-actions .btn-delete-confirm:active {
+      transform: translateY(0px);
     }
 
     /* === HISTORIQUE === */
@@ -1146,31 +1166,28 @@
     }
 
     /* === STATISTIQUES === */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-      margin: 16px 0;
-    }
-
-    .stat-card {
-      background: rgba(0, 0, 0, 0.03);
-      border-radius: 12px;
-      padding: 14px;
+    .stats-simple {
       text-align: center;
-      border: 1px solid rgba(0, 0, 0, 0.04);
+      padding: 20px 0;
     }
 
-    .stat-card .stat-number {
-      font-size: 24px;
+    .stats-simple .stat-number-big {
+      font-size: 64px;
       font-weight: 700;
       color: var(--accent);
+      line-height: 1;
     }
 
-    .stat-card .stat-label {
-      font-size: 12px;
+    .stats-simple .stat-label-big {
+      font-size: 18px;
       color: var(--text-light);
-      margin-top: 4px;
+      margin-top: 8px;
+    }
+
+    .stats-simple .stat-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+      display: block;
     }
 
     /* === DETAIL PERSONNE === */
@@ -1292,8 +1309,8 @@
         top: 70px;
       }
 
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .stats-simple .stat-number-big {
+        font-size: 48px;
       }
     }
 
@@ -1369,7 +1386,7 @@
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
-      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn" style="display:none;">📊 Statistiques</button>
+      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
       <hr class="menu-divider">
       <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
       <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
@@ -1411,30 +1428,17 @@
     </div>
   </div>
 
-  <!-- Stats Modal -->
+  <!-- Stats Modal (SIMPLIFIÉ - visible par tout le monde) -->
   <div class="modal-overlay" id="statsModal">
-    <div class="modal-content">
+    <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
       <h2>📊 Statistiques</h2>
-      <p class="subtitle">Aperçu de l'arbre généalogique</p>
+      <p class="subtitle">Nombre total de personnes dans l'arbre</p>
       
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-card">
-          <div class="stat-number" id="statTotal">0</div>
-          <div class="stat-label">Total personnes</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statGenerations">0</div>
-          <div class="stat-label">Générations</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statRoots">0</div>
-          <div class="stat-label">Branches principales</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statMaxChildren">0</div>
-          <div class="stat-label">Max enfants</div>
-        </div>
+      <div class="stats-simple">
+        <span class="stat-icon">👤</span>
+        <div class="stat-number-big" id="statTotal">0</div>
+        <div class="stat-label-big">personnes dans l'arbre</div>
       </div>
       
       <div class="form-actions">
@@ -1508,7 +1512,7 @@
     </div>
   </div>
 
-  <!-- Add Person Modal -->
+  <!-- Add Person Modal (SANS le champ photo) -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">✕</button>
@@ -1517,10 +1521,6 @@
         <div class="form-group">
           <label for="addName">Nom complet *</label>
           <input type="text" id="addName" required placeholder="Entrez le nom complet">
-        </div>
-        <div class="form-group">
-          <label for="addPhoto">Photo (nom du fichier)</label>
-          <input type="text" id="addPhoto" placeholder="ex: nom.jpg">
         </div>
         <div class="form-group">
           <label for="addBirth">Date de naissance</label>
@@ -1538,7 +1538,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal -->
+  <!-- Edit Person Modal (SANS le champ photo) -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1547,10 +1547,6 @@
         <div class="form-group">
           <label for="editName">Nom complet *</label>
           <input type="text" id="editName" required placeholder="Entrez le nom complet">
-        </div>
-        <div class="form-group">
-          <label for="editPhoto">Photo (nom du fichier)</label>
-          <input type="text" id="editPhoto" placeholder="ex: nom.jpg">
         </div>
         <div class="form-group">
           <label for="editBirth">Date de naissance</label>
@@ -1899,7 +1895,7 @@
       }
     };
 
-    // ===== STATISTIQUES =====
+    // ===== STATISTIQUES (SIMPLIFIÉES) =====
     window.openStatsModal = function() {
       if (!family) {
         showToast("Les données ne sont pas encore chargées", "warning");
@@ -1923,37 +1919,9 @@
       return count;
     }
 
-    function getMaxDepth(node, depth = 1) {
-      if (!node.children || node.children.length === 0) return depth;
-      let max = depth;
-      for (const child of node.children) {
-        const d = getMaxDepth(child, depth + 1);
-        if (d > max) max = d;
-      }
-      return max;
-    }
-
-    function getMaxChildren(node) {
-      let max = node.children ? node.children.length : 0;
-      if (node.children) {
-        for (const child of node.children) {
-          const m = getMaxChildren(child);
-          if (m > max) max = m;
-        }
-      }
-      return max;
-    }
-
     function calculateStats() {
       const total = countNodes(family);
-      const generations = getMaxDepth(family);
-      const maxChildren = getMaxChildren(family);
-      const roots = family.children ? family.children.length : 0;
-      
       document.getElementById('statTotal').textContent = total;
-      document.getElementById('statGenerations').textContent = generations;
-      document.getElementById('statRoots').textContent = roots;
-      document.getElementById('statMaxChildren').textContent = maxChildren;
     }
 
     // ===== HISTORIQUE =====
@@ -2055,7 +2023,9 @@
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
-      document.getElementById("statsBtn").style.display = isAuthenticated ? "flex" : "none";
+      
+      // Statistiques : visible par tout le monde
+      document.getElementById("statsBtn").style.display = "flex";
       
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
       document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
@@ -2182,7 +2152,7 @@
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
-      document.getElementById("statsBtn").style.display = isAuthenticated ? "flex" : "none";
+      document.getElementById("statsBtn").style.display = "flex";
 
       if (!person.children || person.children.length === 0) {
         treeEl.innerHTML = "<p>📭 La liste des enfants n'est pas encore complète.</p>";
@@ -2208,7 +2178,6 @@
           displayPerson(child);
         };
 
-        // Double-click pour voir les détails
         div.ondblclick = (e) => {
           e.stopPropagation();
           openPersonDetail(child);
@@ -2226,7 +2195,6 @@
         div.appendChild(img);
         div.appendChild(name);
 
-        // Badge nombre d'enfants
         if (child.children && child.children.length > 0) {
           const badge = document.createElement("span");
           badge.className = "badge-count";
@@ -2250,6 +2218,7 @@
       
       document.getElementById("editBtn").style.display = "none";
       document.getElementById("deleteBtn").style.display = "none";
+      document.getElementById("statsBtn").style.display = "flex";
 
       if (!family) return;
 
@@ -2393,7 +2362,6 @@
       }
     });
 
-    // Keyboard shortcut: Ctrl+F or Cmd+F
     document.addEventListener('keydown', function(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
@@ -2425,7 +2393,7 @@
       document.getElementById("personDetailModal").classList.remove("active");
     };
 
-    // ===== ADD PERSON =====
+    // ===== ADD PERSON (SANS PHOTO) =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
         showToast("Vous n'avez pas les permissions pour ajouter", "error");
@@ -2433,7 +2401,6 @@
       }
       document.getElementById("addModal").classList.add("active");
       document.getElementById("addName").value = "";
-      document.getElementById("addPhoto").value = "";
       document.getElementById("addBirth").value = "";
       document.getElementById("addBio").value = "";
     };
@@ -2450,7 +2417,6 @@
       }
 
       const name = document.getElementById("addName").value.trim();
-      const photo = document.getElementById("addPhoto").value.trim();
       const birth = document.getElementById("addBirth").value;
       const bio = document.getElementById("addBio").value.trim();
 
@@ -2471,7 +2437,7 @@
 
       const newPerson = {
         name,
-        photo: photo || "",
+        photo: "",
         birth: birth || "",
         bio: bio || "",
         children: []
@@ -2494,7 +2460,7 @@
       }
     };
 
-    // ===== EDIT PERSON =====
+    // ===== EDIT PERSON (SANS PHOTO) =====
     let editingPerson = null;
     let editingParent = null;
 
@@ -2513,7 +2479,6 @@
         editingPerson = result.node;
         editingParent = result.parent;
         document.getElementById("editName").value = editingPerson.name;
-        document.getElementById("editPhoto").value = editingPerson.photo || "";
         document.getElementById("editBirth").value = editingPerson.birth || "";
         document.getElementById("editBio").value = editingPerson.bio || "";
         document.getElementById("editModal").classList.add("active");
@@ -2536,7 +2501,6 @@
       }
 
       const name = document.getElementById("editName").value.trim();
-      const photo = document.getElementById("editPhoto").value.trim();
       const birth = document.getElementById("editBirth").value;
       const bio = document.getElementById("editBio").value.trim();
 
@@ -2559,7 +2523,6 @@
 
       const oldName = editingPerson.name;
       editingPerson.name = name;
-      editingPerson.photo = photo || "";
       editingPerson.birth = birth || "";
       editingPerson.bio = bio || "";
 
@@ -2668,7 +2631,6 @@
       buildNameIndex();
       updateUIForAuth();
       
-      // Afficher un toast de bienvenue
       setTimeout(() => {
         showToast("Bienvenue sur l'arbre généalogique des fils Gaïda 🌳", "info", 4000);
       }, 500);
@@ -2676,10 +2638,10 @@
 
     init();
 
-    // Exposer les fonctions globales
     window.findNodeWithParent = findNodeWithParent;
     window.findPathToNode = findPathToNode;
     window.buildNameIndex = buildNameIndex;
+    window.countNodes = countNodes;
 
   </script>
 </body>
