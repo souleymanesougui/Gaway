@@ -103,7 +103,6 @@
       white-space: nowrap;
       overflow: visible;
       padding: 0 5px;
-      /* Décalage léger vers la droite pour équilibre */
       transform: translateX(5px);
     }
 
@@ -113,7 +112,7 @@
       gap: 6px;
       flex-shrink: 0;
       flex-wrap: nowrap;
-      min-width: 100px;
+      min-width: 50px;
       justify-content: flex-end;
     }
 
@@ -147,49 +146,24 @@
       transform: scale(0.95);
     }
 
-    #google_translate_element {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 30px;
-      padding: 2px 6px;
-      border: 1px solid rgba(255,255,255,0.15);
-      display: inline-block;
-      min-width: 80px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .auth-status {
+      color: rgba(255,255,255,0.8);
+      font-size: clamp(10px, 1.5vw, 12px);
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.2);
+      display: none;
       flex-shrink: 0;
     }
 
-    .goog-te-gadget {
-      color: transparent !important;
+    .auth-status.show {
+      display: inline-block;
     }
-    .goog-te-gadget .goog-te-combo {
-      color: #333 !important;
-      background: rgba(255, 255, 255, 0.9) !important;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 20px !important;
-      padding: 3px 8px !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      font-size: 12px !important;
-      cursor: pointer !important;
-      min-width: 90px !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-    }
-    .goog-te-gadget .goog-te-combo:focus {
-      outline: 2px solid rgba(142, 68, 173, 0.3) !important;
-    }
-    .goog-te-gadget img {
-      display: none !important;
-    }
-    .goog-te-banner-frame {
-      display: none !important;
-    }
-    #goog-gt-tt {
-      display: none !important;
-    }
-    .goog-tooltip {
-      display: none !important;
+
+    .auth-status.admin {
+      background: rgba(46, 204, 113, 0.3);
+      color: #2ecc71;
+      display: inline-block;
     }
 
     .breadcrumb {
@@ -330,7 +304,7 @@
       transform: translateY(-2px);
     }
 
-    /* === MENU HAMBURGER - Plus petit et compact === */
+    /* === MENU HAMBURGER - Avec traduction === */
     .hamburger-menu {
       display: none;
       position: absolute;
@@ -413,7 +387,6 @@
       background: rgba(0, 0, 0, 0.08);
     }
 
-    /* Suppression des couleurs spécifiques */
     .hamburger-menu .action-btn.add-btn {
       background: transparent;
     }
@@ -455,6 +428,52 @@
       margin: 3px 0;
     }
 
+    /* Style de la traduction dans le menu */
+    .hamburger-menu .translate-container {
+      width: 100%;
+      padding: 4px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hamburger-menu .translate-container #google_translate_element {
+      background: rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 3px 8px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: inline-block;
+      min-width: 140px;
+      width: 100%;
+      max-width: 200px;
+      box-shadow: none;
+    }
+
+    .hamburger-menu .translate-container .goog-te-gadget {
+      color: transparent !important;
+    }
+    .hamburger-menu .translate-container .goog-te-gadget .goog-te-combo {
+      color: #1a1a1a !important;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-radius: 20px !important;
+      padding: 4px 10px !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      font-size: 12px !important;
+      cursor: pointer !important;
+      min-width: 100px !important;
+      width: 100% !important;
+      box-shadow: none !important;
+    }
+    .hamburger-menu .translate-container .goog-te-gadget .goog-te-combo:focus {
+      outline: 2px solid rgba(142, 68, 173, 0.3) !important;
+    }
+    .hamburger-menu .translate-container .goog-te-gadget img {
+      display: none !important;
+    }
+
     /* Statut dans le menu - Noir */
     .hamburger-menu .auth-status {
       display: none;
@@ -484,26 +503,6 @@
       background: rgba(52, 152, 219, 0.08);
       border-color: rgba(52, 152, 219, 0.1);
       color: #3498db;
-    }
-
-    .auth-status {
-      color: rgba(255,255,255,0.8);
-      font-size: clamp(10px, 1.5vw, 12px);
-      padding: 3px 8px;
-      border-radius: 20px;
-      background: rgba(0,0,0,0.2);
-      display: none;
-      flex-shrink: 0;
-    }
-
-    .auth-status.show {
-      display: inline-block;
-    }
-
-    .auth-status.admin {
-      background: rgba(46, 204, 113, 0.3);
-      color: #2ecc71;
-      display: inline-block;
     }
 
     /* Modal Styles */
@@ -714,12 +713,7 @@
       }
 
       .header-right {
-        min-width: 70px;
-      }
-
-      #google_translate_element {
-        min-width: 70px;
-        padding: 2px 4px;
+        min-width: 40px;
       }
 
       #tree {
@@ -746,6 +740,11 @@
         font-size: 12px;
         border-radius: 8px;
       }
+
+      .hamburger-menu .translate-container #google_translate_element {
+        min-width: 100px;
+        max-width: 160px;
+      }
     }
 
     @media (max-width: 380px) {
@@ -757,6 +756,11 @@
       .hamburger-btn {
         padding: 4px 10px;
         font-size: 17px;
+      }
+
+      .hamburger-menu .translate-container #google_translate_element {
+        min-width: 80px;
+        max-width: 130px;
       }
     }
 
@@ -794,12 +798,17 @@
     <div class="header-center" id="mainHeader">🌳 Les fils Gaïda</div>
     <div class="header-right">
       <span class="auth-status" id="authStatus"></span>
-      <div id="google_translate_element"></div>
     </div>
     
-    <!-- Menu hamburger - Compact avec texte noir -->
+    <!-- Menu hamburger avec traduction -->
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
+      
+      <!-- Traduction dans le menu -->
+      <div class="translate-container">
+        <div id="google_translate_element"></div>
+      </div>
+      
       <hr class="menu-divider">
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
