@@ -31,6 +31,7 @@
       --success: #27ae60;
       --warning: #f39c12;
       --danger: #e74c3c;
+      --google-blue: #4285F4;
     }
 
     * {
@@ -173,6 +174,16 @@
       background: rgba(52, 152, 219, 0.3);
       color: #3498db;
       display: inline-block;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      object-fit: cover;
+      vertical-align: middle;
+      margin-right: 4px;
     }
 
     .breadcrumb {
@@ -563,6 +574,10 @@
       max-width: 700px;
     }
 
+    .modal-content.auth-modal {
+      max-width: 440px;
+    }
+
     @keyframes modalSlide {
       from {
         opacity: 0;
@@ -752,6 +767,51 @@
     .form-actions .btn-danger:hover {
       background: #c0392b;
       transform: translateY(-2px);
+    }
+
+    /* === GOOGLE LOGIN === */
+    .google-login-container {
+      text-align: center;
+      padding: 10px 0 20px 0;
+    }
+
+    .google-login-container .google-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .google-login-container p {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .g_id_signin {
+      display: flex;
+      justify-content: center;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .auth-divider::before {
+      margin-right: 15px;
+    }
+
+    .auth-divider::after {
+      margin-left: 15px;
     }
 
     /* === HISTORIQUE === */
@@ -1143,20 +1203,44 @@
     </div>
   </div>
 
-  <!-- Auth Modal - Connexion -->
+  <!-- Auth Modal - Connexion avec Google -->
   <div class="modal-overlay" id="authModal">
-    <div class="modal-content">
+    <div class="modal-content auth-modal">
       <button class="modal-close" onclick="closeAuthModal()">✕</button>
       <h2>Connexion</h2>
+      
+      <!-- Connexion avec Google -->
+      <div class="google-login-container">
+        <div class="google-icon">🔑</div>
+        <p>Connectez-vous avec votre compte Google</p>
+        <div id="g_id_onload"
+             data-client_id="1061998444067-5frh87o160d2mohh52qqhh1jgm2p7c21.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-login_uri="https://souleymanesougui.github.io/Gaway/"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+      </div>
+
+      <div class="auth-divider">ou</div>
+
+      <!-- Connexion par mot de passe (pour Admin/Propriétaire) -->
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
-          <label for="authPassword">Mot de passe</label>
-          <input type="password" id="authPassword" required placeholder="Entrez votre mot de passe">
+          <label for="authPassword">Mot de passe (Admin / Propriétaire)</label>
+          <input type="password" id="authPassword" placeholder="Entrez votre mot de passe">
           <div class="password-hint">Contactez le propriétaire pour obtenir le mot de passe.</div>
         </div>
         <div class="auth-error" id="authError">Mot de passe incorrect</div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeAuthModal()">Annuler</button>
           <button type="submit" class="btn-submit">Se connecter</button>
         </div>
       </form>
@@ -1193,7 +1277,7 @@
     </div>
   </div>
 
-  <!-- Historique Modal - Consultation uniquement -->
+  <!-- Historique Modal -->
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
@@ -1303,6 +1387,9 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+  <!-- Google Sign-In Script -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <script type="importmap">
     {
       "imports": {
@@ -1366,13 +1453,14 @@
       }
     }
 
-    async function addJournalEntry(action, type, data, userRole, targetData = null) {
+    async function addJournalEntry(action, type, data, userRole, userEmail = null, targetData = null) {
       try {
         const entry = {
           action: action,
           type: type,
           data: data,
           user: userRole || "admin",
+          userEmail: userEmail || null,
           date: new Date().toISOString(),
           status: "accepted",
           targetData: targetData || null
@@ -1426,7 +1514,79 @@
       }
     }
 
-    // ===== AUTHENTIFICATION =====
+    // ===== GOOGLE SIGN-IN =====
+    window.onGoogleSignIn = function(response) {
+      try {
+        const payload = parseJwt(response.credential);
+        const email = payload.email;
+        const name = payload.name;
+        const picture = payload.picture;
+
+        // Vérifier si l'utilisateur est le propriétaire
+        const isProprietaire = email === "souguisouleymane7@gmail.com";
+
+        // Rôle par défaut pour les utilisateurs Google
+        let role = 'user';
+        let roleDisplay = 'Utilisateur';
+
+        if (isProprietaire) {
+          role = 'proprietaire';
+          roleDisplay = 'Propriétaire';
+          closeAuthModal();
+          currentUser = { role: role, email: email, name: name, picture: picture };
+          updateUIForAuth();
+          alert(`✅ Bienvenue ${name} ! Connecté en tant que ${roleDisplay}.`);
+        } else {
+          // Pour les autres utilisateurs Google, ils ont un accès limité (lecture seule)
+          role = 'user';
+          roleDisplay = 'Visiteur';
+          closeAuthModal();
+          currentUser = { role: role, email: email, name: name, picture: picture };
+          updateUIForAuth();
+          alert(
+            `👋 Bienvenue ${name} !\n\n` +
+            `Vous êtes connecté en tant que VISITEUR.\n\n` +
+            `✅ Vous pouvez :\n` +
+            `   - Visualiser l'arbre généalogique\n` +
+            `   - Rechercher des personnes\n\n` +
+            `❌ Vous ne pouvez pas :\n` +
+            `   - Ajouter des personnes\n` +
+            `   - Modifier des personnes\n` +
+            `   - Supprimer des personnes\n` +
+            `   - Gérer les mots de passe\n\n` +
+            `Contactez le propriétaire pour obtenir plus de droits.`
+          );
+        }
+      } catch (e) {
+        console.error("Erreur de décodage du token:", e);
+        document.getElementById("authError").textContent = "❌ Erreur de connexion. Veuillez réessayer.";
+        document.getElementById("authError").classList.add("show");
+        setTimeout(() => {
+          document.getElementById("authError").classList.remove("show");
+        }, 5000);
+      }
+    };
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function initGoogleSignIn() {
+      if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.initialize({
+          client_id: "1061998444067-5frh87o160d2mohh52qqhh1jgm2p7c21.apps.googleusercontent.com",
+          callback: window.onGoogleSignIn,
+          cancel_on_tap_outside: false
+        });
+      }
+    }
+
+    // ===== AUTHENTIFICATION PAR MOT DE PASSE =====
     window.authenticate = async function(e) {
       e.preventDefault();
       const password = document.getElementById("authPassword").value.trim();
@@ -1435,7 +1595,7 @@
       await loadPasswords();
       
       if (password === passwords.admin) {
-        currentUser = { role: 'proprietaire' };
+        currentUser = { role: 'proprietaire', email: 'proprietaire', name: 'Propriétaire', picture: null };
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
@@ -1449,7 +1609,7 @@
           "   - Voir et supprimer l'historique"
         );
       } else if (password === passwords.editor) {
-        currentUser = { role: 'admin' };
+        currentUser = { role: 'admin', email: 'admin', name: 'Admin', picture: null };
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
@@ -1480,6 +1640,13 @@
     };
 
     window.logout = function() {
+      // Déconnexion Google
+      if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.disableAutoSelect();
+        if (currentUser && currentUser.email && currentUser.email.includes('@')) {
+          google.accounts.id.revoke(currentUser.email, () => {});
+        }
+      }
       currentUser = null;
       updateUIForAuth();
       if (currentNode) {
@@ -1591,6 +1758,8 @@
         const date = new Date(entry.date);
         const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
 
+        const userDisplay = entry.userEmail ? `${entry.user} (${entry.userEmail})` : entry.user;
+
         html += `
           <div class="historique-item ${entry.type}">
             <div class="info">
@@ -1599,7 +1768,7 @@
                 <span class="status-badge ${statusClass}">${statusLabel}</span>
               </div>
               <div class="details">${entry.data}</div>
-              <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
+              <div class="date">${dateStr} · par ${userDisplay || 'admin'}</div>
             </div>
             <div class="actions-historique">
               <button class="btn-delete-entry" onclick="deleteHistoriqueEntry('${entry.id}')">🗑️</button>
@@ -1652,9 +1821,13 @@
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+      const isUser = isAuthenticated && currentUser.role === 'user';
       
-      document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      // Les Admins et Propriétaires peuvent ajouter et modifier
+      document.getElementById("addBtn").style.display = (isAdmin || isProprietaire) ? "flex" : "none";
+      document.getElementById("editBtn").style.display = (isAdmin || isProprietaire) ? "flex" : "none";
+      
+      // Seul le propriétaire peut supprimer et gérer les mots de passe
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       
@@ -1668,11 +1841,30 @@
       const menuStatusEl = document.getElementById("menuAuthStatus");
       
       if (isAuthenticated) {
-        const statusText = isProprietaire ? "Propriétaire" : "Admin";
-        const statusClass = isProprietaire ? "proprietaire" : "admin";
-        statusEl.textContent = statusText;
+        let statusText = "";
+        let statusClass = "";
+        
+        if (isProprietaire) {
+          statusText = "Propriétaire";
+          statusClass = "proprietaire";
+        } else if (isAdmin) {
+          statusText = "Admin";
+          statusClass = "admin";
+        } else {
+          statusText = "Visiteur";
+          statusClass = "user";
+        }
+        
+        // Ajouter l'avatar si disponible
+        const avatarHtml = currentUser.picture ? 
+          `<img src="${currentUser.picture}" class="user-avatar" alt="${currentUser.name}"> ` : "";
+        
+        const displayName = currentUser.name || statusText;
+        
+        statusEl.innerHTML = `${avatarHtml}${displayName} (${statusText})`;
         statusEl.className = `auth-status show ${statusClass}`;
-        menuStatusEl.textContent = statusText;
+        
+        menuStatusEl.innerHTML = `${avatarHtml}${displayName} (${statusText})`;
         menuStatusEl.className = `auth-status show ${statusClass}`;
         menuStatusEl.style.display = "block";
       } else {
@@ -1775,8 +1967,8 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
 
-      document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("addBtn").style.display = (isAdmin || isProprietaire) ? "flex" : "none";
+      document.getElementById("editBtn").style.display = (isAdmin || isProprietaire) ? "flex" : "none";
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -1980,7 +2172,8 @@
         
         // Ajouter à l'historique
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-        await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
+        const userEmail = currentUser.email || null;
+        await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole, userEmail);
         
         alert(`"${name}" a été ajouté avec succès !`);
       }
@@ -2071,7 +2264,8 @@
         
         // Ajouter à l'historique
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
+        const userEmail = currentUser.email || null;
+        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole, userEmail);
         
         alert(`"${oldName}" a été modifié en "${name}" avec succès !`);
       }
@@ -2139,7 +2333,8 @@
         }
         
         // Ajouter à l'historique
-        await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
+        const userEmail = currentUser.email || null;
+        await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire', userEmail);
         
         alert(`"${nameToDelete}" a été supprimé avec succès !`);
       }
@@ -2159,6 +2354,18 @@
       await loadPasswords();
       await chargerfamille();
       await loadJournal();
+      
+      // Initialiser Google Sign-In
+      if (typeof google !== 'undefined' && google.accounts) {
+        initGoogleSignIn();
+      } else {
+        const checkGoogle = setInterval(() => {
+          if (typeof google !== 'undefined' && google.accounts) {
+            initGoogleSignIn();
+            clearInterval(checkGoogle);
+          }
+        }, 500);
+      }
     }
 
     init();
