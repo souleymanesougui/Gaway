@@ -420,9 +420,6 @@
       width: 100%;
     }
 
-    #tree.tree-view { padding: 0; overflow: auto; }
-    #tree.tree-view canvas { width: 100%; height: auto; background: transparent; border-radius: 16px; cursor: pointer; }
-
     .person {
       text-align: center;
       cursor: pointer;
@@ -943,26 +940,21 @@
       
       <hr class="menu-divider">
       
-      <!-- Export/Import -->
-      <button class="action-btn" onclick="exportFamily(); closeMenu();">💾 Exporter l'arbre</button>
-      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();">📥 Importer un arbre</button>
+      <!-- Export/Import : UNIQUEMENT POUR PROPRIÉTAIRE -->
+      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">💾 Exporter l'arbre</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">📥 Importer un arbre</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
+      
       <button class="action-btn" onclick="shareFamily(); closeMenu();">🔗 Partager l'arbre</button>
-      <button class="action-btn" onclick="printFamily(); closeMenu();">🖨️ Imprimer</button>
-      
-      <hr class="menu-divider">
-      
-      <!-- Vue arbre -->
-      <button class="action-btn" onclick="toggleView(); closeMenu();" id="viewToggleBtn">👁️ Vue arbre</button>
       
       <hr class="menu-divider">
       
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
       
-      <!-- Ajout : UNIQUEMENT pour propriétaire ET admin -->
+      <!-- Ajout : propriétaire ET admin -->
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
       
-      <!-- Modification : UNIQUEMENT pour propriétaire ET admin -->
+      <!-- Modification : propriétaire ET admin -->
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
       
       <!-- Suppression : UNIQUEMENT propriétaire -->
@@ -1272,7 +1264,6 @@
     let currentPath = [];
     let currentNode = null;
     let lastDetailPerson = null;
-    let treeViewActive = false;
     let filterType = 'all';
 
     // ===== TOAST SYSTEM =====
@@ -1608,10 +1599,10 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
-      // AJOUT : propriétaire ET admin peuvent ajouter
+      // AJOUT : propriétaire ET admin
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       
-      // MODIFICATION : propriétaire ET admin peuvent modifier
+      // MODIFICATION : propriétaire ET admin
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
       
       // SUPPRESSION : UNIQUEMENT propriétaire
@@ -1622,6 +1613,10 @@
       
       // HISTORIQUE : UNIQUEMENT propriétaire
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      
+      // EXPORT/IMPORT : UNIQUEMENT propriétaire
+      document.getElementById("exportBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("importBtn").style.display = isProprietaire ? "flex" : "none";
       
       document.getElementById("statsBtn").style.display = "flex";
       
@@ -1729,157 +1724,12 @@
       return results;
     }
 
-    // ===== VUE ARBRE =====
-    window.toggleView = function() {
-      treeViewActive = !treeViewActive;
-      const btn = document.getElementById('viewToggleBtn');
-      btn.textContent = treeViewActive ? '🌳 Vue normale' : '👁️ Vue arbre';
-      
-      if (treeViewActive) {
-        drawTreeView();
-      } else {
-        if (currentNode) displayPerson(currentNode);
-        else displayRoot();
-      }
-    };
-
-    function drawTreeView() {
-      const container = document.getElementById('tree');
-      container.innerHTML = '';
-      container.className = 'tree-view';
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(800, window.innerWidth * 0.9);
-      canvas.height = Math.max(600, window.innerHeight * 0.7);
-      container.appendChild(canvas);
-      
-      const ctx = canvas.getContext('2d');
-      const root = family;
-      
-      function getTreeHeight(node) {
-        if (!node.children || node.children.length === 0) return 1;
-        return 1 + Math.max(...node.children.map(getTreeHeight));
-      }
-      
-      function drawNode(node, x, y, level, totalLevels, parentX = null, parentY = null) {
-        const radius = Math.min(35, canvas.width / 20);
-        const spacingX = Math.min(80, canvas.width / 10);
-        const spacingY = Math.min(80, canvas.height / 10);
-        
-        if (parentX !== null && parentY !== null) {
-          ctx.beginPath();
-          ctx.moveTo(parentX, parentY + radius);
-          ctx.lineTo(x, y - radius);
-          ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        }
-        
-        const gradient = ctx.createRadialGradient(x-10, y-10, 0, x, y, radius);
-        const isRoot = node === root;
-        const isSelected = node === currentNode;
-        
-        if (isRoot) {
-          gradient.addColorStop(0, '#8E44AD');
-          gradient.addColorStop(1, '#2C3E50');
-        } else if (isSelected) {
-          gradient.addColorStop(0, '#27ae60');
-          gradient.addColorStop(1, '#2C3E50');
-        } else {
-          gradient.addColorStop(0, '#3498db');
-          gradient.addColorStop(1, '#2C3E50');
-        }
-        
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        ctx.fillStyle = '#fff';
-        ctx.font = `${Math.min(12, radius * 0.4)}px Inter, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        let displayName = node.name;
-        if (displayName.length > 12) displayName = displayName.slice(0, 10) + '...';
-        ctx.fillText(displayName, x, y);
-        
-        if (node.children && node.children.length > 0) {
-          ctx.fillStyle = 'rgba(255,255,255,0.5)';
-          ctx.font = '10px Inter, sans-serif';
-          ctx.fillText(`👨‍👦 ${node.children.length}`, x, y + radius + 15);
-        }
-        
-        if (node.children && node.children.length > 0) {
-          const childrenCount = node.children.length;
-          const startX = x - ((childrenCount - 1) * spacingX) / 2;
-          node.children.forEach((child, i) => {
-            const childX = startX + i * spacingX;
-            const childY = y + spacingY;
-            drawNode(child, childX, childY, level + 1, totalLevels, x, y);
-          });
-        }
-      }
-      
-      const height = getTreeHeight(root);
-      const startY = 50;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawNode(root, canvas.width/2, startY, 0, height);
-      
-      canvas.addEventListener('click', async (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        
-        function findClosestNode(node, px, py, level = 0) {
-          const radius = Math.min(35, canvas.width / 20);
-          const spacingY = Math.min(80, canvas.height / 10);
-          const nodeX = px;
-          const nodeY = py;
-          const distance = Math.sqrt((x - nodeX) ** 2 + (y - nodeY) ** 2);
-          
-          if (distance < radius + 10) return node;
-          
-          if (node.children && node.children.length > 0) {
-            const spacingX = Math.min(80, canvas.width / 10);
-            const childrenCount = node.children.length;
-            const startX = px - ((childrenCount - 1) * spacingX) / 2;
-            for (let i = 0; i < node.children.length; i++) {
-              const childX = startX + i * spacingX;
-              const childY = py + spacingY;
-              const result = findClosestNode(node.children[i], childX, childY, level + 1);
-              if (result) return result;
-            }
-          }
-          return null;
-        }
-        
-        const clickedNode = findClosestNode(root, canvas.width/2, startY);
-        if (clickedNode) {
-          const path = findPathToNode(family, clickedNode.name);
-          if (path) {
-            history = path.slice(0, -1);
-            currentPath = path;
-            currentNode = clickedNode;
-            displayPerson(clickedNode);
-            treeViewActive = false;
-            document.getElementById('viewToggleBtn').textContent = '👁️ Vue arbre';
-          }
-        }
-      });
-      
-      canvas.style.width = '100%';
-      canvas.style.height = 'auto';
-    }
-
     // ===== EXPORT/IMPORT =====
     window.exportFamily = function() {
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        showToast("🔒 Seul le propriétaire peut exporter", "error");
+        return;
+      }
       if (!family) {
         showToast("Aucune donnée à exporter", "warning");
         return;
@@ -1898,8 +1748,8 @@
     };
 
     window.importFamily = function(event) {
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut importer", "error");
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        showToast("🔒 Seul le propriétaire peut importer", "error");
         return;
       }
       const file = event.target.files[0];
@@ -1946,10 +1796,6 @@
           showToast("🔗 URL : " + url, "info", 5000);
         });
       }
-    };
-
-    window.printFamily = function() {
-      window.print();
     };
 
     // ===== RECHERCHE =====
@@ -2043,7 +1889,6 @@
     // ===== DISPLAY FUNCTIONS =====
     function displayPerson(person) {
       treeEl.innerHTML = "";
-      treeEl.className = '';
       currentNode = person;
       backBtn.style.display = "inline-block";
       updateBreadcrumb();
@@ -2057,6 +1902,8 @@
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("exportBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("importBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("statsBtn").style.display = "flex";
 
       if (!person.children || person.children.length === 0) {
@@ -2226,7 +2073,6 @@
 
     function displayRoot() {
       treeEl.innerHTML = "";
-      treeEl.className = '';
       history = [];
       currentPath = [family];
       currentNode = family;
@@ -2237,6 +2083,8 @@
       
       document.getElementById("editBtn").style.display = "none";
       document.getElementById("deleteBtn").style.display = "none";
+      document.getElementById("exportBtn").style.display = "none";
+      document.getElementById("importBtn").style.display = "none";
       document.getElementById("statsBtn").style.display = "flex";
 
       if (!family) return;
@@ -2283,10 +2131,6 @@
     }
 
     window.goBack = function() {
-      if (treeViewActive) {
-        treeViewActive = false;
-        document.getElementById('viewToggleBtn').textContent = '👁️ Vue arbre';
-      }
       if (history.length) {
         const prev = history.pop();
         currentPath.pop();
@@ -2573,17 +2417,6 @@
 
     // ===== MODE HORS-LIGNE =====
     const CACHE_KEY = 'gaway_family_cache';
-    let isOnline = navigator.onLine;
-
-    window.addEventListener('online', () => {
-      isOnline = true;
-      showToast('📶 Retour en ligne', 'info', 2000);
-    });
-
-    window.addEventListener('offline', () => {
-      isOnline = false;
-      showToast('📶 Mode hors-ligne', 'warning', 3000);
-    });
 
     function saveToCache(data) {
       localStorage.setItem(CACHE_KEY, JSON.stringify({ family: data, timestamp: Date.now() }));
@@ -2603,19 +2436,6 @@
       await loadJournal();
       buildNameIndex();
       updateUIForAuth();
-      
-      // Charger depuis le cache si hors-ligne
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached && !navigator.onLine) {
-        try {
-          const data = JSON.parse(cached);
-          if (data.family) {
-            family = data.family;
-            currentPath = [family];
-            displayRoot();
-          }
-        } catch (e) {}
-      }
       
       setTimeout(() => {
         showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
