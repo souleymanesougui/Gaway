@@ -1043,29 +1043,29 @@
       
       <hr class="menu-divider">
       
-      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">💾 Exporter l'arbre</button>
-      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">📥 Importer un arbre</button>
+      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">Exporter l'arbre</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">Importer un arbre</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
       
-      <button class="action-btn" onclick="shareFamily(); closeMenu();">🔗 Partager l'arbre</button>
+      <button class="action-btn" onclick="shareFamily(); closeMenu();">Partager l'arbre</button>
       
       <hr class="menu-divider">
       
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
+      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
       
-      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
-      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
-      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
+      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
+      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
+      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
-      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Proprietaire</button>
+      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
       
-      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
+      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">Statistiques</button>
       
       <hr class="menu-divider">
       
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
+      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
+      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Deconnexion</button>
     </div>
   </header>
 
@@ -1076,7 +1076,7 @@
     <div class="search-suggestions" id="searchSuggestions"></div>
   </div>
   
-  <button id="backBtn" onclick="goBack()">← Retour</button>
+  <button id="backBtn" onclick="goBack()">Retour</button>
   <div id="tree"></div>
 
   <!-- Toast Container -->
@@ -1086,10 +1086,10 @@
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
-      <h2>📖 Histoire</h2>
+      <h2>Histoire</h2>
       <p>
-        La lignée des <strong>fils Gaïda</strong> est une famille dont les racines plongent 
-        au cœur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
+        La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent 
+        au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
         et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître 
         ses origines et son héritage.
       </p>
@@ -1103,7 +1103,7 @@
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
-      <h2>📊 Statistiques</h2>
+      <h2>Statistiques</h2>
       <p class="subtitle">Nombre total de personnes dans l'arbre</p>
       <div class="stats-simple">
         <span class="stat-icon">👤</span>
@@ -1120,12 +1120,12 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      <h2>🔑 Connexion</h2>
+      <h2>Connexion</h2>
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
           <input type="password" id="authPassword" required placeholder="Entrez votre mot de passe">
-          <div class="password-hint">Contactez le propriétaire pour obtenir le mot de passe.</div>
+          <div class="password-hint">Contactez le proprietaire pour obtenir le mot de passe.</div>
         </div>
         <div class="auth-error" id="authError">Mot de passe incorrect</div>
         <div class="form-actions">
@@ -1140,11 +1140,11 @@
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">✕</button>
-      <h2>👑 Gestion des mots de passe</h2>
+      <h2>Gestion des mots de passe</h2>
       <p class="subtitle">Gérez les accès pour chaque rôle.</p>
       <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
-          <label for="adminPassword">Mot de passe Propriétaire</label>
+          <label for="adminPassword">Mot de passe Proprietaire</label>
           <input type="text" id="adminPassword" placeholder="Nouveau mot de passe">
           <div style="font-size: 12px; color: var(--text-light); margin-top: 4px;">
             Actuel : <strong id="currentAdminPass">••••••••</strong>
@@ -1169,7 +1169,7 @@
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
-      <h2>📋 Historique des modifications</h2>
+      <h2>Historique des modifications</h2>
       <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
       <div id="historiqueList" class="historique-list"></div>
       <div class="form-actions">
@@ -1182,7 +1182,7 @@
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">✕</button>
-      <h2>➕ Ajouter une personne</h2>
+      <h2>Ajouter une personne</h2>
       <form id="addForm" onsubmit="addPerson(event)">
         <div class="form-group">
           <label for="addName">Nom complet *</label>
@@ -1192,8 +1192,8 @@
           <label for="addGender">Genre *</label>
           <select id="addGender" required>
             <option value="">Sélectionnez...</option>
-            <option value="male">👨 Homme</option>
-            <option value="female">👩 Femme</option>
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
           </select>
         </div>
         <div class="form-group">
@@ -1216,7 +1216,7 @@
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
-      <h2>✏️ Modifier une personne</h2>
+      <h2>Modifier une personne</h2>
       <form id="editForm" onsubmit="editPerson(event)">
         <div class="form-group">
           <label for="editName">Nom complet *</label>
@@ -1225,8 +1225,8 @@
         <div class="form-group">
           <label for="editGender">Genre *</label>
           <select id="editGender" required>
-            <option value="male">👨 Homme</option>
-            <option value="female">👩 Femme</option>
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
           </select>
         </div>
         <div class="form-group">
@@ -1249,8 +1249,8 @@
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-content delete-modal">
       <button class="modal-close" onclick="closeDeleteModal()">✕</button>
-      <div class="delete-icon">⚠️</div>
-      <h2>🗑️ Supprimer une personne</h2>
+      <div class="delete-icon">!</div>
+      <h2>Supprimer une personne</h2>
       <p>
         Êtes-vous sûr de vouloir supprimer<br>
         <span class="delete-name" id="deleteName"></span> ?
@@ -1282,33 +1282,33 @@
         
         <!-- CHEMIN VERS LA RACINE -->
         <div class="detail-path" id="detailPath">
-          <span class="path-root">🌳 Racine</span>
+          <span class="path-root">Racine</span>
           <span class="path-arrow">→</span>
           <span class="path-name" id="pathDisplay">Chargement...</span>
         </div>
         
         <div class="detail-grid">
           <div class="detail-card">
-            <div class="detail-label">⚤ Genre</div>
+            <div class="detail-label">Genre</div>
             <div class="detail-value" id="detailGender">Non renseigné</div>
           </div>
           <div class="detail-card">
-            <div class="detail-label">📅 Date de naissance</div>
+            <div class="detail-label">Date de naissance</div>
             <div class="detail-value" id="detailBirth">Non renseigné</div>
           </div>
           <div class="detail-card">
-            <div class="detail-label">👤 Biographie</div>
+            <div class="detail-label">Biographie</div>
             <div class="detail-value" id="detailBio">Non renseignée</div>
           </div>
           <div class="detail-card">
-            <div class="detail-label">👨‍👦 Enfants</div>
+            <div class="detail-label">Enfants</div>
             <div class="detail-value" id="detailChildren">0</div>
           </div>
         </div>
         
         <div class="detail-actions">
           <button type="button" class="btn-detail btn-primary" onclick="closePersonDetailModal(); navigateToPerson();">
-            🌳 Voir dans l'arbre
+            Voir dans l'arbre
           </button>
           <button type="button" class="btn-detail" onclick="closePersonDetailModal()">Fermer</button>
         </div>
@@ -1383,10 +1383,10 @@
     function showToast(message, type = 'success', duration = 3500) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const icons = { success: '✔', error: '✖', warning: '!', info: 'i' };
       toast.className = `toast ${type}`;
       toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+        <span class="toast-icon">${icons[type] || 'i'}</span>
         <span>${message}</span>
         <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
       `;
@@ -1508,7 +1508,7 @@
         errorEl.classList.remove("show");
         closeAuthModal();
         updateUIForAuth();
-        showToast("Connecté en tant que Propriétaire", "success");
+        showToast("Connecté en tant que Proprietaire", "success");
       } else if (password === passwords.editor) {
         currentUser = { role: 'admin' };
         errorEl.classList.remove("show");
@@ -1536,13 +1536,13 @@
       currentUser = null;
       updateUIForAuth();
       if (currentNode) displayPerson(currentNode);
-      showToast("Déconnecté", "info");
+      showToast("Deconnecté", "info");
     };
 
     // ===== ADMIN =====
     window.openAdminModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut gérer les mots de passe", "error");
+        showToast("Seul le proprietaire peut gérer les mots de passe", "error");
         return;
       }
       document.getElementById("adminModal").classList.add("active");
@@ -1559,7 +1559,7 @@
     window.updatePasswords = async function(e) {
       e.preventDefault();
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut modifier les mots de passe", "error");
+        showToast("Seul le proprietaire peut modifier les mots de passe", "error");
         return;
       }
 
@@ -1567,7 +1567,7 @@
       const newEditorPass = document.getElementById("editorPassword").value.trim();
 
       if (newAdminPass && newAdminPass.length < 4) {
-        showToast("Le mot de passe propriétaire doit faire au moins 4 caractères", "error");
+        showToast("Le mot de passe proprietaire doit faire au moins 4 caractères", "error");
         return;
       }
       if (newEditorPass && newEditorPass.length < 4) {
@@ -1621,7 +1621,7 @@
     // ===== HISTORIQUE =====
     window.openHistoriqueModal = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut voir l'historique", "error");
+        showToast("Seul le proprietaire peut voir l'historique", "error");
         return;
       }
       document.getElementById("historiqueModal").classList.add("active");
@@ -1664,7 +1664,7 @@
               <div class="date">${dateStr} · par ${entry.user || 'admin'}</div>
             </div>
             <div class="actions-historique">
-              <button class="btn-delete-entry" onclick="deleteHistoriqueEntry('${entry.id}')">🗑️</button>
+              <button class="btn-delete-entry" onclick="deleteHistoriqueEntry('${entry.id}')">🗑</button>
             </div>
           </div>
         `;
@@ -1675,10 +1675,10 @@
 
     window.deleteHistoriqueEntry = async function(entryId) {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut supprimer des entrées", "error");
+        showToast("Seul le proprietaire peut supprimer des entrées", "error");
         return;
       }
-      if (confirm("❌ Êtes-vous sûr de vouloir supprimer cette entrée ?")) {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cette entrée ?")) {
         const success = await deleteJournalEntry(entryId);
         if (success) {
           showToast("Entrée supprimée de l'historique", "success");
@@ -1728,7 +1728,7 @@
       const menuStatusEl = document.getElementById("menuAuthStatus");
       
       if (isAuthenticated) {
-        const statusText = isProprietaire ? "Propriétaire" : "Admin";
+        const statusText = isProprietaire ? "Proprietaire" : "Admin";
         const statusClass = isProprietaire ? "proprietaire" : "admin";
         statusEl.textContent = statusText;
         statusEl.className = `auth-status show ${statusClass}`;
@@ -1830,7 +1830,7 @@
     // ===== EXPORT/IMPORT =====
     window.exportFamily = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut exporter", "error");
+        showToast("Seul le proprietaire peut exporter", "error");
         return;
       }
       if (!family) {
@@ -1847,12 +1847,12 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast("📦 Arbre exporté avec succès !", "success");
+      showToast("Arbre exporté avec succès !", "success");
     };
 
     window.importFamily = function(event) {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut importer", "error");
+        showToast("Seul le proprietaire peut importer", "error");
         return;
       }
       const file = event.target.files[0];
@@ -1863,7 +1863,7 @@
         try {
           const data = JSON.parse(e.target.result);
           if (!data.name || !data.children) {
-            showToast("❌ Fichier invalide", "error");
+            showToast("Fichier invalide", "error");
             return;
           }
           const count = countNodes(data);
@@ -1874,10 +1874,10 @@
             currentPath = [family];
             currentNode = family;
             displayRoot();
-            showToast(`📥 Arbre importé avec succès (${count} personnes) !`, "success");
+            showToast(`Arbre importé avec succès (${count} personnes) !`, "success");
           }
         } catch (error) {
-          showToast("❌ Fichier JSON invalide", "error");
+          showToast("Fichier JSON invalide", "error");
         }
       };
       reader.readAsText(file);
@@ -1888,15 +1888,15 @@
       const url = window.location.href;
       if (navigator.share) {
         navigator.share({
-          title: '🌳 Arbre généalogique Gaway',
+          title: 'Arbre généalogique Gaway',
           text: 'Découvrez l\'arbre généalogique des fils Gaïda',
           url: url
         }).catch(() => {});
       } else {
         navigator.clipboard.writeText(url).then(() => {
-          showToast("🔗 Lien copié dans le presse-papier !", "success");
+          showToast("Lien copié dans le presse-papier !", "success");
         }).catch(() => {
-          showToast("🔗 URL : " + url, "info", 5000);
+          showToast("URL : " + url, "info", 5000);
         });
       }
     };
@@ -2012,7 +2012,7 @@
       document.getElementById("statsBtn").style.display = "flex";
 
       if (!person.children || person.children.length === 0) {
-        treeEl.innerHTML = "<p>📭 La liste des enfants n'est pas encore complète.</p>";
+        treeEl.innerHTML = "<p>La liste des enfants n'est pas encore complète.</p>";
         return;
       }
 
@@ -2040,7 +2040,7 @@
         div.addEventListener('dragstart', (e) => {
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
             e.preventDefault();
-            showToast("🔒 Permission refusée", "error");
+            showToast("Permission refusée", "error");
             return;
           }
           dragIndex = index;
@@ -2068,7 +2068,7 @@
           if (dragIndex === null || dragIndex === index) return;
           
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-            showToast("🔒 Permission refusée", "error");
+            showToast("Permission refusée", "error");
             return;
           }
           
@@ -2076,7 +2076,7 @@
           person.children.splice(index, 0, moved);
           await sauvegarderFamille();
           displayPerson(person);
-          showToast("🔄 Ordre modifié !", "success");
+          showToast("Ordre modifié !", "success");
           dragIndex = null;
         });
 
@@ -2092,7 +2092,7 @@
         name.addEventListener('dblclick', (e) => {
           e.stopPropagation();
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-            showToast("🔒 Permission refusée", "error");
+            showToast("Permission refusée", "error");
             return;
           }
           
@@ -2131,7 +2131,7 @@
               displayPerson(person);
               const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
               await addJournalEntry('edit', 'edit', `${oldName} → ${newName} (édition rapide)`, userRole);
-              showToast(`✅ "${oldName}" → "${newName}"`, "success");
+              showToast(`"${oldName}" → "${newName}"`, "success");
             } else {
               input.replaceWith(name);
             }
@@ -2230,10 +2230,10 @@
       } else {
         mainHeader.style.display = "none";
         breadcrumbEl.style.display = "block";
-        breadcrumbEl.innerHTML = "👤 ";
+        breadcrumbEl.innerHTML = "";
         currentPath.forEach((p, i) => {
           if (i > 0) {
-            breadcrumbEl.innerHTML += " ➜ ";
+            breadcrumbEl.innerHTML += " → ";
             const span = document.createElement("span");
             span.textContent = p.name;
             span.onclick = () => {
@@ -2253,7 +2253,7 @@
       lastDetailPerson = person;
       
       const gender = person.gender || 'unknown';
-      const genderText = gender === 'male' ? '👨 Homme' : gender === 'female' ? '👩 Femme' : 'Non renseigné';
+      const genderText = gender === 'male' ? 'Homme' : gender === 'female' ? 'Femme' : 'Non renseigné';
       const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
       
       document.getElementById("detailName").textContent = person.name || "Nom inconnu";
@@ -2278,35 +2278,33 @@
       
       const roleBadge = document.getElementById("detailRole");
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      const roleText = person === family ? "👑 Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
+      const roleText = person === family ? "Racine" : (isProprietaire ? "Membre" : "Membre");
       roleBadge.textContent = roleText;
       roleBadge.className = `role-badge ${genderClass}`;
       
       // === AFFICHAGE DU CHEMIN VERS LA RACINE ===
       const pathDisplay = document.getElementById('pathDisplay');
       if (person === family) {
-        pathDisplay.textContent = '👑 Racine';
+        pathDisplay.textContent = 'Racine';
         document.getElementById('detailPath').innerHTML = `
-          <span class="path-root">🌳 Racine</span>
+          <span class="path-root">Racine</span>
           <span class="path-arrow">→</span>
-          <span class="path-name" style="color: var(--accent); font-weight: 600;">👑 ${person.name}</span>
+          <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>
         `;
       } else {
         const path = getPathToNode(family, person.name);
         if (path && path.length > 1) {
-          let pathHtml = `<span class="path-root">🌳 ${family.name}</span>`;
-          // Afficher le chemin sans le dernier (la personne elle-même)
+          let pathHtml = `<span class="path-root">${family.name}</span>`;
           for (let i = 1; i < path.length - 1; i++) {
             pathHtml += ` <span class="path-arrow">→</span> <span class="path-name">${path[i].name}</span>`;
           }
-          // Dernier élément : la personne en surbrillance
-          pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>`;
+          pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>`;
           document.getElementById('detailPath').innerHTML = pathHtml;
         } else {
           document.getElementById('detailPath').innerHTML = `
-            <span class="path-root">🌳 ${family.name}</span>
+            <span class="path-root">${family.name}</span>
             <span class="path-arrow">→</span>
-            <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>
+            <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>
           `;
         }
       }
@@ -2332,7 +2330,7 @@
     // ===== ADD PERSON =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
+        showToast("Seul le proprietaire ou admin peut ajouter", "error");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -2349,7 +2347,7 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
+        showToast("Seul le proprietaire ou admin peut ajouter", "error");
         return;
       }
 
@@ -2407,7 +2405,7 @@
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
+        showToast("Seul le proprietaire ou admin peut modifier", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2438,7 +2436,7 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
+        showToast("Seul le proprietaire ou admin peut modifier", "error");
         return;
       }
 
@@ -2495,7 +2493,7 @@
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut supprimer", "error");
+        showToast("Seul le proprietaire peut supprimer", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2522,7 +2520,7 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut supprimer", "error");
+        showToast("Seul le proprietaire peut supprimer", "error");
         return;
       }
       if (!deletingPerson || !deletingParent) {
