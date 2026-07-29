@@ -734,7 +734,6 @@
     .modal-content.historique-modal { max-width: 700px; }
     .modal-content.person-detail-modal { max-width: 480px; padding: 0; overflow: hidden; }
     .modal-content.stats-modal { max-width: 400px; }
-    .modal-content.history-modal { max-width: 600px; }
 
     @keyframes modalSlide {
       from { opacity: 0; transform: translateY(30px) scale(0.96); }
@@ -1077,78 +1076,6 @@
       box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
     }
 
-    /* === STYLES POUR L'HISTOIRE === */
-    .history-content {
-      line-height: 1.8;
-      color: var(--text-dark);
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-    .history-content p {
-      margin: 8px 0;
-    }
-    .history-content.editable {
-      cursor: text;
-    }
-    .history-textarea {
-      width: 100%;
-      min-height: 200px;
-      border: 2px solid var(--accent);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      line-height: 1.8;
-      background: rgba(255, 255, 255, 0.5);
-      color: var(--text-dark);
-      resize: vertical;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-    .history-textarea:focus {
-      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
-      background: rgba(255, 255, 255, 0.85);
-    }
-    .history-editor-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-      justify-content: flex-end;
-    }
-    .history-editor-actions button {
-      padding: 8px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-    .history-editor-actions .btn-save {
-      background: var(--accent);
-      color: white;
-      box-shadow: 0 4px 16px rgba(142, 68, 173, 0.25);
-    }
-    .history-editor-actions .btn-save:hover {
-      background: #6c3483;
-      transform: translateY(-2px);
-    }
-    .history-editor-actions .btn-cancel {
-      background: rgba(0, 0, 0, 0.04);
-      color: var(--text-dark);
-    }
-    .history-editor-actions .btn-cancel:hover {
-      background: rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
-    }
-    .history-editor-hint {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 6px;
-      font-style: italic;
-    }
-
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
       .person { width: calc(50% - 10px); padding: 8px; }
@@ -1168,7 +1095,6 @@
       .detail-body .detail-name { font-size: 19px; }
       .detail-path { font-size: 12px; padding: 8px 12px; }
       .person .click-hint { display: none; }
-      .modal-content.history-modal { max-width: 100%; }
     }
   </style>
 </head>
@@ -1203,6 +1129,7 @@
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
       
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
+      <!-- Bouton Modifier SUPPRIMÉ -->
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Proprietaire</button>
@@ -1230,23 +1157,20 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ===== HISTORY MODAL - SIMPLIFIÉ COMME LA BIO ===== -->
+  <!-- History Modal -->
   <div class="modal-overlay" id="historyModal">
-    <div class="modal-content history-modal">
+    <div class="modal-content">
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
-      <h2 id="historyTitle">📜 Notre Histoire</h2>
-      <p class="subtitle" id="historySubtitle">Découvrez l'histoire de la famille Gaïda</p>
-      
-      <div class="history-content" id="historyContent">
-        <div id="historyBody">
-          <p>Chargement de l'histoire...</p>
-        </div>
-      </div>
-      
-      <div class="form-actions" id="historyActions" style="display:none;">
-        <button type="button" class="btn-cancel" onclick="closeHistoryModal()">Fermer</button>
-        <button type="button" class="btn-submit" onclick="saveHistoryContent()">💾 Sauvegarder</button>
-      </div>
+      <h2>Histoire</h2>
+      <p>
+        La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent 
+        au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
+        et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître 
+        ses origines et son héritage.
+      </p>
+      <p style="font-style: italic; color: var(--accent);">
+        — Que la mémoire de nos ancêtres vive à travers nous.
+      </p>
     </div>
   </div>
 
@@ -1363,7 +1287,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal -->
+  <!-- Edit Person Modal - Gardé pour compatibilité mais plus utilisé -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1416,7 +1340,7 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal -->
+  <!-- Person Detail Modal - ÉDITION DIRECTE POUR LE PROPRIÉTAIRE -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
@@ -1433,6 +1357,7 @@
           <span class="role-badge" id="detailRole">Membre</span>
         </div>
         
+        <!-- CHEMIN VERS LA RACINE -->
         <div class="detail-path" id="detailPath">
           <span class="path-root">Racine</span>
           <span class="path-arrow">→</span>
@@ -1457,6 +1382,9 @@
             <div class="detail-value" id="detailChildren">0</div>
           </div>
         </div>
+        
+        <!-- SECTION BOUTONS SUPPRIMÉE -->
+        
       </div>
     </div>
   </div>
@@ -1523,13 +1451,6 @@
     let currentPath = [];
     let currentNode = null;
     let lastDetailPerson = null;
-
-    // ===== DONNÉES HISTOIRE =====
-    let historyData = {
-      title: "📜 Notre Histoire",
-      subtitle: "Découvrez l'histoire de la famille Gaïda",
-      content: "La lignée des fils Gaida est une famille dont les racines plongent au coeur des traditions et de l'histoire.\n\nCe site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous."
-    };
 
     // ===== TOAST SYSTEM =====
     function showToast(message, type = 'success', duration = 3500) {
@@ -1643,36 +1564,6 @@
       } catch (error) {
         console.error("Erreur sauvegarde mots de passe:", error);
         showToast("Erreur lors de la sauvegarde des mots de passe", "error");
-        return false;
-      }
-    }
-
-    // ===== LOAD HISTORY FROM FIREBASE =====
-    async function loadHistoryFromFirebase() {
-      try {
-        const docRef = doc(db, "config", "history");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          historyData = docSnap.data();
-          return historyData;
-        } else {
-          await setDoc(docRef, historyData);
-          return historyData;
-        }
-      } catch (error) {
-        console.error("Erreur chargement histoire:", error);
-        return historyData;
-      }
-    }
-
-    async function saveHistoryToFirebase(data) {
-      try {
-        const docRef = doc(db, "config", "history");
-        await setDoc(docRef, data);
-        return true;
-      } catch (error) {
-        console.error("Erreur sauvegarde histoire:", error);
-        showToast("Erreur lors de la sauvegarde de l'histoire", "error");
         return false;
       }
     }
@@ -2389,7 +2280,7 @@
       }
     }
 
-    // ===== PERSON DETAIL =====
+    // ===== PERSON DETAIL - ÉDITION DIRECTE =====
     let currentDetailPerson = null;
 
     window.openPersonDetail = function(person) {
@@ -2397,6 +2288,7 @@
       lastDetailPerson = person;
       
       const gender = person.gender || 'unknown';
+      const genderText = gender === 'male' ? 'Homme' : gender === 'female' ? 'Femme' : 'Non renseigné';
       const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
       
       const cover = document.getElementById("detailCover");
@@ -2405,6 +2297,7 @@
       document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
       document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
       
+      // Affichage du chemin vers la racine
       if (person === family) {
         document.getElementById('detailPath').innerHTML = `
           <span class="path-root">Racine</span>
@@ -2429,7 +2322,9 @@
         }
       }
       
+      // Remplir les détails
       renderDetailFields(person);
+      
       document.getElementById("personDetailModal").classList.add("active");
     };
 
@@ -2437,8 +2332,10 @@
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
       const canEdit = isProprietaire && person !== family;
       
-      // Nom
+      // NOM - édition possible pour le propriétaire
       const nameWrapper = document.getElementById('detailNameWrapper');
+      const nameDisplay = document.getElementById('detailName');
+      
       if (canEdit) {
         nameWrapper.innerHTML = `
           <input type="text" class="detail-name-input" id="nameInput" value="${person.name || ''}" 
@@ -2450,7 +2347,7 @@
         nameWrapper.innerHTML = `<div class="detail-name" id="detailName">${person.name || 'Nom inconnu'}</div>`;
       }
       
-      // Genre
+      // Gender
       const genderCard = document.getElementById('detailGenderCard');
       const genderValue = document.getElementById('detailGender');
       const genderText = person.gender === 'male' ? 'Homme' : person.gender === 'female' ? 'Femme' : 'Non renseigné';
@@ -2470,7 +2367,7 @@
         genderValue.className = `detail-value${genderText === 'Non renseigné' ? ' empty' : ''}`;
       }
       
-      // Date de naissance
+      // Birth
       const birthCard = document.getElementById('detailBirthCard');
       const birthValue = document.getElementById('detailBirth');
       const birthText = person.birth || "Non renseigné";
@@ -2488,7 +2385,7 @@
         birthValue.className = `detail-value${birthText === "Non renseigné" ? ' empty' : ''}`;
       }
       
-      // Biographie
+      // Bio
       const bioCard = document.getElementById('detailBioCard');
       const bioValue = document.getElementById('detailBio');
       const bioText = person.bio || "Non renseignée";
@@ -2508,7 +2405,7 @@
         bioValue.className = `detail-value${bioText === "Non renseignée" ? ' empty' : ''}`;
       }
       
-      // Enfants (lecture seule)
+      // Children (toujours en lecture seule)
       const childrenCount = (person.children && person.children.length) || 0;
       document.getElementById("detailChildren").textContent = childrenCount;
       
@@ -2544,14 +2441,17 @@
         bio: 'Biographie'
       };
 
+      // Pour le nom, il faut vérifier les doublons
       if (field === 'name') {
         const trimmedName = newValue.trim();
         if (!trimmedName) {
           showToast("Le nom ne peut pas être vide", "warning");
+          // Re-rendre pour remettre l'ancienne valeur
           renderDetailFields(currentDetailPerson);
           return;
         }
         
+        // Vérifier si le nom existe déjà (sauf pour la personne elle-même)
         const existing = findNodeByName(family, trimmedName);
         if (existing && existing !== currentDetailPerson) {
           showToast(`"${trimmedName}" existe déjà`, "warning");
@@ -2559,25 +2459,38 @@
           return;
         }
         
+        // Mettre à jour l'objet
         currentDetailPerson.name = trimmedName;
+        
+        // Si c'est le noeud courant, mettre à jour
         if (currentNode === currentDetailPerson) {
           currentNode.name = trimmedName;
         }
+        
+        // Mettre à jour l'index de recherche
         buildNameIndex();
+        
+        // Mettre à jour l'affichage de l'arbre
         if (currentNode === currentDetailPerson) {
           displayPerson(currentNode);
         }
       } else {
+        // Pour les autres champs
         currentDetailPerson[field] = newValue;
       }
 
+      // Sauvegarder dans Firebase
       const saved = await sauvegarderFamille();
       if (saved) {
+        // Re-rendre les champs
         renderDetailFields(currentDetailPerson);
+        
+        // Journal
         await addJournalEntry('edit', 'edit', 
           `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${newValue || 'vide'}"`, 
           'proprietaire'
         );
+        
         showToast(`${fieldNames[field] || field} modifié avec succès !`, "success");
       }
     };
@@ -2585,74 +2498,6 @@
     window.closePersonDetailModal = function() {
       document.getElementById("personDetailModal").classList.remove("active");
       currentDetailPerson = null;
-    };
-
-    // ===== HISTORY MODAL - SIMPLIFIÉ COMME LA BIO =====
-    window.openHistoryModal = async function() {
-      await loadHistoryFromFirebase();
-      document.getElementById("historyModal").classList.add("active");
-      renderHistoryContent();
-    };
-
-    window.closeHistoryModal = function() {
-      document.getElementById("historyModal").classList.remove("active");
-    };
-
-    function renderHistoryContent() {
-      const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      
-      document.getElementById('historyTitle').textContent = historyData.title || "📜 Notre Histoire";
-      document.getElementById('historySubtitle').textContent = historyData.subtitle || "Découvrez l'histoire de la famille Gaïda";
-      
-      const body = document.getElementById('historyBody');
-      
-      if (isProprietaire) {
-        // Mode édition pour le propriétaire - comme la bio
-        body.innerHTML = `
-          <div style="margin-bottom: 8px;">
-            <label style="font-size: 12px; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contenu de l'histoire</label>
-          </div>
-          <textarea class="history-textarea" id="historyEditor" placeholder="Écrivez l'histoire de la famille ici...">${historyData.content || ''}</textarea>
-          <div class="history-editor-actions">
-            <button class="btn-cancel" onclick="closeHistoryModal()">Fermer</button>
-            <button class="btn-save" onclick="saveHistoryContent()">💾 Sauvegarder</button>
-          </div>
-          <div class="history-editor-hint">✏️ Cliquez sur Sauvegarder pour enregistrer vos modifications</div>
-        `;
-      } else {
-        // Mode lecture pour tous
-        const content = historyData.content || "L'histoire de la famille est en cours de rédaction...";
-        body.innerHTML = `
-          <div style="white-space: pre-wrap; line-height: 1.8;">${content}</div>
-        `;
-      }
-    }
-
-    window.saveHistoryContent = async function() {
-      if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le proprietaire peut modifier l'histoire", "error");
-        return;
-      }
-
-      const editor = document.getElementById('historyEditor');
-      if (!editor) return;
-
-      const newContent = editor.value;
-      const oldContent = historyData.content || '';
-
-      if (newContent === oldContent) {
-        showToast("Aucune modification détectée", "info");
-        return;
-      }
-
-      historyData.content = newContent;
-
-      const saved = await saveHistoryToFirebase(historyData);
-      if (saved) {
-        renderHistoryContent();
-        await addJournalEntry('edit', 'edit', `Contenu de l'histoire modifié`, 'proprietaire');
-        showToast("Histoire mise à jour avec succès !", "success");
-      }
     };
 
     // ===== ADD PERSON =====
@@ -2727,7 +2572,7 @@
       }
     };
 
-    // ===== EDIT PERSON =====
+    // ===== EDIT PERSON - Gardé pour compatibilité =====
     window.openEditModal = function() {
       showToast("La modification se fait dans la vue détail", "info");
     };
@@ -2808,6 +2653,15 @@
       }
     };
 
+    // ===== HISTORY MODAL =====
+    window.openHistoryModal = function() {
+      document.getElementById("historyModal").classList.add("active");
+    };
+
+    window.closeHistoryModal = function() {
+      document.getElementById("historyModal").classList.remove("active");
+    };
+
     // ===== MODE HORS-LIGNE =====
     const CACHE_KEY = 'gaway_family_cache';
 
@@ -2827,7 +2681,6 @@
       await loadPasswords();
       await chargerfamille();
       await loadJournal();
-      await loadHistoryFromFirebase();
       buildNameIndex();
       updateUIForAuth();
       
