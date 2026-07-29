@@ -1767,6 +1767,8 @@
         if (resultat.exists()) {
           family = resultat.data();
           if (!family.gender) family.gender = 'unknown';
+          // S'assurer que la racine a un champ gender
+          if (!family.gender || family.gender === '') family.gender = 'male';
           currentPath = [family];
           displayRoot();
         } else {
@@ -1785,7 +1787,7 @@
           name: family.name,
           children: family.children || [],
           photo: family.photo || "",
-          gender: family.gender || "unknown",
+          gender: family.gender || "male",
           birth: family.birth || "",
           bio: family.bio || ""
         });
@@ -2169,9 +2171,9 @@
       backBtn.style.display = "none";
       mainHeader.style.display = "block";
       breadcrumbEl.style.display = "none";
-      mainHeader.textContent = "🌳 Les fils Gaïda";
+      mainHeader.textContent = "🌳 Les fils " + (family ? family.name : "Gaïda");
       
-      // === MODIFICATION : Afficher les boutons selon les permissions ===
+      // Afficher les boutons selon les permissions
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
@@ -2407,9 +2409,8 @@
       }
     };
 
-    // ===== EDIT PERSON - MODIFIÉ POUR PERMETTRE LA MODIFICATION DE LA RACINE =====
+    // ===== EDIT PERSON - VERSION CORRIGÉE =====
     let editingPerson = null;
-    let editingParent = null;
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
@@ -2417,28 +2418,15 @@
         return;
       }
       
-      // On autorise la modification même si c'est la racine
-      let personToEdit = currentNode;
-      let parentToEdit = null;
-      
-      // Si c'est la racine, on l'édite directement
-      if (currentNode === family) {
-        personToEdit = family;
-        parentToEdit = null;
-      } else {
-        const result = findNodeWithParent(family, currentNode.name);
-        if (!result) {
-          showToast("Erreur : personne non trouvée", "error");
-          return;
-        }
-        personToEdit = result.node;
-        parentToEdit = result.parent;
+      if (!currentNode) {
+        showToast("Aucune personne sélectionnée", "warning");
+        return;
       }
       
-      editingPerson = personToEdit;
-      editingParent = parentToEdit;
+      // On utilise currentNode directement (peu importe si c'est la racine ou non)
+      editingPerson = currentNode;
       
-      document.getElementById("editName").value = editingPerson.name;
+      document.getElementById("editName").value = editingPerson.name || "";
       document.getElementById("editGender").value = editingPerson.gender || "male";
       document.getElementById("editBirth").value = editingPerson.birth || "";
       document.getElementById("editBio").value = editingPerson.bio || "";
@@ -2449,13 +2437,17 @@
     window.closeEditModal = function() {
       document.getElementById("editModal").classList.remove("active");
       editingPerson = null;
-      editingParent = null;
     };
 
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
         showToast("Seul le proprietaire ou admin peut modifier", "error");
+        return;
+      }
+
+      if (!editingPerson) {
+        showToast("Erreur : aucune personne à modifier", "error");
         return;
       }
 
@@ -2473,16 +2465,17 @@
         return;
       }
 
-      if (!editingPerson) {
-        showToast("Erreur : aucune personne à modifier", "error");
-        return;
-      }
-
-      // Vérification des doublons uniquement si ce n'est pas la racine
-      if (editingParent && editingParent.children && name !== editingPerson.name) {
-        if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
-          showToast(`"${name}" existe déjà`, "warning");
-          return;
+      // Vérification des doublons (sauf si c'est la racine)
+      if (editingPerson !== family) {
+        const result = findNodeWithParent(family, editingPerson.name);
+        if (result && result.parent) {
+          const parent = result.parent;
+          if (parent.children && name !== editingPerson.name) {
+            if (parent.children.some(c => c.name === name && c !== editingPerson)) {
+              showToast(`"${name}" existe déjà`, "warning");
+              return;
+            }
+          }
         }
       }
 
@@ -2492,20 +2485,27 @@
       editingPerson.birth = birth || "";
       editingPerson.bio = bio || "";
 
-      // Si c'est la racine, on met à jour family
+      // Si c'est la racine, on met à jour family et le titre
       if (editingPerson === family) {
         family.name = name;
         mainHeader.textContent = "🌳 Les fils " + name;
       }
 
-      if (oldName !== name && currentNode === editingPerson) currentNode.name = name;
+      if (oldName !== name && currentNode === editingPerson) {
+        currentNode.name = name;
+      }
 
       const saved = await sauvegarderFamille();
       if (saved) {
         closeEditModal();
         buildNameIndex();
-        if (currentNode === editingPerson || currentNode.name === name) displayPerson(editingPerson);
-        else displayPerson(currentNode);
+        
+        // Rafraîchir l'affichage
+        if (editingPerson === family) {
+          displayRoot();
+        } else {
+          displayPerson(currentNode);
+        }
         
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
         await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
