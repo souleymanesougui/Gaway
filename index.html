@@ -1043,29 +1043,29 @@
       
       <hr class="menu-divider">
       
-      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">💾 Exporter l'arbre</button>
-      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">📥 Importer un arbre</button>
+      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;"> Exporter l'arbre</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;"> Importer un arbre</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
       
       <button class="action-btn" onclick="shareFamily(); closeMenu();">🔗 Partager l'arbre</button>
       
       <hr class="menu-divider">
       
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
+      <button class="history-btn" onclick="openHistoryModal(); closeMenu();"> Histoire</button>
       
-      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
-      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
-      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
+      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;"> Ajouter</button>
+      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;"> Modifier</button>
+      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;"> Supprimer</button>
       
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
-      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;"> Propriétaire</button>
+      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;"> Historique</button>
       
-      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
+      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn"> Statistiques</button>
       
       <hr class="menu-divider">
       
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">🔑 Connexion</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">🚪 Déconnexion</button>
+      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn"> Connexion</button>
+      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;"> Déconnexion</button>
     </div>
   </header>
 
@@ -1086,7 +1086,7 @@
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
-      <h2>📖 Histoire</h2>
+      <h2> Histoire</h2>
       <p>
         La lignée des <strong>fils Gaïda</strong> est une famille dont les racines plongent 
         au cœur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire 
@@ -1103,7 +1103,7 @@
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
-      <h2>📊 Statistiques</h2>
+      <h2> Statistiques</h2>
       <p class="subtitle">Nombre total de personnes dans l'arbre</p>
       <div class="stats-simple">
         <span class="stat-icon">👤</span>
@@ -1120,7 +1120,7 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      <h2>🔑 Connexion</h2>
+      <h2> Connexion</h2>
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
@@ -1140,7 +1140,7 @@
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAdminModal()">✕</button>
-      <h2>👑 Gestion des mots de passe</h2>
+      <h2> Gestion des mots de passe</h2>
       <p class="subtitle">Gérez les accès pour chaque rôle.</p>
       <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
@@ -1192,8 +1192,8 @@
           <label for="addGender">Genre *</label>
           <select id="addGender" required>
             <option value="">Sélectionnez...</option>
-            <option value="male">👨 Homme</option>
-            <option value="female">👩 Femme</option>
+            <option value="male"> Homme</option>
+            <option value="female"> Femme</option>
           </select>
         </div>
         <div class="form-group">
@@ -1216,7 +1216,7 @@
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
-      <h2>✏️ Modifier une personne</h2>
+      <h2> Modifier une personne</h2>
       <form id="editForm" onsubmit="editPerson(event)">
         <div class="form-group">
           <label for="editName">Nom complet *</label>
@@ -1225,8 +1225,8 @@
         <div class="form-group">
           <label for="editGender">Genre *</label>
           <select id="editGender" required>
-            <option value="male">👨 Homme</option>
-            <option value="female">👩 Femme</option>
+            <option value="male"> Homme</option>
+            <option value="female"> Femme</option>
           </select>
         </div>
         <div class="form-group">
@@ -1250,7 +1250,7 @@
     <div class="modal-content delete-modal">
       <button class="modal-close" onclick="closeDeleteModal()">✕</button>
       <div class="delete-icon">⚠️</div>
-      <h2>🗑️ Supprimer une personne</h2>
+      <h2> Supprimer une personne</h2>
       <p>
         Êtes-vous sûr de vouloir supprimer<br>
         <span class="delete-name" id="deleteName"></span> ?
@@ -1282,7 +1282,7 @@
         
         <!-- CHEMIN VERS LA RACINE -->
         <div class="detail-path" id="detailPath">
-          <span class="path-root">🌳 Racine</span>
+          <span class="path-root"> Racine</span>
           <span class="path-arrow">→</span>
           <span class="path-name" id="pathDisplay">Chargement...</span>
         </div>
@@ -1383,10 +1383,10 @@
     function showToast(message, type = 'success', duration = 3500) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const icons = { success: '✅', error: '🙅', warning: '❕', info: '🛈' };
       toast.className = `toast ${type}`;
       toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+        <span class="toast-icon">${icons[type] || }</span>
         <span>${message}</span>
         <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
       `;
@@ -1830,7 +1830,7 @@
     // ===== EXPORT/IMPORT =====
     window.exportFamily = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut exporter", "error");
+        showToast(" Seul le propriétaire peut exporter", "error");
         return;
       }
       if (!family) {
@@ -1847,12 +1847,12 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast("📦 Arbre exporté avec succès !", "success");
+      showToast(" Arbre exporté avec succès !", "success");
     };
 
     window.importFamily = function(event) {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut importer", "error");
+        showToast(" Seul le propriétaire peut importer", "error");
         return;
       }
       const file = event.target.files[0];
@@ -1863,7 +1863,7 @@
         try {
           const data = JSON.parse(e.target.result);
           if (!data.name || !data.children) {
-            showToast("❌ Fichier invalide", "error");
+            showToast(" Fichier invalide", "error");
             return;
           }
           const count = countNodes(data);
@@ -1874,7 +1874,7 @@
             currentPath = [family];
             currentNode = family;
             displayRoot();
-            showToast(`📥 Arbre importé avec succès (${count} personnes) !`, "success");
+            showToast(` Arbre importé avec succès (${count} personnes) !`, "success");
           }
         } catch (error) {
           showToast("❌ Fichier JSON invalide", "error");
@@ -1888,7 +1888,7 @@
       const url = window.location.href;
       if (navigator.share) {
         navigator.share({
-          title: '🌳 Arbre généalogique Gaway',
+          title: ' Arbre généalogique Gaway',
           text: 'Découvrez l\'arbre généalogique des fils Gaïda',
           url: url
         }).catch(() => {});
@@ -2040,7 +2040,7 @@
         div.addEventListener('dragstart', (e) => {
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
             e.preventDefault();
-            showToast("🔒 Permission refusée", "error");
+            showToast(" Permission refusée", "error");
             return;
           }
           dragIndex = index;
@@ -2068,7 +2068,7 @@
           if (dragIndex === null || dragIndex === index) return;
           
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-            showToast("🔒 Permission refusée", "error");
+            showToast(" Permission refusée", "error");
             return;
           }
           
@@ -2076,7 +2076,7 @@
           person.children.splice(index, 0, moved);
           await sauvegarderFamille();
           displayPerson(person);
-          showToast("🔄 Ordre modifié !", "success");
+          showToast(" Ordre modifié !", "success");
           dragIndex = null;
         });
 
@@ -2092,7 +2092,7 @@
         name.addEventListener('dblclick', (e) => {
           e.stopPropagation();
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-            showToast("🔒 Permission refusée", "error");
+            showToast(" Permission refusée", "error");
             return;
           }
           
@@ -2131,7 +2131,7 @@
               displayPerson(person);
               const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
               await addJournalEntry('edit', 'edit', `${oldName} → ${newName} (édition rapide)`, userRole);
-              showToast(`✅ "${oldName}" → "${newName}"`, "success");
+              showToast(` "${oldName}" → "${newName}"`, "success");
             } else {
               input.replaceWith(name);
             }
@@ -2253,7 +2253,7 @@
       lastDetailPerson = person;
       
       const gender = person.gender || 'unknown';
-      const genderText = gender === 'male' ? '👨 Homme' : gender === 'female' ? '👩 Femme' : 'Non renseigné';
+      const genderText = gender === 'male' ? ' Homme' : gender === 'female' ? ' Femme' : 'Non renseigné';
       const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
       
       document.getElementById("detailName").textContent = person.name || "Nom inconnu";
@@ -2278,35 +2278,35 @@
       
       const roleBadge = document.getElementById("detailRole");
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      const roleText = person === family ? "👑 Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
+      const roleText = person === family ? " Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
       roleBadge.textContent = roleText;
       roleBadge.className = `role-badge ${genderClass}`;
       
       // === AFFICHAGE DU CHEMIN VERS LA RACINE ===
       const pathDisplay = document.getElementById('pathDisplay');
       if (person === family) {
-        pathDisplay.textContent = '👑 Racine';
+        pathDisplay.textContent = ' Racine';
         document.getElementById('detailPath').innerHTML = `
-          <span class="path-root">🌳 Racine</span>
+          <span class="path-root"> Racine</span>
           <span class="path-arrow">→</span>
-          <span class="path-name" style="color: var(--accent); font-weight: 600;">👑 ${person.name}</span>
+          <span class="path-name" style="color: var(--accent); font-weight: 600;"> ${person.name}</span>
         `;
       } else {
         const path = getPathToNode(family, person.name);
         if (path && path.length > 1) {
-          let pathHtml = `<span class="path-root">🌳 ${family.name}</span>`;
+          let pathHtml = `<span class="path-root"> ${family.name}</span>`;
           // Afficher le chemin sans le dernier (la personne elle-même)
           for (let i = 1; i < path.length - 1; i++) {
             pathHtml += ` <span class="path-arrow">→</span> <span class="path-name">${path[i].name}</span>`;
           }
           // Dernier élément : la personne en surbrillance
-          pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>`;
+          pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;"> ${person.name}</span>`;
           document.getElementById('detailPath').innerHTML = pathHtml;
         } else {
           document.getElementById('detailPath').innerHTML = `
-            <span class="path-root">🌳 ${family.name}</span>
+            <span class="path-root"> ${family.name}</span>
             <span class="path-arrow">→</span>
-            <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>
+            <span class="path-name" style="color: var(--accent); font-weight: 600;"> ${person.name}</span>
           `;
         }
       }
@@ -2332,7 +2332,7 @@
     // ===== ADD PERSON =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
+        showToast(" Seul le propriétaire ou admin peut ajouter", "error");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -2349,7 +2349,7 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
+        showToast(" Seul le propriétaire ou admin peut ajouter", "error");
         return;
       }
 
@@ -2407,7 +2407,7 @@
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
+        showToast(" Seul le propriétaire ou admin peut modifier", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2438,7 +2438,7 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
+        showToast(" Seul le propriétaire ou admin peut modifier", "error");
         return;
       }
 
@@ -2495,7 +2495,7 @@
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut supprimer", "error");
+        showToast(" Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -2522,7 +2522,7 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("🔒 Seul le propriétaire peut supprimer", "error");
+        showToast(" Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!deletingPerson || !deletingParent) {
@@ -2581,9 +2581,6 @@
       buildNameIndex();
       updateUIForAuth();
       
-      setTimeout(() => {
-        showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
-      }, 500);
     }
 
     init();
