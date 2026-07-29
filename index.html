@@ -976,9 +976,6 @@
     .detail-card .detail-value { font-size: 15px; color: var(--text-dark); font-weight: 500; }
     .detail-card .detail-value.empty { color: var(--text-light); font-weight: 400; font-style: italic; }
 
-    /* === SUPPRESSION DES BOUTONS DANS LA MODALE DÉTAIL === */
-    /* .detail-actions complètement supprimé */
-
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
       .person { width: calc(50% - 10px); padding: 8px; }
@@ -1032,7 +1029,7 @@
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
       
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
-      <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">Modifier</button>
+      <!-- Bouton Modifier SUPPRIMÉ -->
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Proprietaire</button>
@@ -1190,7 +1187,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal -->
+  <!-- Edit Person Modal - Gardé pour compatibilité mais plus utilisé -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1687,7 +1684,7 @@
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -1977,7 +1974,7 @@
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
 
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -2063,10 +2060,12 @@
         name.className = "person-name";
         name.textContent = child.name;
 
+        // ÉDITION DIRECTE PAR DOUBLE-CLIC - UNIQUEMENT POUR LE PROPRIÉTAIRE
         name.addEventListener('dblclick', (e) => {
           e.stopPropagation();
-          if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-            showToast("Permission refusée", "error");
+          // Seul le propriétaire peut modifier directement
+          if (!currentUser || currentUser.role !== 'proprietaire') {
+            showToast("Seul le proprietaire peut modifier les noms", "error");
             return;
           }
           
@@ -2149,7 +2148,7 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
-      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
@@ -2367,28 +2366,11 @@
       }
     };
 
-    // ===== EDIT PERSON =====
+    // ===== EDIT PERSON - Gardé pour compatibilité mais plus utilisé =====
     let editingPerson = null;
 
     window.openEditModal = function() {
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Seul le proprietaire ou admin peut modifier", "error");
-        return;
-      }
-      
-      if (!currentNode) {
-        showToast("Aucune personne sélectionnée", "warning");
-        return;
-      }
-      
-      editingPerson = currentNode;
-      
-      document.getElementById("editName").value = editingPerson.name || "";
-      document.getElementById("editGender").value = editingPerson.gender || "male";
-      document.getElementById("editBirth").value = editingPerson.birth || "";
-      document.getElementById("editBio").value = editingPerson.bio || "";
-      
-      document.getElementById("editModal").classList.add("active");
+      showToast("La modification se fait désormais par double-clic sur le nom", "info");
     };
 
     window.closeEditModal = function() {
@@ -2398,74 +2380,7 @@
 
     window.editPerson = async function(e) {
       e.preventDefault();
-      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Seul le proprietaire ou admin peut modifier", "error");
-        return;
-      }
-
-      if (!editingPerson) {
-        showToast("Erreur : aucune personne à modifier", "error");
-        return;
-      }
-
-      const name = document.getElementById("editName").value.trim();
-      const gender = document.getElementById("editGender").value;
-      const birth = document.getElementById("editBirth").value;
-      const bio = document.getElementById("editBio").value.trim();
-
-      if (!name) {
-        showToast("Veuillez entrer un nom", "warning");
-        return;
-      }
-      if (!gender) {
-        showToast("Veuillez sélectionner un genre", "warning");
-        return;
-      }
-
-      // Vérification des doublons (sauf si c'est la racine)
-      if (editingPerson !== family) {
-        const result = findNodeWithParent(family, editingPerson.name);
-        if (result && result.parent) {
-          const parent = result.parent;
-          if (parent.children && name !== editingPerson.name) {
-            if (parent.children.some(c => c.name === name && c !== editingPerson)) {
-              showToast(`"${name}" existe déjà`, "warning");
-              return;
-            }
-          }
-        }
-      }
-
-      const oldName = editingPerson.name;
-      editingPerson.name = name;
-      editingPerson.gender = gender;
-      editingPerson.birth = birth || "";
-      editingPerson.bio = bio || "";
-
-      if (editingPerson === family) {
-        family.name = name;
-        mainHeader.textContent = "🌳 Les fils " + name;
-      }
-
-      if (oldName !== name && currentNode === editingPerson) {
-        currentNode.name = name;
-      }
-
-      const saved = await sauvegarderFamille();
-      if (saved) {
-        closeEditModal();
-        buildNameIndex();
-        
-        if (editingPerson === family) {
-          displayRoot();
-        } else {
-          displayPerson(currentNode);
-        }
-        
-        const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-        await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
-        showToast(`"${oldName}" modifié en "${name}"`, "success");
-      }
+      showToast("Utilisez le double-clic sur le nom pour modifier", "info");
     };
 
     // ===== DELETE PERSON =====
