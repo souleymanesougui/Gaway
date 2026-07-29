@@ -1127,7 +1127,7 @@
       
       <hr class="menu-divider">
       
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Histoire</button>
+      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Info</button>
       
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
@@ -1163,11 +1163,10 @@
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
       <div class="detail-body" style="padding: 28px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h2 style="margin: 0;">📖 Histoire</h2>
-          <span id="historyEditIndicator" style="font-size: 12px; color: var(--text-light);"></span>
+          <h2 style="margin: 0;">📖 Info</h2>
         </div>
         <p class="subtitle" style="margin-bottom: 16px;">
-          L'histoire de la famille — modifiable par le proprietaire.
+          Informations sur la famille — modifiable par le proprietaire.
         </p>
         
         <div id="historyContentWrapper">
@@ -1187,20 +1186,19 @@
           <!-- Édition (cachée par défaut) -->
           <div id="historyEdit" style="display: none;">
             <div class="form-group">
-              <label for="historyTextarea">Contenu de l'histoire</label>
+              <label for="historyTextarea">Contenu des informations</label>
               <textarea id="historyTextarea" rows="6" style="width: 100%; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 14px; font-size: 15px; font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.85); color: var(--text-dark); resize: vertical;"></textarea>
             </div>
             <div class="form-actions" style="margin-top: 12px;">
               <button type="button" class="btn-cancel" onclick="cancelHistoryEdit()">Annuler</button>
-              <button type="button" class="btn-submit" onclick="saveHistory()">💾 Sauvegarder</button>
+              <button type="button" class="btn-submit" onclick="saveHistory()">💾</button>
             </div>
           </div>
         </div>
         
         <!-- Boutons d'action -->
         <div id="historyActions" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; border-top: 1px solid rgba(0,0,0,0.04); padding-top: 16px;">
-          <button type="button" class="btn-cancel" onclick="closeHistoryModal()">Fermer</button>
-          <button type="button" id="historyEditBtn" class="btn-submit" onclick="enableHistoryEdit()" style="display: none;">✏️ Modifier</button>
+          <button type="button" id="historyEditBtn" class="btn-submit" onclick="enableHistoryEdit()" style="display: none;">✏️</button>
         </div>
       </div>
     </div>
@@ -1533,7 +1531,6 @@
         if (docSnap.exists()) {
           familyHistory = docSnap.data().content || familyHistory;
         } else {
-          // Créer le document avec la valeur par défaut
           await setDoc(ref, { content: familyHistory });
         }
         return familyHistory;
@@ -2722,7 +2719,6 @@
       // Mettre à jour les boutons
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
       document.getElementById("historyEditBtn").style.display = isProprietaire ? "flex" : "none";
-      document.getElementById("historyEditIndicator").textContent = isProprietaire ? "🔓 Éditable" : "🔒 Lecture seule";
       
       // Sortir du mode édition si on était dedans
       if (isHistoryEditMode) {
@@ -2737,7 +2733,7 @@
 
     window.enableHistoryEdit = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le proprietaire peut modifier l'histoire", "error");
+        showToast("Seul le proprietaire peut modifier les informations", "error");
         return;
       }
       
@@ -2762,7 +2758,7 @@
 
     window.saveHistory = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le proprietaire peut modifier l'histoire", "error");
+        showToast("Seul le proprietaire peut modifier les informations", "error");
         return;
       }
       
@@ -2777,10 +2773,9 @@
       
       const saved = await saveFamilyHistory(newContent);
       if (saved) {
-        // Mettre à jour l'affichage
         document.getElementById("historyTextDisplay").innerHTML = newContent.replace(/\n/g, '<br>');
-        await addJournalEntry('edit', 'edit', 'Histoire de la famille modifiée', 'proprietaire');
-        showToast("Histoire mise à jour avec succès !", "success");
+        await addJournalEntry('edit', 'edit', 'Informations de la famille modifiées', 'proprietaire');
+        showToast("Informations mises à jour avec succès !", "success");
         cancelHistoryEdit();
       } else {
         showToast("Erreur lors de la sauvegarde", "error");
