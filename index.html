@@ -976,30 +976,8 @@
     .detail-card .detail-value { font-size: 15px; color: var(--text-dark); font-weight: 500; }
     .detail-card .detail-value.empty { color: var(--text-light); font-weight: 400; font-style: italic; }
 
-    .detail-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .detail-actions .btn-detail {
-      padding: 8px 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-      background: rgba(0, 0, 0, 0.04);
-      color: var(--text-dark);
-    }
-    .detail-actions .btn-detail:hover { background: rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
-    .detail-actions .btn-detail.btn-primary { background: var(--accent); color: white; }
-    .detail-actions .btn-detail.btn-primary:hover { background: #6c3483; }
-    .detail-actions .btn-detail.btn-danger { background: var(--danger); color: white; }
-    .detail-actions .btn-detail.btn-danger:hover { background: #c0392b; }
+    /* === SUPPRESSION DES BOUTONS DANS LA MODALE DÉTAIL === */
+    /* .detail-actions complètement supprimé */
 
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
@@ -1265,7 +1243,7 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal avec CHEMIN -->
+  <!-- Person Detail Modal - SANS BOUTONS -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
@@ -1306,12 +1284,8 @@
           </div>
         </div>
         
-        <div class="detail-actions">
-          <button type="button" class="btn-detail btn-primary" onclick="closePersonDetailModal(); navigateToPerson();">
-            Voir dans l'arbre
-          </button>
-          <button type="button" class="btn-detail" onclick="closePersonDetailModal()">Fermer</button>
-        </div>
+        <!-- SECTION BOUTONS SUPPRIMÉE -->
+        
       </div>
     </div>
   </div>
@@ -1767,7 +1741,6 @@
         if (resultat.exists()) {
           family = resultat.data();
           if (!family.gender) family.gender = 'unknown';
-          // S'assurer que la racine a un champ gender
           if (!family.gender || family.gender === '') family.gender = 'male';
           currentPath = [family];
           displayRoot();
@@ -1829,7 +1802,6 @@
       return results;
     }
 
-    // ===== FONCTION POUR TROUVER LE CHEMIN =====
     function getPathToNode(node, targetName, path = []) {
       if (node.name === targetName) return [...path, node];
       if (!node.children) return null;
@@ -2173,7 +2145,6 @@
       breadcrumbEl.style.display = "none";
       mainHeader.textContent = "🌳 Les fils " + (family ? family.name : "Gaïda");
       
-      // Afficher les boutons selon les permissions
       const isAuthenticated = currentUser !== null;
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
@@ -2258,7 +2229,7 @@
       }
     }
 
-    // ===== PERSON DETAIL AVEC CHEMIN =====
+    // ===== PERSON DETAIL - SANS BOUTONS =====
     window.openPersonDetail = function(person) {
       lastDetailPerson = person;
       
@@ -2292,10 +2263,8 @@
       roleBadge.textContent = roleText;
       roleBadge.className = `role-badge ${genderClass}`;
       
-      // === AFFICHAGE DU CHEMIN VERS LA RACINE ===
-      const pathDisplay = document.getElementById('pathDisplay');
+      // Affichage du chemin vers la racine
       if (person === family) {
-        pathDisplay.textContent = 'Racine';
         document.getElementById('detailPath').innerHTML = `
           <span class="path-root">Racine</span>
           <span class="path-arrow">→</span>
@@ -2324,17 +2293,6 @@
 
     window.closePersonDetailModal = function() {
       document.getElementById("personDetailModal").classList.remove("active");
-    };
-
-    window.navigateToPerson = function() {
-      if (lastDetailPerson) {
-        const path = findPathToNode(family, lastDetailPerson.name);
-        if (path) {
-          history = path.slice(0, -1);
-          currentPath = path;
-          displayPerson(path[path.length - 1]);
-        }
-      }
     };
 
     // ===== ADD PERSON =====
@@ -2409,7 +2367,7 @@
       }
     };
 
-    // ===== EDIT PERSON - VERSION CORRIGÉE =====
+    // ===== EDIT PERSON =====
     let editingPerson = null;
 
     window.openEditModal = function() {
@@ -2423,7 +2381,6 @@
         return;
       }
       
-      // On utilise currentNode directement (peu importe si c'est la racine ou non)
       editingPerson = currentNode;
       
       document.getElementById("editName").value = editingPerson.name || "";
@@ -2485,7 +2442,6 @@
       editingPerson.birth = birth || "";
       editingPerson.bio = bio || "";
 
-      // Si c'est la racine, on met à jour family et le titre
       if (editingPerson === family) {
         family.name = name;
         mainHeader.textContent = "🌳 Les fils " + name;
@@ -2500,7 +2456,6 @@
         closeEditModal();
         buildNameIndex();
         
-        // Rafraîchir l'affichage
         if (editingPerson === family) {
           displayRoot();
         } else {
@@ -2523,7 +2478,6 @@
         return;
       }
       
-      // Empêcher la suppression de la racine
       if (currentNode === family) {
         showToast("Impossible de supprimer la racine de l'arbre", "warning");
         return;
