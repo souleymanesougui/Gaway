@@ -2580,8 +2580,11 @@
       await loadJournal();
       buildNameIndex();
       updateUIForAuth();
+      setTimeout(() => {
+        showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
+      }, 500);
       
-    };
+    }
 
     init();
 
