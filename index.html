@@ -39,9 +39,13 @@
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       --male-color: #3498db;
       --female-color: #e74c3c;
+      --menu-bg: rgba(255, 255, 255, 0.95);
+      --menu-text: #1a1a1a;
+      --menu-hover: rgba(0, 0, 0, 0.05);
+      --menu-border: rgba(0, 0, 0, 0.06);
     }
 
-    /* === THEMES === */
+    /* === THEME SOMBRE === */
     [data-theme="dark"] {
       --primary: #ecf0f1;
       --secondary: #bdc3c7;
@@ -51,39 +55,154 @@
       --card-bg: rgba(30, 30, 50, 0.9);
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       --border: rgba(255, 255, 255, 0.05);
+      --menu-bg: rgba(30, 30, 50, 0.95);
+      --menu-text: #ecf0f1;
+      --menu-hover: rgba(255, 255, 255, 0.05);
+      --menu-border: rgba(255, 255, 255, 0.05);
     }
 
+    /* === THEME NATURE === */
     [data-theme="nature"] {
       --primary: #2E7D32;
       --secondary: #388E3C;
       --accent: #43A047;
       --bg: #E8F5E9;
       --card-bg: rgba(255, 255, 255, 0.92);
+      --menu-bg: rgba(232, 245, 233, 0.95);
+      --menu-text: #1a1a1a;
+      --menu-hover: rgba(46, 125, 50, 0.08);
+      --menu-border: rgba(46, 125, 50, 0.1);
     }
 
+    /* === THEME VINTAGE === */
     [data-theme="vintage"] {
       --primary: #5D4037;
       --secondary: #795548;
       --accent: #8D6E63;
       --bg: #EFEBE9;
       --card-bg: rgba(255, 248, 225, 0.9);
+      --menu-bg: rgba(255, 248, 225, 0.95);
+      --menu-text: #3E2723;
+      --menu-hover: rgba(93, 64, 55, 0.08);
+      --menu-border: rgba(93, 64, 55, 0.1);
     }
 
+    /* === THEME MODERN === */
     [data-theme="modern"] {
       --primary: #0D47A1;
       --secondary: #1565C0;
       --accent: #42A5F5;
       --bg: #E3F2FD;
       --card-bg: rgba(255, 255, 255, 0.9);
+      --menu-bg: rgba(227, 242, 253, 0.95);
+      --menu-text: #0D47A1;
+      --menu-hover: rgba(13, 71, 161, 0.08);
+      --menu-border: rgba(13, 71, 161, 0.1);
     }
 
+    /* === THEME ACCESSIBILITÉ === */
     [data-theme="accessibility"] {
       --primary: #000000;
       --secondary: #1A237E;
       --accent: #D32F2F;
       --bg: #FFFFFF;
       --card-bg: rgba(255, 255, 255, 0.98);
+      --menu-bg: rgba(255, 255, 255, 0.98);
+      --menu-text: #000000;
+      --menu-hover: rgba(0, 0, 0, 0.05);
+      --menu-border: rgba(0, 0, 0, 0.1);
       font-size: 120%;
+    }
+
+    /* === ADAPTATION DU MENU SELON LE THEME === */
+    [data-theme="dark"] .hamburger-menu {
+      background: var(--menu-bg);
+      border: 1px solid var(--menu-border);
+    }
+    [data-theme="dark"] .hamburger-menu .history-btn,
+    [data-theme="dark"] .hamburger-menu .action-btn,
+    [data-theme="dark"] .hamburger-menu .auth-btn {
+      color: var(--menu-text);
+    }
+    [data-theme="dark"] .hamburger-menu .history-btn:hover,
+    [data-theme="dark"] .hamburger-menu .action-btn:hover,
+    [data-theme="dark"] .hamburger-menu .auth-btn:hover {
+      background: var(--menu-hover);
+    }
+    [data-theme="dark"] .hamburger-menu .menu-divider {
+      border-color: var(--menu-border);
+    }
+
+    [data-theme="nature"] .hamburger-menu {
+      background: var(--menu-bg);
+      border: 1px solid var(--menu-border);
+    }
+    [data-theme="nature"] .hamburger-menu .history-btn,
+    [data-theme="nature"] .hamburger-menu .action-btn,
+    [data-theme="nature"] .hamburger-menu .auth-btn {
+      color: var(--menu-text);
+    }
+    [data-theme="nature"] .hamburger-menu .history-btn:hover,
+    [data-theme="nature"] .hamburger-menu .action-btn:hover,
+    [data-theme="nature"] .hamburger-menu .auth-btn:hover {
+      background: var(--menu-hover);
+    }
+    [data-theme="nature"] .hamburger-menu .menu-divider {
+      border-color: var(--menu-border);
+    }
+
+    [data-theme="vintage"] .hamburger-menu {
+      background: var(--menu-bg);
+      border: 1px solid var(--menu-border);
+    }
+    [data-theme="vintage"] .hamburger-menu .history-btn,
+    [data-theme="vintage"] .hamburger-menu .action-btn,
+    [data-theme="vintage"] .hamburger-menu .auth-btn {
+      color: var(--menu-text);
+    }
+    [data-theme="vintage"] .hamburger-menu .history-btn:hover,
+    [data-theme="vintage"] .hamburger-menu .action-btn:hover,
+    [data-theme="vintage"] .hamburger-menu .auth-btn:hover {
+      background: var(--menu-hover);
+    }
+    [data-theme="vintage"] .hamburger-menu .menu-divider {
+      border-color: var(--menu-border);
+    }
+
+    [data-theme="modern"] .hamburger-menu {
+      background: var(--menu-bg);
+      border: 1px solid var(--menu-border);
+    }
+    [data-theme="modern"] .hamburger-menu .history-btn,
+    [data-theme="modern"] .hamburger-menu .action-btn,
+    [data-theme="modern"] .hamburger-menu .auth-btn {
+      color: var(--menu-text);
+    }
+    [data-theme="modern"] .hamburger-menu .history-btn:hover,
+    [data-theme="modern"] .hamburger-menu .action-btn:hover,
+    [data-theme="modern"] .hamburger-menu .auth-btn:hover {
+      background: var(--menu-hover);
+    }
+    [data-theme="modern"] .hamburger-menu .menu-divider {
+      border-color: var(--menu-border);
+    }
+
+    [data-theme="accessibility"] .hamburger-menu {
+      background: var(--menu-bg);
+      border: 1px solid var(--menu-border);
+    }
+    [data-theme="accessibility"] .hamburger-menu .history-btn,
+    [data-theme="accessibility"] .hamburger-menu .action-btn,
+    [data-theme="accessibility"] .hamburger-menu .auth-btn {
+      color: var(--menu-text);
+    }
+    [data-theme="accessibility"] .hamburger-menu .history-btn:hover,
+    [data-theme="accessibility"] .hamburger-menu .action-btn:hover,
+    [data-theme="accessibility"] .hamburger-menu .auth-btn:hover {
+      background: var(--menu-hover);
+    }
+    [data-theme="accessibility"] .hamburger-menu .menu-divider {
+      border-color: var(--menu-border);
     }
 
     [data-theme="dark"] body::before {
@@ -129,17 +248,6 @@
       background: rgba(20, 20, 40, 0.8);
       color: #ecf0f1;
       border: 1.5px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .hamburger-menu {
-      background: rgba(30, 30, 50, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .hamburger-menu .history-btn,
-    [data-theme="dark"] .hamburger-menu .action-btn,
-    [data-theme="dark"] .hamburger-menu .auth-btn {
-      color: #ecf0f1;
     }
 
     [data-theme="dark"] .toast {
@@ -332,7 +440,7 @@
     .breadcrumb span { margin: 0 6px; color: #9b59b6; cursor: pointer; }
     .breadcrumb span:hover { text-decoration: underline; color: #a569bd; }
 
-    /* === BARRE DE RECHERCHE (sans filtres) === */
+    /* === BARRE DE RECHERCHE === */
     .search-wrapper {
       width: 90%;
       max-width: 450px;
@@ -435,27 +543,6 @@
     }
     .person:hover img { transform: scale(1.05); border-color: var(--secondary); }
 
-    /* Genre sur la carte */
-    .person-gender {
-      position: absolute;
-      top: -8px;
-      left: -8px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 2;
-    }
-    .person-gender.male { background: var(--male-color); }
-    .person-gender.female { background: var(--female-color); }
-    .person-gender.unknown { background: var(--text-light); }
-
     .person-name {
       margin-top: 10px;
       font-size: clamp(13px, 3.5vw, 15px);
@@ -482,18 +569,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    .person .badge-count {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: var(--accent);
-      color: white;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 600;
-      box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
-    }
+    /* SUPPRESSION du badge-count et du person-gender */
 
     .detail-btn {
       position: absolute;
@@ -522,7 +598,6 @@
 
     @media (max-width: 600px) {
       .detail-btn { opacity: 1; transform: scale(1); background: rgba(255, 255, 255, 0.85); width: 32px; height: 32px; font-size: 16px; top: 4px; right: 4px; }
-      .person-gender { width: 24px; height: 24px; font-size: 12px; top: -6px; left: -6px; }
     }
 
     #backBtn {
@@ -554,12 +629,13 @@
       top: 100%;
       left: 0;
       transform: none;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--menu-bg);
       backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       border-radius: 0 16px 16px 0;
       padding: 12px 18px 16px 18px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--menu-border);
       flex-direction: column;
       gap: 4px;
       z-index: 200;
@@ -580,7 +656,7 @@
     .hamburger-menu .auth-btn {
       background: transparent;
       border: none;
-      color: #1a1a1a;
+      color: var(--menu-text);
       padding: 8px 14px;
       border-radius: 10px;
       font-size: 14px;
@@ -599,11 +675,15 @@
     .hamburger-menu .history-btn:hover,
     .hamburger-menu .action-btn:hover,
     .hamburger-menu .auth-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--menu-hover);
       border-radius: 10px;
     }
 
-    .menu-divider { border: none; border-top: 1px solid rgba(0, 0, 0, 0.06); margin: 4px 0; }
+    .menu-divider { 
+      border: none; 
+      border-top: 1px solid var(--menu-border); 
+      margin: 4px 0; 
+    }
 
     .hamburger-menu .translate-container {
       width: 100%;
@@ -616,7 +696,7 @@
       backdrop-filter: blur(10px);
       border-radius: 30px;
       padding: 3px 8px;
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--menu-border);
       display: inline-block;
       min-width: 160px;
       width: 100%;
@@ -1309,7 +1389,7 @@
     }
     window.showToast = showToast;
 
-    // ===== THEME TOGGLE =====
+    // ===== THEME TOGGLE (SANS ALERTE) =====
     function toggleTheme() {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
@@ -1323,6 +1403,7 @@
       else newTheme = 'light';
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
+      // Plus de toast pour le thème
     }
     window.toggleTheme = toggleTheme;
 
@@ -1677,7 +1758,6 @@
         const resultat = await getDoc(ref);
         if (resultat.exists()) {
           family = resultat.data();
-          // Si le genre n'existe pas, ajouter une valeur par défaut
           if (!family.gender) family.gender = 'unknown';
           currentPath = [family];
           displayRoot();
@@ -1982,17 +2062,6 @@
           dragIndex = null;
         });
 
-        // === GENRE SUR LA CARTE ===
-        const gender = child.gender || 'unknown';
-        const genderIcon = gender === 'male' ? '♂' : gender === 'female' ? '♀' : '?';
-        const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
-        
-        const genderBadge = document.createElement("div");
-        genderBadge.className = `person-gender ${genderClass}`;
-        genderBadge.textContent = genderIcon;
-        genderBadge.title = gender === 'male' ? 'Homme' : gender === 'female' ? 'Femme' : 'Genre non renseigné';
-        div.appendChild(genderBadge);
-
         const img = document.createElement("img");
         img.src = child.photo ? "photos/" + child.photo : "ssi.jpg";
         img.alt = child.name;
@@ -2071,12 +2140,7 @@
         };
         div.appendChild(detailBtn);
 
-        if (child.children && child.children.length > 0) {
-          const badge = document.createElement("span");
-          badge.className = "badge-count";
-          badge.textContent = child.children.length;
-          div.appendChild(badge);
-        }
+        // SUPPRESSION du badge-count (nombre d'enfants)
 
         treeEl.appendChild(div);
       });
@@ -2109,17 +2173,6 @@
         displayPerson(family);
       };
 
-      // Genre pour la racine
-      const rootGender = family.gender || 'unknown';
-      const rootGenderIcon = rootGender === 'male' ? '♂' : rootGender === 'female' ? '♀' : '?';
-      const rootGenderClass = rootGender === 'male' ? 'male' : rootGender === 'female' ? 'female' : 'unknown';
-      
-      const genderBadge = document.createElement("div");
-      genderBadge.className = `person-gender ${rootGenderClass}`;
-      genderBadge.textContent = rootGenderIcon;
-      genderBadge.title = rootGender === 'male' ? 'Homme' : rootGender === 'female' ? 'Femme' : 'Genre non renseigné';
-      div.appendChild(genderBadge);
-
       const img = document.createElement("img");
       img.src = family.photo ? "photos/" + family.photo : "ssi.jpg";
       img.alt = family.name;
@@ -2142,12 +2195,7 @@
       };
       div.appendChild(detailBtn);
 
-      if (family.children && family.children.length > 0) {
-        const badge = document.createElement("span");
-        badge.className = "badge-count";
-        badge.textContent = family.children.length;
-        div.appendChild(badge);
-      }
+      // SUPPRESSION du badge-count pour la racine
 
       treeEl.appendChild(div);
     }
@@ -2199,7 +2247,6 @@
       document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
       document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
       
-      // Couleur de fond selon le genre
       const cover = document.getElementById("detailCover");
       cover.className = `detail-cover ${genderClass}`;
       
