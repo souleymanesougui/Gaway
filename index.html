@@ -971,10 +971,66 @@
       border-radius: 12px;
       padding: 12px 16px;
       border: 1px solid rgba(0, 0, 0, 0.04);
+      cursor: default;
+      transition: all 0.2s ease;
     }
-    .detail-card .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); font-weight: 600; margin-bottom: 4px; }
-    .detail-card .detail-value { font-size: 15px; color: var(--text-dark); font-weight: 500; }
-    .detail-card .detail-value.empty { color: var(--text-light); font-weight: 400; font-style: italic; }
+    .detail-card.editable {
+      cursor: pointer;
+      border-color: var(--accent);
+      background: rgba(142, 68, 173, 0.05);
+    }
+    .detail-card.editable:hover {
+      background: rgba(142, 68, 173, 0.1);
+      box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.15);
+    }
+    .detail-card .detail-label { 
+      font-size: 11px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+      color: var(--text-light); 
+      font-weight: 600; 
+      margin-bottom: 4px; 
+    }
+    .detail-card .detail-value { 
+      font-size: 15px; 
+      color: var(--text-dark); 
+      font-weight: 500; 
+    }
+    .detail-card .detail-value.empty { 
+      color: var(--text-light); 
+      font-weight: 400; 
+      font-style: italic; 
+    }
+    .detail-card .detail-value-input {
+      width: 100%;
+      font-size: 15px;
+      font-weight: 500;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 6px 10px;
+      background: white;
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+    .detail-card .detail-value-input:focus {
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
+    }
+    .detail-card .detail-value-select {
+      width: 100%;
+      font-size: 15px;
+      font-weight: 500;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 6px 10px;
+      background: white;
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+    .detail-card .detail-value-select:focus {
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
+    }
 
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
@@ -1240,7 +1296,7 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal - SANS BOUTONS -->
+  <!-- Person Detail Modal - ÉDITION DIRECTE POUR LE PROPRIÉTAIRE -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
@@ -1262,16 +1318,16 @@
           <span class="path-name" id="pathDisplay">Chargement...</span>
         </div>
         
-        <div class="detail-grid">
-          <div class="detail-card">
+        <div class="detail-grid" id="detailGrid">
+          <div class="detail-card" id="detailGenderCard" data-field="gender">
             <div class="detail-label">Genre</div>
             <div class="detail-value" id="detailGender">Non renseigné</div>
           </div>
-          <div class="detail-card">
+          <div class="detail-card" id="detailBirthCard" data-field="birth">
             <div class="detail-label">Date de naissance</div>
             <div class="detail-value" id="detailBirth">Non renseigné</div>
           </div>
-          <div class="detail-card">
+          <div class="detail-card" id="detailBioCard" data-field="bio">
             <div class="detail-label">Biographie</div>
             <div class="detail-value" id="detailBio">Non renseignée</div>
           </div>
@@ -1684,7 +1740,6 @@
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -1974,7 +2029,6 @@
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
 
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
-      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
@@ -2060,63 +2114,6 @@
         name.className = "person-name";
         name.textContent = child.name;
 
-        // ÉDITION DIRECTE PAR DOUBLE-CLIC - UNIQUEMENT POUR LE PROPRIÉTAIRE
-        name.addEventListener('dblclick', (e) => {
-          e.stopPropagation();
-          // Seul le propriétaire peut modifier directement
-          if (!currentUser || currentUser.role !== 'proprietaire') {
-            showToast("Seul le proprietaire peut modifier les noms", "error");
-            return;
-          }
-          
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.value = child.name;
-          input.style.cssText = `
-            width: 100%;
-            font-size: inherit;
-            font-weight: inherit;
-            text-align: center;
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            padding: 4px 8px;
-            background: var(--card-bg);
-            color: var(--text-dark);
-            font-family: 'Inter', sans-serif;
-          `;
-          
-          name.replaceWith(input);
-          input.focus();
-          input.select();
-          
-          const saveEdit = async () => {
-            const newName = input.value.trim();
-            if (newName && newName !== child.name) {
-              if (person.children.some(c => c.name === newName && c !== child)) {
-                showToast(`"${newName}" existe déjà`, "warning");
-                input.replaceWith(name);
-                return;
-              }
-              const oldName = child.name;
-              child.name = newName;
-              await sauvegarderFamille();
-              buildNameIndex();
-              displayPerson(person);
-              const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
-              await addJournalEntry('edit', 'edit', `${oldName} → ${newName} (édition rapide)`, userRole);
-              showToast(`"${oldName}" → "${newName}"`, "success");
-            } else {
-              input.replaceWith(name);
-            }
-          };
-          
-          input.addEventListener('blur', saveEdit);
-          input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
-            if (e.key === 'Escape') { input.replaceWith(name); }
-          });
-        });
-
         div.appendChild(img);
         div.appendChild(name);
 
@@ -2148,7 +2145,6 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
-      // Le bouton Modifier est définitivement supprimé
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
@@ -2228,8 +2224,11 @@
       }
     }
 
-    // ===== PERSON DETAIL - SANS BOUTONS =====
+    // ===== PERSON DETAIL - ÉDITION DIRECTE =====
+    let currentDetailPerson = null;
+
     window.openPersonDetail = function(person) {
+      currentDetailPerson = person;
       lastDetailPerson = person;
       
       const gender = person.gender || 'unknown';
@@ -2242,25 +2241,6 @@
       
       const cover = document.getElementById("detailCover");
       cover.className = `detail-cover ${genderClass}`;
-      
-      document.getElementById("detailGender").textContent = genderText;
-      
-      const birth = person.birth || "Non renseigné";
-      document.getElementById("detailBirth").textContent = birth;
-      document.getElementById("detailBirth").className = `detail-value${birth === "Non renseigné" ? " empty" : ""}`;
-      
-      const bio = person.bio || "Non renseignée";
-      document.getElementById("detailBio").textContent = bio;
-      document.getElementById("detailBio").className = `detail-value${bio === "Non renseignée" ? " empty" : ""}`;
-      
-      const childrenCount = (person.children && person.children.length) || 0;
-      document.getElementById("detailChildren").textContent = childrenCount;
-      
-      const roleBadge = document.getElementById("detailRole");
-      const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      const roleText = person === family ? "Racine" : (isProprietaire ? "Membre" : "Membre");
-      roleBadge.textContent = roleText;
-      roleBadge.className = `role-badge ${genderClass}`;
       
       // Affichage du chemin vers la racine
       if (person === family) {
@@ -2287,11 +2267,128 @@
         }
       }
       
+      // Remplir les détails
+      renderDetailFields(person);
+      
       document.getElementById("personDetailModal").classList.add("active");
+    };
+
+    function renderDetailFields(person) {
+      const isProprietaire = currentUser && currentUser.role === 'proprietaire';
+      
+      // Gender
+      const genderCard = document.getElementById('detailGenderCard');
+      const genderValue = document.getElementById('detailGender');
+      const genderText = person.gender === 'male' ? 'Homme' : person.gender === 'female' ? 'Femme' : 'Non renseigné';
+      
+      if (isProprietaire && person !== family) {
+        genderCard.classList.add('editable');
+        genderValue.innerHTML = `
+          <select class="detail-value-select" id="genderSelect" onchange="saveDetailField('gender', this.value)">
+            <option value="male" ${person.gender === 'male' ? 'selected' : ''}>Homme</option>
+            <option value="female" ${person.gender === 'female' ? 'selected' : ''}>Femme</option>
+            <option value="unknown" ${person.gender === 'unknown' || !person.gender ? 'selected' : ''}>Non renseigné</option>
+          </select>
+        `;
+      } else {
+        genderCard.classList.remove('editable');
+        genderValue.textContent = genderText;
+        genderValue.className = `detail-value${genderText === 'Non renseigné' ? ' empty' : ''}`;
+      }
+      
+      // Birth
+      const birthCard = document.getElementById('detailBirthCard');
+      const birthValue = document.getElementById('detailBirth');
+      const birthText = person.birth || "Non renseigné";
+      
+      if (isProprietaire && person !== family) {
+        birthCard.classList.add('editable');
+        birthValue.innerHTML = `
+          <input type="date" class="detail-value-input" id="birthInput" value="${person.birth || ''}" 
+                 onchange="saveDetailField('birth', this.value)" 
+                 onclick="event.stopPropagation();">
+        `;
+      } else {
+        birthCard.classList.remove('editable');
+        birthValue.textContent = birthText;
+        birthValue.className = `detail-value${birthText === "Non renseigné" ? ' empty' : ''}`;
+      }
+      
+      // Bio
+      const bioCard = document.getElementById('detailBioCard');
+      const bioValue = document.getElementById('detailBio');
+      const bioText = person.bio || "Non renseignée";
+      
+      if (isProprietaire && person !== family) {
+        bioCard.classList.add('editable');
+        bioValue.innerHTML = `
+          <textarea class="detail-value-input" id="bioInput" rows="2" 
+                    placeholder="Courte biographie..." 
+                    onchange="saveDetailField('bio', this.value)" 
+                    onclick="event.stopPropagation();"
+                    style="resize: vertical; min-height: 50px;">${person.bio || ''}</textarea>
+        `;
+      } else {
+        bioCard.classList.remove('editable');
+        bioValue.textContent = bioText;
+        bioValue.className = `detail-value${bioText === "Non renseignée" ? ' empty' : ''}`;
+      }
+      
+      // Children (toujours en lecture seule)
+      const childrenCount = (person.children && person.children.length) || 0;
+      document.getElementById("detailChildren").textContent = childrenCount;
+      
+      // Role badge
+      const roleBadge = document.getElementById("detailRole");
+      const roleText = person === family ? "Racine" : "Membre";
+      const genderClass = person.gender === 'male' ? 'male' : person.gender === 'female' ? 'female' : 'unknown';
+      roleBadge.textContent = roleText;
+      roleBadge.className = `role-badge ${genderClass}`;
+    }
+
+    // ===== SAUVEGARDE DES CHAMPS MODIFIÉS =====
+    window.saveDetailField = async function(field, value) {
+      if (!currentDetailPerson) return;
+      if (!currentUser || currentUser.role !== 'proprietaire') {
+        showToast("Seul le proprietaire peut modifier", "error");
+        return;
+      }
+      if (currentDetailPerson === family) {
+        showToast("La racine ne peut pas être modifiée ici", "warning");
+        return;
+      }
+
+      const oldValue = currentDetailPerson[field] || '';
+      if (value === oldValue) return;
+
+      const fieldNames = {
+        gender: 'Genre',
+        birth: 'Date de naissance',
+        bio: 'Biographie'
+      };
+
+      // Mettre à jour l'objet
+      currentDetailPerson[field] = value || '';
+
+      // Sauvegarder dans Firebase
+      const saved = await sauvegarderFamille();
+      if (saved) {
+        // Re-rendre les champs
+        renderDetailFields(currentDetailPerson);
+        
+        // Journal
+        await addJournalEntry('edit', 'edit', 
+          `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${value || 'vide'}"`, 
+          'proprietaire'
+        );
+        
+        showToast(`${fieldNames[field] || field} modifié avec succès !`, "success");
+      }
     };
 
     window.closePersonDetailModal = function() {
       document.getElementById("personDetailModal").classList.remove("active");
+      currentDetailPerson = null;
     };
 
     // ===== ADD PERSON =====
@@ -2366,21 +2463,18 @@
       }
     };
 
-    // ===== EDIT PERSON - Gardé pour compatibilité mais plus utilisé =====
-    let editingPerson = null;
-
+    // ===== EDIT PERSON - Gardé pour compatibilité =====
     window.openEditModal = function() {
-      showToast("La modification se fait désormais par double-clic sur le nom", "info");
+      showToast("La modification se fait dans la vue détail", "info");
     };
 
     window.closeEditModal = function() {
       document.getElementById("editModal").classList.remove("active");
-      editingPerson = null;
     };
 
     window.editPerson = async function(e) {
       e.preventDefault();
-      showToast("Utilisez le double-clic sur le nom pour modifier", "info");
+      showToast("Utilisez la vue détail pour modifier", "info");
     };
 
     // ===== DELETE PERSON =====
@@ -2495,6 +2589,7 @@
     window.sauvegarderFamille = sauvegarderFamille;
     window.family = family;
     window.getPathToNode = getPathToNode;
+    window.currentDetailPerson = currentDetailPerson;
 
   </script>
 </body>
