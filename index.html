@@ -39,7 +39,7 @@
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* === THEME SOMBRE === */
+    /* === THEMES === */
     [data-theme="dark"] {
       --primary: #ecf0f1;
       --secondary: #bdc3c7;
@@ -51,7 +51,6 @@
       --border: rgba(255, 255, 255, 0.05);
     }
 
-    /* === THÈMES PERSONNALISÉS === */
     [data-theme="nature"] {
       --primary: #2E7D32;
       --secondary: #388E3C;
@@ -68,6 +67,14 @@
       --card-bg: rgba(255, 248, 225, 0.9);
     }
 
+    [data-theme="modern"] {
+      --primary: #0D47A1;
+      --secondary: #1565C0;
+      --accent: #42A5F5;
+      --bg: #E3F2FD;
+      --card-bg: rgba(255, 255, 255, 0.9);
+    }
+
     [data-theme="accessibility"] {
       --primary: #000000;
       --secondary: #1A237E;
@@ -75,14 +82,6 @@
       --bg: #FFFFFF;
       --card-bg: rgba(255, 255, 255, 0.98);
       font-size: 120%;
-    }
-
-    [data-theme="modern"] {
-      --primary: #0D47A1;
-      --secondary: #1565C0;
-      --accent: #42A5F5;
-      --bg: #E3F2FD;
-      --card-bg: rgba(255, 255, 255, 0.9);
     }
 
     [data-theme="dark"] body::before {
@@ -112,11 +111,6 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    [data-theme="dark"] #searchBox:focus {
-      border-color: rgba(142, 68, 173, 0.3);
-      box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
-    }
-
     [data-theme="dark"] .modal-content {
       background: rgba(30, 30, 50, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -127,27 +121,12 @@
       color: #ecf0f1;
     }
 
-    [data-theme="dark"] .modal-content .subtitle {
-      color: #95a5a6;
-    }
-
     [data-theme="dark"] .form-group input,
     [data-theme="dark"] .form-group select,
     [data-theme="dark"] .form-group textarea {
       background: rgba(20, 20, 40, 0.8);
       color: #ecf0f1;
       border: 1.5px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .form-group input:focus,
-    [data-theme="dark"] .form-group select:focus,
-    [data-theme="dark"] .form-group textarea:focus {
-      border-color: var(--accent);
-      background: rgba(30, 30, 50, 0.9);
-    }
-
-    [data-theme="dark"] .form-group label {
-      color: #bdc3c7;
     }
 
     [data-theme="dark"] .hamburger-menu {
@@ -161,51 +140,10 @@
       color: #ecf0f1;
     }
 
-    [data-theme="dark"] .hamburger-menu .history-btn:hover,
-    [data-theme="dark"] .hamburger-menu .action-btn:hover,
-    [data-theme="dark"] .hamburger-menu .auth-btn:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .historique-item {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    [data-theme="dark"] .historique-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
     [data-theme="dark"] .toast {
       background: rgba(30, 30, 50, 0.95);
       color: #ecf0f1;
       border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .stat-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .stat-card .stat-label {
-      color: #95a5a6;
-    }
-
-    [data-theme="dark"] .detail-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="dark"] .detail-card .detail-label {
-      color: #95a5a6;
-    }
-
-    [data-theme="dark"] .detail-btn {
-      background: rgba(255, 255, 255, 0.05) !important;
-      color: #ecf0f1 !important;
-    }
-
-    [data-theme="dark"] .detail-btn:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
     }
 
     /* === TOASTS === */
@@ -245,11 +183,7 @@
     .toast.warning { border-left-color: var(--warning); }
     .toast.info { border-left-color: var(--accent); }
 
-    .toast .toast-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
+    .toast .toast-icon { font-size: 20px; flex-shrink: 0; }
     .toast .toast-close {
       margin-left: auto;
       cursor: pointer;
@@ -260,42 +194,20 @@
       font-size: 18px;
       color: inherit;
     }
-
-    .toast .toast-close:hover {
-      opacity: 1;
-    }
+    .toast .toast-close:hover { opacity: 1; }
 
     @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(60px) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-      }
+      from { opacity: 0; transform: translateX(60px) scale(0.9); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
     }
-
     @keyframes slideOutRight {
-      from {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-      }
-      to {
-        opacity: 0;
-        transform: translateX(60px) scale(0.9);
-      }
+      from { opacity: 1; transform: translateX(0) scale(1); }
+      to { opacity: 0; transform: translateX(60px) scale(0.9); }
     }
-
-    .toast.removing {
-      animation: slideOutRight 0.3s ease forwards;
-    }
+    .toast.removing { animation: slideOutRight 0.3s ease forwards; }
 
     /* === STYLES DE BASE === */
-    * {
-      box-sizing: border-box;
-      transition: var(--transition);
-    }
+    * { box-sizing: border-box; transition: var(--transition); }
 
     body {
       margin: 0;
@@ -346,44 +258,13 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-      flex-wrap: nowrap;
-      min-width: 60px;
-    }
-
-    .header-center {
-      flex: 1;
-      text-align: center;
-      font-size: clamp(18px, 4vw, 28px);
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: white;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      min-width: 0;
-      white-space: nowrap;
-      overflow: visible;
-      padding: 0 5px;
-      transform: translateX(5px);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-      flex-wrap: nowrap;
-      min-width: 50px;
-      justify-content: flex-end;
-    }
+    .header-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: nowrap; min-width: 60px; }
+    .header-center { flex: 1; text-align: center; font-size: clamp(18px, 4vw, 28px); font-weight: 600; letter-spacing: 1px; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3); min-width: 0; white-space: nowrap; overflow: visible; padding: 0 5px; }
+    .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; min-width: 50px; justify-content: flex-end; }
 
     .hamburger-btn {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       padding: 6px 12px;
@@ -399,21 +280,11 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       flex-shrink: 0;
     }
-
-    .hamburger-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(1.02);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .hamburger-btn:active {
-      transform: scale(0.95);
-    }
+    .hamburger-btn:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.02); border-color: rgba(255, 255, 255, 0.3); }
 
     .theme-toggle {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       padding: 6px 10px;
@@ -428,11 +299,7 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       flex-shrink: 0;
     }
-
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(1.02);
-    }
+    .theme-toggle:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.02); }
 
     .auth-status {
       color: rgba(255,255,255,0.8);
@@ -443,27 +310,13 @@
       display: none;
       flex-shrink: 0;
     }
-
-    .auth-status.show {
-      display: inline-block;
-    }
-
-    .auth-status.proprietaire {
-      background: rgba(46, 204, 113, 0.3);
-      color: #2ecc71;
-      display: inline-block;
-    }
-
-    .auth-status.admin {
-      background: rgba(52, 152, 219, 0.3);
-      color: #3498db;
-      display: inline-block;
-    }
+    .auth-status.show { display: inline-block; }
+    .auth-status.proprietaire { background: rgba(46, 204, 113, 0.3); color: #2ecc71; display: inline-block; }
+    .auth-status.admin { background: rgba(52, 152, 219, 0.3); color: #3498db; display: inline-block; }
 
     .breadcrumb {
       background: rgba(44, 62, 80, 0.85);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       width: 100%;
       padding: 8px 15px;
       font-size: clamp(12px, 2.5vw, 14px);
@@ -471,23 +324,13 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       margin-bottom: 8px;
       text-align: center;
-      word-wrap: break-word;
       display: none;
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
+    .breadcrumb span { margin: 0 6px; color: #9b59b6; cursor: pointer; }
+    .breadcrumb span:hover { text-decoration: underline; color: #a569bd; }
 
-    .breadcrumb span {
-      margin: 0 6px;
-      color: #9b59b6;
-      cursor: pointer;
-    }
-
-    .breadcrumb span:hover {
-      text-decoration: underline;
-      color: #a569bd;
-    }
-
-    /* === BARRE DE RECHERCHE AMÉLIORÉE === */
+    /* === RECHERCHE === */
     .search-wrapper {
       width: 90%;
       max-width: 450px;
@@ -504,7 +347,6 @@
       outline: none;
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       color: var(--text-dark);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -514,13 +356,8 @@
       background-position: 16px center;
       font-family: 'Inter', sans-serif;
     }
+    #searchBox:focus { border-color: rgba(142, 68, 173, 0.3); box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15); }
 
-    #searchBox:focus {
-      border-color: rgba(142, 68, 173, 0.3);
-      box-shadow: 0 8px 32px rgba(142, 68, 173, 0.15);
-    }
-
-    /* Filtres de recherche */
     .search-filters {
       display: flex;
       gap: 8px;
@@ -528,9 +365,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
-    .search-filters select,
-    .search-filters button {
+    .search-filters select, .search-filters button {
       padding: 6px 12px;
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.2);
@@ -542,12 +377,6 @@
       font-family: 'Inter', sans-serif;
     }
 
-    [data-theme="dark"] .search-filters select,
-    [data-theme="dark"] .search-filters button {
-      background: rgba(30,30,50,0.5);
-      color: #ecf0f1;
-    }
-
     .search-suggestions {
       position: absolute;
       top: 100%;
@@ -555,7 +384,6 @@
       right: 0;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border-radius: 16px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
       margin-top: 6px;
@@ -565,11 +393,7 @@
       z-index: 50;
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
-
-    .search-suggestions.active {
-      display: block;
-    }
-
+    .search-suggestions.active { display: block; }
     .search-suggestion {
       padding: 10px 16px;
       cursor: pointer;
@@ -581,25 +405,11 @@
       align-items: center;
       gap: 10px;
     }
+    .search-suggestion:hover { background: rgba(142, 68, 173, 0.06); }
+    .search-suggestion .highlight { background: rgba(142, 68, 173, 0.2); padding: 0 4px; border-radius: 4px; font-weight: 600; }
+    .search-suggestion .suggestion-path { font-size: 11px; color: var(--text-light); margin-left: auto; }
 
-    .search-suggestion:hover {
-      background: rgba(142, 68, 173, 0.06);
-    }
-
-    .search-suggestion .highlight {
-      background: rgba(142, 68, 173, 0.2);
-      padding: 0 4px;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-
-    .search-suggestion .suggestion-path {
-      font-size: 11px;
-      color: var(--text-light);
-      margin-left: auto;
-    }
-
-    /* === ARBRE AVEC VUE GRAPHIQUE === */
+    /* === ARBRE === */
     #tree {
       display: flex;
       flex-wrap: wrap;
@@ -610,18 +420,8 @@
       width: 100%;
     }
 
-    #tree.tree-view {
-      padding: 0;
-      overflow: auto;
-    }
-
-    #tree.tree-view canvas {
-      width: 100%;
-      height: auto;
-      background: transparent;
-      border-radius: 16px;
-      cursor: pointer;
-    }
+    #tree.tree-view { padding: 0; overflow: auto; }
+    #tree.tree-view canvas { width: 100%; height: auto; background: transparent; border-radius: 16px; cursor: pointer; }
 
     .person {
       text-align: center;
@@ -630,7 +430,6 @@
       border-radius: 16px;
       background: var(--card-bg);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       box-shadow: var(--shadow);
       transition: var(--transition);
       width: calc(50% - 15px);
@@ -639,21 +438,8 @@
       position: relative;
       border: 1px solid var(--border);
     }
-
-    .person:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      background: rgba(255, 255, 255, 0.95);
-    }
-
-    .person.dragging {
-      opacity: 0.5;
-      transform: scale(0.9);
-    }
-
-    [data-theme="dark"] .person:hover {
-      background: rgba(40, 40, 60, 0.9);
-    }
+    .person:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); background: rgba(255, 255, 255, 0.95); }
+    .person.dragging { opacity: 0.5; transform: scale(0.9); }
 
     .person img {
       width: 100%;
@@ -667,11 +453,7 @@
       object-fit: cover;
       background: #ecf0f1;
     }
-
-    .person:hover img {
-      transform: scale(1.05);
-      border-color: var(--secondary);
-    }
+    .person:hover img { transform: scale(1.05); border-color: var(--secondary); }
 
     .person-name {
       margin-top: 10px;
@@ -712,14 +494,12 @@
       box-shadow: 0 2px 10px rgba(142, 68, 173, 0.3);
     }
 
-    /* === BOUTON DÉTAILS === */
     .detail-btn {
       position: absolute;
       top: 6px;
       right: 6px;
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border: none;
       border-radius: 50%;
       width: 28px;
@@ -736,48 +516,11 @@
       opacity: 0;
       transform: scale(0.8);
     }
-
-    .person:hover .detail-btn {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .detail-btn:hover {
-      background: var(--accent);
-      color: white;
-      transform: scale(1.1) !important;
-      box-shadow: 0 4px 20px rgba(142, 68, 173, 0.3);
-    }
+    .person:hover .detail-btn { opacity: 1; transform: scale(1); }
+    .detail-btn:hover { background: var(--accent); color: white; transform: scale(1.1) !important; box-shadow: 0 4px 20px rgba(142, 68, 173, 0.3); }
 
     @media (max-width: 600px) {
-      .detail-btn {
-        opacity: 1;
-        transform: scale(1);
-        background: rgba(255, 255, 255, 0.85);
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-        top: 4px;
-        right: 4px;
-      }
-    }
-
-    .person .click-hint {
-      font-size: 10px;
-      color: var(--text-light);
-      opacity: 0.5;
-      margin-top: 4px;
-      display: block;
-    }
-
-    [data-theme="dark"] .detail-btn {
-      background: rgba(30, 30, 50, 0.7);
-      color: #a569bd;
-    }
-
-    [data-theme="dark"] .detail-btn:hover {
-      background: var(--accent);
-      color: white;
+      .detail-btn { opacity: 1; transform: scale(1); background: rgba(255, 255, 255, 0.85); width: 32px; height: 32px; font-size: 16px; top: 4px; right: 4px; }
     }
 
     #backBtn {
@@ -791,7 +534,6 @@
       outline: none;
       background: rgba(44, 62, 80, 0.85);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       color: white;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       cursor: pointer;
@@ -801,11 +543,7 @@
       display: none;
       border: 1px solid rgba(255,255,255,0.1);
     }
-
-    #backBtn:hover {
-      background: rgba(44, 62, 80, 0.95);
-      transform: translateY(-2px);
-    }
+    #backBtn:hover { background: rgba(44, 62, 80, 0.95); transform: translateY(-2px); }
 
     /* === MENU HAMBURGER === */
     .hamburger-menu {
@@ -816,7 +554,6 @@
       transform: none;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
       border-radius: 0 16px 16px 0;
       padding: 12px 18px 16px 18px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
@@ -829,20 +566,11 @@
       min-width: 240px;
       max-width: 320px;
     }
-
-    .hamburger-menu.open {
-      display: flex;
-    }
+    .hamburger-menu.open { display: flex; }
 
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .hamburger-menu .history-btn,
@@ -866,7 +594,6 @@
       letter-spacing: 0.2px;
       text-align: center;
     }
-
     .hamburger-menu .history-btn:hover,
     .hamburger-menu .action-btn:hover,
     .hamburger-menu .auth-btn:hover {
@@ -874,11 +601,7 @@
       border-radius: 10px;
     }
 
-    .menu-divider {
-      border: none;
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
-      margin: 4px 0;
-    }
+    .menu-divider { border: none; border-top: 1px solid rgba(0, 0, 0, 0.06); margin: 4px 0; }
 
     .hamburger-menu .translate-container {
       width: 100%;
@@ -886,11 +609,9 @@
       display: flex;
       justify-content: center;
     }
-
     .hamburger-menu .translate-container #google_translate_element {
       background: rgba(0, 0, 0, 0.03);
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border-radius: 30px;
       padding: 3px 8px;
       border: 1px solid rgba(0, 0, 0, 0.06);
@@ -899,25 +620,6 @@
       width: 100%;
       max-width: 220px;
       box-shadow: none;
-    }
-
-    .hamburger-menu .translate-container .goog-te-gadget {
-      color: transparent !important;
-    }
-    .hamburger-menu .translate-container .goog-te-gadget .goog-te-combo {
-      color: #1a1a1a !important;
-      background: transparent !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border-radius: 20px !important;
-      padding: 4px 10px !important;
-      border: 1px solid rgba(0, 0, 0, 0.08) !important;
-      font-size: 12px !important;
-      cursor: pointer !important;
-      min-width: 120px !important;
-      width: 100% !important;
-      box-shadow: none !important;
-      text-align: center !important;
     }
 
     /* === MODALS === */
@@ -930,73 +632,36 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
       padding: 20px;
       animation: overlayFade 0.3s ease;
     }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    @keyframes overlayFade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    .modal-overlay.active { display: flex; }
+    @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
 
     .modal-content {
       background: var(--card-bg);
       backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
       border-radius: 28px;
       max-width: 420px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
       padding: 32px 28px 28px 28px;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.12), 0 10px 30px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.12);
       position: relative;
       animation: modalSlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       border: 1px solid var(--border);
     }
-
-    .modal-content.historique-modal {
-      max-width: 700px;
-    }
-
-    .modal-content.person-detail-modal {
-      max-width: 480px;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .modal-content.stats-modal {
-      max-width: 400px;
-    }
+    .modal-content.historique-modal { max-width: 700px; }
+    .modal-content.person-detail-modal { max-width: 480px; padding: 0; overflow: hidden; }
+    .modal-content.stats-modal { max-width: 400px; }
 
     @keyframes modalSlide {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-content::-webkit-scrollbar {
-      width: 4px;
-    }
-    .modal-content::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .modal-content::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 10px;
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .modal-close {
@@ -1018,35 +683,13 @@
       line-height: 1;
       z-index: 10;
     }
+    .modal-close:hover { color: rgba(0, 0, 0, 0.7); background: rgba(0, 0, 0, 0.08); transform: rotate(90deg); }
 
-    .modal-close:hover {
-      color: rgba(0, 0, 0, 0.7);
-      background: rgba(0, 0, 0, 0.08);
-      transform: rotate(90deg);
-    }
-
-    .modal-content h2 {
-      color: var(--primary);
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-
-    .modal-content .subtitle {
-      color: var(--text-light);
-      font-size: 14px;
-      margin-bottom: 20px;
-      line-height: 1.5;
-      font-weight: 400;
-    }
+    .modal-content h2 { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+    .modal-content .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 400; }
 
     /* === FORMULAIRES === */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
+    .form-group { margin-bottom: 18px; }
     .form-group label {
       display: block;
       margin-bottom: 6px;
@@ -1057,10 +700,7 @@
       text-transform: uppercase;
       opacity: 0.7;
     }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 12px 16px;
       border: 1.5px solid rgba(0, 0, 0, 0.06);
@@ -1069,37 +709,15 @@
       transition: all 0.25s ease;
       background: rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       font-family: 'Inter', sans-serif;
       color: var(--text-dark);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
-
-    .form-group input:hover,
-    .form-group select:hover,
-    .form-group textarea:hover {
-      border-color: rgba(0, 0, 0, 0.1);
-      background: rgba(255, 255, 255, 0.7);
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
       border-color: var(--accent);
       outline: none;
       background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.08), 0 4px 16px rgba(142, 68, 173, 0.06);
-    }
-
-    .form-group input::placeholder,
-    .form-group textarea::placeholder {
-      color: rgba(0, 0, 0, 0.25);
-      font-weight: 400;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 60px;
+      box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.08);
     }
 
     .form-actions {
@@ -1108,7 +726,6 @@
       justify-content: flex-end;
       margin-top: 24px;
     }
-
     .form-actions button {
       padding: 10px 24px;
       border: none;
@@ -1120,61 +737,23 @@
       font-family: 'Inter', sans-serif;
       letter-spacing: 0.2px;
     }
-
     .form-actions .btn-submit {
       background: var(--accent);
       color: white;
       box-shadow: 0 4px 16px rgba(142, 68, 173, 0.25);
     }
-
-    .form-actions .btn-submit:hover {
-      background: #6c3483;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(142, 68, 173, 0.3);
-    }
-
-    .form-actions .btn-submit:active {
-      transform: translateY(0px);
-      box-shadow: 0 2px 8px rgba(142, 68, 173, 0.2);
-    }
-
-    .form-actions .btn-cancel {
-      background: rgba(0, 0, 0, 0.04);
-      color: var(--text-dark);
-    }
-
-    .form-actions .btn-cancel:hover {
-      background: rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
-    }
-
+    .form-actions .btn-submit:hover { background: #6c3483; transform: translateY(-2px); }
+    .form-actions .btn-cancel { background: rgba(0, 0, 0, 0.04); color: var(--text-dark); }
+    .form-actions .btn-cancel:hover { background: rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
     .form-actions .btn-delete-confirm {
       background: #e74c3c;
       color: white;
       box-shadow: 0 4px 16px rgba(231, 76, 60, 0.25);
     }
-
-    .form-actions .btn-delete-confirm:hover {
-      background: #c0392b;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(231, 76, 60, 0.3);
-    }
+    .form-actions .btn-delete-confirm:hover { background: #c0392b; transform: translateY(-2px); }
 
     /* === HISTORIQUE === */
-    .historique-list {
-      margin: 16px 0;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .historique-list::-webkit-scrollbar {
-      width: 4px;
-    }
-    .historique-list::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 10px;
-    }
-
+    .historique-list { margin: 16px 0; max-height: 400px; overflow-y: auto; }
     .historique-item {
       display: flex;
       align-items: center;
@@ -1186,52 +765,18 @@
       border-left: 3px solid transparent;
       transition: all 0.2s ease;
     }
+    .historique-item:hover { background: rgba(0, 0, 0, 0.04); }
+    .historique-item.add { border-left-color: var(--success); }
+    .historique-item.edit { border-left-color: var(--warning); }
+    .historique-item.delete { border-left-color: var(--danger); }
 
-    .historique-item:hover {
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    .historique-item.add {
-      border-left-color: var(--success);
-    }
-    .historique-item.edit {
-      border-left-color: var(--warning);
-    }
-    .historique-item.delete {
-      border-left-color: var(--danger);
-    }
-
-    .historique-item .info {
-      flex: 1;
-    }
-
-    .historique-item .info .action-type {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text-dark);
-    }
-
+    .historique-item .info { flex: 1; }
+    .historique-item .info .action-type { font-weight: 600; font-size: 14px; color: var(--text-dark); }
     .historique-item .info .action-type .type-add { color: var(--success); }
     .historique-item .info .action-type .type-edit { color: var(--warning); }
     .historique-item .info .action-type .type-delete { color: var(--danger); }
-
-    .historique-item .info .details {
-      font-size: 13px;
-      color: var(--text-light);
-      margin-top: 2px;
-    }
-
-    .historique-item .info .date {
-      font-size: 11px;
-      color: rgba(0,0,0,0.3);
-      margin-top: 2px;
-    }
-
-    .historique-item .actions-historique {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
+    .historique-item .info .details { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+    .historique-item .info .date { font-size: 11px; color: rgba(0,0,0,0.3); margin-top: 2px; }
 
     .historique-item .actions-historique .btn-delete-entry {
       background: rgba(231, 76, 60, 0.1);
@@ -1245,25 +790,14 @@
       transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
     }
-
     .historique-item .actions-historique .btn-delete-entry:hover {
       background: var(--danger);
       color: white;
       transform: scale(1.02);
     }
 
-    .historique-empty {
-      text-align: center;
-      color: var(--text-light);
-      padding: 30px 0;
-      font-size: 15px;
-    }
-
-    .historique-empty .icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-      opacity: 0.5;
-    }
+    .historique-empty { text-align: center; color: var(--text-light); padding: 30px 0; font-size: 15px; }
+    .historique-empty .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
 
     .status-badge {
       font-size: 11px;
@@ -1272,19 +806,9 @@
       font-weight: 600;
       display: inline-block;
     }
-
-    .status-badge.accepted {
-      background: rgba(46, 204, 113, 0.15);
-      color: var(--success);
-    }
-    .status-badge.rejected {
-      background: rgba(231, 76, 60, 0.15);
-      color: var(--danger);
-    }
-    .status-badge.pending {
-      background: rgba(243, 156, 18, 0.15);
-      color: var(--warning);
-    }
+    .status-badge.accepted { background: rgba(46, 204, 113, 0.15); color: var(--success); }
+    .status-badge.rejected { background: rgba(231, 76, 60, 0.15); color: var(--danger); }
+    .status-badge.pending { background: rgba(243, 156, 18, 0.15); color: var(--warning); }
 
     .auth-error {
       color: #e74c3c;
@@ -1297,42 +821,13 @@
       border-radius: 12px;
       border: 1px solid rgba(231, 76, 60, 0.1);
     }
-
-    .auth-error.show {
-      display: block;
-    }
-
-    .password-hint {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.3);
-      margin-top: 6px;
-      font-weight: 400;
-    }
+    .auth-error.show { display: block; }
 
     /* === STATISTIQUES === */
-    .stats-simple {
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .stats-simple .stat-number-big {
-      font-size: 64px;
-      font-weight: 700;
-      color: var(--accent);
-      line-height: 1;
-    }
-
-    .stats-simple .stat-label-big {
-      font-size: 18px;
-      color: var(--text-light);
-      margin-top: 8px;
-    }
-
-    .stats-simple .stat-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
-      display: block;
-    }
+    .stats-simple { text-align: center; padding: 20px 0; }
+    .stats-simple .stat-number-big { font-size: 64px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .stats-simple .stat-label-big { font-size: 18px; color: var(--text-light); margin-top: 8px; }
+    .stats-simple .stat-icon { font-size: 48px; margin-bottom: 10px; display: block; }
 
     /* === DÉTAIL PERSONNE === */
     .detail-cover {
@@ -1344,14 +839,12 @@
       align-items: flex-end;
       padding-bottom: 50px;
     }
-
     .detail-avatar-wrapper {
       position: absolute;
       bottom: -45px;
       left: 50%;
       transform: translateX(-50%);
     }
-
     .detail-avatar-wrapper img {
       width: 90px;
       height: 90px;
@@ -1361,26 +854,9 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       background: #ecf0f1;
     }
-
-    .detail-body {
-      padding: 55px 28px 28px 28px;
-    }
-
-    .detail-body .detail-name {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--primary);
-      text-align: center;
-      margin-bottom: 4px;
-    }
-
-    .detail-body .detail-role {
-      text-align: center;
-      font-size: 14px;
-      color: var(--text-light);
-      margin-bottom: 20px;
-    }
-
+    .detail-body { padding: 55px 28px 28px 28px; }
+    .detail-body .detail-name { font-size: 22px; font-weight: 700; color: var(--primary); text-align: center; margin-bottom: 4px; }
+    .detail-body .detail-role { text-align: center; font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
     .detail-body .detail-role .role-badge {
       display: inline-block;
       padding: 2px 14px;
@@ -1390,39 +866,16 @@
       background: rgba(142, 68, 173, 0.1);
       color: var(--accent);
     }
-
-    .detail-grid {
-      display: grid;
-      gap: 10px;
-    }
-
+    .detail-grid { display: grid; gap: 10px; }
     .detail-card {
       background: rgba(0, 0, 0, 0.02);
       border-radius: 12px;
       padding: 12px 16px;
       border: 1px solid rgba(0, 0, 0, 0.04);
     }
-
-    .detail-card .detail-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-light);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .detail-card .detail-value {
-      font-size: 15px;
-      color: var(--text-dark);
-      font-weight: 500;
-    }
-
-    .detail-card .detail-value.empty {
-      color: var(--text-light);
-      font-weight: 400;
-      font-style: italic;
-    }
+    .detail-card .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); font-weight: 600; margin-bottom: 4px; }
+    .detail-card .detail-value { font-size: 15px; color: var(--text-dark); font-weight: 500; }
+    .detail-card .detail-value.empty { color: var(--text-light); font-weight: 400; font-style: italic; }
 
     .detail-actions {
       display: flex;
@@ -1431,7 +884,6 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .detail-actions .btn-detail {
       padding: 8px 18px;
       border: none;
@@ -1444,181 +896,30 @@
       background: rgba(0, 0, 0, 0.04);
       color: var(--text-dark);
     }
-
-    .detail-actions .btn-detail:hover {
-      background: rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
-    }
-
-    .detail-actions .btn-detail.btn-primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .detail-actions .btn-detail.btn-primary:hover {
-      background: #6c3483;
-    }
-
-    .detail-actions .btn-detail.btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-
-    .detail-actions .btn-detail.btn-danger:hover {
-      background: #c0392b;
-    }
+    .detail-actions .btn-detail:hover { background: rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+    .detail-actions .btn-detail.btn-primary { background: var(--accent); color: white; }
+    .detail-actions .btn-detail.btn-primary:hover { background: #6c3483; }
+    .detail-actions .btn-detail.btn-danger { background: var(--danger); color: white; }
+    .detail-actions .btn-detail.btn-danger:hover { background: #c0392b; }
 
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
-      .person {
-        width: calc(50% - 10px);
-        padding: 8px;
-      }
-      
-      .person img {
-        max-width: 80px;
-      }
-      
-      .search-wrapper {
-        width: 95%;
-        margin: 10px 8px 6px;
-      }
-
-      #searchBox {
-        padding: 8px 12px 8px 35px;
-        background-size: 14px;
-        background-position: 14px center;
-      }
-
-      header {
-        padding: 8px 10px;
-        min-height: 50px;
-      }
-
-      .header-center {
-        font-size: clamp(16px, 4vw, 20px);
-        transform: translateX(3px);
-        white-space: nowrap;
-        overflow: visible;
-      }
-
-      .header-left {
-        min-width: 45px;
-      }
-
-      .header-right {
-        min-width: 40px;
-      }
-
-      #tree {
-        gap: 10px;
-        padding: 8px;
-      }
-
-      .modal-content {
-        padding: 24px 18px 20px 18px;
-        max-height: 85vh;
-        border-radius: 24px;
-      }
-
-      .modal-content h2 {
-        font-size: 19px;
-      }
-
-      .modal-content.historique-modal {
-        max-width: 100%;
-      }
-
-      .modal-content.person-detail-modal {
-        max-width: 100%;
-        border-radius: 24px;
-      }
-
-      .hamburger-menu {
-        padding: 10px 14px 14px 14px;
-        min-width: 200px;
-        max-width: 85%;
-        border-radius: 0 14px 14px 0;
-      }
-
-      .toast-container {
-        right: 10px;
-        left: 10px;
-        max-width: none;
-        top: 70px;
-      }
-
-      .stats-simple .stat-number-big {
-        font-size: 48px;
-      }
-
-      .detail-cover {
-        height: 90px;
-      }
-
-      .detail-avatar-wrapper img {
-        width: 70px;
-        height: 70px;
-        bottom: -35px;
-      }
-
-      .detail-body {
-        padding: 45px 18px 20px 18px;
-      }
-
-      .detail-body .detail-name {
-        font-size: 19px;
-      }
-
-      .person .click-hint {
-        display: none;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .header-center {
-        font-size: clamp(14px, 3.5vw, 17px);
-        transform: translateX(2px);
-      }
-      
-      .hamburger-btn {
-        padding: 4px 10px;
-        font-size: 17px;
-      }
-
-      .person {
-        width: calc(50% - 8px);
-        padding: 6px;
-      }
-
-      .person img {
-        max-width: 60px;
-      }
-    }
-
-    @media (max-width: 320px) {
-      .person {
-        width: 100%;
-        max-width: 130px;
-      }
-      
-      .header-center {
-        font-size: 13px;
-        transform: translateX(0px);
-      }
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-      }
-      .header-center {
-        flex: 1;
-        text-align: center;
-        min-width: 0;
-        padding: 0 3px;
-      }
+      .person { width: calc(50% - 10px); padding: 8px; }
+      .person img { max-width: 80px; }
+      .search-wrapper { width: 95%; margin: 10px 8px 6px; }
+      #searchBox { padding: 8px 12px 8px 35px; background-size: 14px; background-position: 14px center; }
+      header { padding: 8px 10px; min-height: 50px; }
+      .header-center { font-size: clamp(16px, 4vw, 20px); }
+      #tree { gap: 10px; padding: 8px; }
+      .modal-content { padding: 24px 18px 20px 18px; max-height: 85vh; border-radius: 24px; }
+      .modal-content h2 { font-size: 19px; }
+      .hamburger-menu { padding: 10px 14px 14px 14px; min-width: 200px; max-width: 85%; border-radius: 0 14px 14px 0; }
+      .toast-container { right: 10px; left: 10px; max-width: none; top: 70px; }
+      .detail-cover { height: 90px; }
+      .detail-avatar-wrapper img { width: 70px; height: 70px; bottom: -35px; }
+      .detail-body { padding: 45px 18px 20px 18px; }
+      .detail-body .detail-name { font-size: 19px; }
+      .person .click-hint { display: none; }
     }
   </style>
 </head>
@@ -1642,7 +943,7 @@
       
       <hr class="menu-divider">
       
-      <!-- Nouveaux boutons pour l'export/import -->
+      <!-- Export/Import -->
       <button class="action-btn" onclick="exportFamily(); closeMenu();">💾 Exporter l'arbre</button>
       <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();">📥 Importer un arbre</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
@@ -1651,17 +952,28 @@
       
       <hr class="menu-divider">
       
-      <!-- Nouveau bouton pour la vue arbre -->
+      <!-- Vue arbre -->
       <button class="action-btn" onclick="toggleView(); closeMenu();" id="viewToggleBtn">👁️ Vue arbre</button>
       
       <hr class="menu-divider">
       
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
+      
+      <!-- Ajout : UNIQUEMENT pour propriétaire ET admin -->
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
+      
+      <!-- Modification : UNIQUEMENT pour propriétaire ET admin -->
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
+      
+      <!-- Suppression : UNIQUEMENT propriétaire -->
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
+      
+      <!-- Admin : UNIQUEMENT propriétaire -->
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
+      
+      <!-- Historique : UNIQUEMENT propriétaire -->
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
+      
       <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
       
       <hr class="menu-divider">
@@ -1676,8 +988,6 @@
   <div class="search-wrapper">
     <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
     <div class="search-suggestions" id="searchSuggestions"></div>
-    
-    <!-- Filtres de recherche -->
     <div class="search-filters">
       <select id="filterType" onchange="applyFilters()">
         <option value="all">Tous</option>
@@ -1705,11 +1015,6 @@
         et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître 
         ses origines et son héritage.
       </p>
-      <p>
-        Chaque nom sur cet arbre est une branche, un lien qui relie le passé au présent. 
-        Nous vous invitons à explorer cet héritage familial et à contribuer à sa transmission 
-        aux générations futures.
-      </p>
       <p style="font-style: italic; color: var(--accent);">
         — Que la mémoire de nos ancêtres vive à travers nous.
       </p>
@@ -1722,28 +1027,11 @@
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
       <h2>📊 Statistiques</h2>
       <p class="subtitle">Nombre total de personnes dans l'arbre</p>
-      
       <div class="stats-simple">
         <span class="stat-icon">👤</span>
         <div class="stat-number-big" id="statTotal">0</div>
         <div class="stat-label-big">personnes dans l'arbre</div>
       </div>
-      
-      <!-- Statistiques avancées -->
-      <div id="advancedStats" style="margin-top: 20px; display: none;">
-        <div class="detail-card">
-          <div class="detail-label">📅 Générations</div>
-          <div class="detail-value" id="statGenerations">-</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">👨‍👦 Plus grande branche</div>
-          <div class="detail-value" id="statLargestBranch">-</div>
-        </div>
-      </div>
-      <button class="action-btn" onclick="toggleAdvancedStats()" style="margin-top: 10px; width: 100%; padding: 8px; border: none; border-radius: 10px; background: var(--accent); color: white; cursor: pointer;">
-        📈 Plus de statistiques
-      </button>
-      
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
       </div>
@@ -1776,7 +1064,6 @@
       <button class="modal-close" onclick="closeAdminModal()">✕</button>
       <h2>👑 Gestion des mots de passe</h2>
       <p class="subtitle">Gérez les accès pour chaque rôle.</p>
-      
       <form id="adminForm" onsubmit="updatePasswords(event)">
         <div class="form-group">
           <label for="adminPassword">Mot de passe Propriétaire</label>
@@ -1806,9 +1093,7 @@
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
       <h2>📋 Historique des modifications</h2>
       <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
-      
       <div id="historiqueList" class="historique-list"></div>
-      
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeHistoriqueModal()">Fermer</button>
       </div>
@@ -1891,19 +1176,16 @@
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
-      
       <div class="detail-cover">
         <div class="detail-avatar-wrapper">
           <img id="detailAvatar" src="ssi.jpg" alt="Photo">
         </div>
       </div>
-      
       <div class="detail-body">
         <div class="detail-name" id="detailName">Nom</div>
         <div class="detail-role">
           <span class="role-badge" id="detailRole">Membre</span>
         </div>
-        
         <div class="detail-grid">
           <div class="detail-card">
             <div class="detail-label">📅 Date de naissance</div>
@@ -1918,7 +1200,6 @@
             <div class="detail-value" id="detailChildren">0</div>
           </div>
         </div>
-        
         <div class="detail-actions">
           <button type="button" class="btn-detail btn-primary" onclick="closePersonDetailModal(); navigateToPerson();">
             🌳 Voir dans l'arbre
@@ -1990,7 +1271,6 @@
     let history = [];
     let currentPath = [];
     let currentNode = null;
-    let currentParent = null;
     let lastDetailPerson = null;
     let treeViewActive = false;
     let filterType = 'all';
@@ -1999,12 +1279,7 @@
     function showToast(message, type = 'success', duration = 3500) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-      };
+      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
       toast.className = `toast ${type}`;
       toast.innerHTML = `
         <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
@@ -2012,13 +1287,11 @@
         <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
       `;
       container.appendChild(toast);
-      
       setTimeout(() => {
         toast.classList.add('removing');
         setTimeout(() => toast.remove(), 300);
       }, duration);
     }
-
     window.showToast = showToast;
 
     // ===== THEME TOGGLE =====
@@ -2027,28 +1300,20 @@
       const current = html.getAttribute('data-theme');
       const themes = ['light', 'dark', 'nature', 'vintage', 'modern', 'accessibility'];
       let newTheme = 'light';
-      
       if (current === 'light') newTheme = 'dark';
       else if (current === 'dark') newTheme = 'nature';
       else if (current === 'nature') newTheme = 'vintage';
       else if (current === 'vintage') newTheme = 'modern';
       else if (current === 'modern') newTheme = 'accessibility';
       else newTheme = 'light';
-      
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      showToast(`🎨 Thème : ${newTheme}`, 'info', 2000);
     }
-
     window.toggleTheme = toggleTheme;
 
     function initTheme() {
       const saved = localStorage.getItem('theme');
-      if (saved) {
-        document.documentElement.setAttribute('data-theme', saved);
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
     }
     initTheme();
 
@@ -2071,9 +1336,7 @@
     async function addJournalEntry(action, type, data, userRole, targetData = null) {
       try {
         const entry = {
-          action,
-          type,
-          data,
+          action, type, data,
           user: userRole || "admin",
           date: new Date().toISOString(),
           status: "accepted",
@@ -2222,9 +1485,7 @@
       }
     };
 
-    // ===== STATISTIQUES AVANCÉES =====
-    let advancedStatsVisible = false;
-
+    // ===== STATISTIQUES =====
     window.openStatsModal = function() {
       if (!family) {
         showToast("Les données ne sont pas encore chargées", "warning");
@@ -2238,12 +1499,6 @@
       document.getElementById("statsModal").classList.remove("active");
     };
 
-    window.toggleAdvancedStats = function() {
-      advancedStatsVisible = !advancedStatsVisible;
-      document.getElementById('advancedStats').style.display = advancedStatsVisible ? 'block' : 'none';
-      if (advancedStatsVisible) calculateAdvancedStats();
-    };
-
     function countNodes(node) {
       let count = 1;
       if (node.children) {
@@ -2254,37 +1509,9 @@
       return count;
     }
 
-    function getTreeHeight(node) {
-      if (!node.children || node.children.length === 0) return 1;
-      return 1 + Math.max(...node.children.map(getTreeHeight));
-    }
-
-    function getLargestBranch(node) {
-      let maxSize = countNodes(node);
-      let maxName = node.name;
-      if (node.children) {
-        for (const child of node.children) {
-          const childSize = countNodes(child);
-          if (childSize > maxSize) {
-            maxSize = childSize;
-            maxName = child.name;
-          }
-        }
-      }
-      return { name: maxName, size: maxSize };
-    }
-
     function calculateStats() {
       const total = countNodes(family);
       document.getElementById('statTotal').textContent = total;
-    }
-
-    function calculateAdvancedStats() {
-      const generations = getTreeHeight(family);
-      const largest = getLargestBranch(family);
-      
-      document.getElementById('statGenerations').textContent = `${generations} génération${generations > 1 ? 's' : ''}`;
-      document.getElementById('statLargestBranch').textContent = `${largest.name} (${largest.size} personnes)`;
     }
 
     // ===== HISTORIQUE =====
@@ -2381,11 +1608,21 @@
       const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
       const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       
+      // AJOUT : propriétaire ET admin peuvent ajouter
       document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
+      
+      // MODIFICATION : propriétaire ET admin peuvent modifier
       document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      
+      // SUPPRESSION : UNIQUEMENT propriétaire
       document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
+      
+      // ADMIN : UNIQUEMENT propriétaire
       document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
+      
+      // HISTORIQUE : UNIQUEMENT propriétaire
       document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      
       document.getElementById("statsBtn").style.display = "flex";
       
       document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
@@ -2431,7 +1668,6 @@
       try {
         const ref = doc(db, "famille", "bollou_oumar");
         const resultat = await getDoc(ref);
-
         if (resultat.exists()) {
           family = resultat.data();
           currentPath = [family];
@@ -2464,9 +1700,7 @@
     }
 
     function findNodeWithParent(node, targetName, parent = null) {
-      if (node.name === targetName) {
-        return { node, parent };
-      }
+      if (node.name === targetName) return { node, parent };
       if (!node.children) return null;
       for (let child of node.children) {
         const result = findNodeWithParent(child, targetName, node);
@@ -2476,9 +1710,7 @@
     }
 
     function findPathToNode(node, targetName, path = []) {
-      if (node.name === targetName) {
-        return [...path, node];
-      }
+      if (node.name === targetName) return [...path, node];
       if (!node.children) return null;
       for (let child of node.children) {
         const result = findPathToNode(child, targetName, [...path, node]);
@@ -2497,7 +1729,7 @@
       return results;
     }
 
-    // ===== VUE ARBRE GRAPHIQUE =====
+    // ===== VUE ARBRE =====
     window.toggleView = function() {
       treeViewActive = !treeViewActive;
       const btn = document.getElementById('viewToggleBtn');
@@ -2517,7 +1749,6 @@
       container.className = 'tree-view';
       
       const canvas = document.createElement('canvas');
-      const rect = container.getBoundingClientRect();
       canvas.width = Math.max(800, window.innerWidth * 0.9);
       canvas.height = Math.max(600, window.innerHeight * 0.7);
       container.appendChild(canvas);
@@ -2535,7 +1766,6 @@
         const spacingX = Math.min(80, canvas.width / 10);
         const spacingY = Math.min(80, canvas.height / 10);
         
-        // Lien vers le parent
         if (parentX !== null && parentY !== null) {
           ctx.beginPath();
           ctx.moveTo(parentX, parentY + radius);
@@ -2545,7 +1775,6 @@
           ctx.stroke();
         }
         
-        // Cercle avec dégradé
         const gradient = ctx.createRadialGradient(x-10, y-10, 0, x, y, radius);
         const isRoot = node === root;
         const isSelected = node === currentNode;
@@ -2564,18 +1793,14 @@
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, 2 * Math.PI);
         ctx.fillStyle = gradient;
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        // Ombre portée
         ctx.shadowColor = 'rgba(0,0,0,0.2)';
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
         
-        // Nom
         ctx.fillStyle = '#fff';
         ctx.font = `${Math.min(12, radius * 0.4)}px Inter, sans-serif`;
         ctx.textAlign = 'center';
@@ -2585,18 +1810,15 @@
         if (displayName.length > 12) displayName = displayName.slice(0, 10) + '...';
         ctx.fillText(displayName, x, y);
         
-        // Nombre d'enfants
         if (node.children && node.children.length > 0) {
           ctx.fillStyle = 'rgba(255,255,255,0.5)';
           ctx.font = '10px Inter, sans-serif';
           ctx.fillText(`👨‍👦 ${node.children.length}`, x, y + radius + 15);
         }
         
-        // Dessiner les enfants
         if (node.children && node.children.length > 0) {
           const childrenCount = node.children.length;
           const startX = x - ((childrenCount - 1) * spacingX) / 2;
-          
           node.children.forEach((child, i) => {
             const childX = startX + i * spacingX;
             const childY = y + spacingY;
@@ -2607,38 +1829,27 @@
       
       const height = getTreeHeight(root);
       const startY = 50;
-      
-      // Fond transparent
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Dessiner l'arbre
       drawNode(root, canvas.width/2, startY, 0, height);
       
-      // Ajouter un événement de clic pour naviguer
       canvas.addEventListener('click', async (e) => {
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
         
-        // Recherche simple du nœud le plus proche
         function findClosestNode(node, px, py, level = 0) {
           const radius = Math.min(35, canvas.width / 20);
           const spacingY = Math.min(80, canvas.height / 10);
-          
-          // Vérifier si le clic est sur ce nœud
           const nodeX = px;
           const nodeY = py;
           const distance = Math.sqrt((x - nodeX) ** 2 + (y - nodeY) ** 2);
           
-          if (distance < radius + 10) {
-            return node;
-          }
+          if (distance < radius + 10) return node;
           
           if (node.children && node.children.length > 0) {
-            const childrenCount = node.children.length;
             const spacingX = Math.min(80, canvas.width / 10);
+            const childrenCount = node.children.length;
             const startX = px - ((childrenCount - 1) * spacingX) / 2;
-            
             for (let i = 0; i < node.children.length; i++) {
               const childX = startX + i * spacingX;
               const childY = py + spacingY;
@@ -2657,14 +1868,12 @@
             currentPath = path;
             currentNode = clickedNode;
             displayPerson(clickedNode);
-            // Revenir à la vue normale
             treeViewActive = false;
             document.getElementById('viewToggleBtn').textContent = '👁️ Vue arbre';
           }
         }
       });
       
-      // Adapter la taille
       canvas.style.width = '100%';
       canvas.style.height = 'auto';
     }
@@ -2675,7 +1884,6 @@
         showToast("Aucune donnée à exporter", "warning");
         return;
       }
-      
       const data = JSON.stringify(family, null, 2);
       const blob = new Blob([data], {type: 'application/json'});
       const url = URL.createObjectURL(blob);
@@ -2690,6 +1898,10 @@
     };
 
     window.importFamily = function(event) {
+      if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+        showToast("🔒 Seul le propriétaire ou admin peut importer", "error");
+        return;
+      }
       const file = event.target.files[0];
       if (!file) return;
       
@@ -2701,7 +1913,6 @@
             showToast("❌ Fichier invalide", "error");
             return;
           }
-          
           const count = countNodes(data);
           if (confirm(`Voulez-vous importer "${data.name}" (${count} personnes) ?\nCela remplacera l'arbre actuel.`)) {
             family = data;
@@ -2741,14 +1952,12 @@
       window.print();
     };
 
-    // ===== RECHERCHE AMÉLIORÉE =====
+    // ===== RECHERCHE =====
     let searchTimeout = null;
     let allNames = [];
 
     function buildNameIndex() {
-      if (family) {
-        allNames = getAllNames(family);
-      }
+      if (family) allNames = getAllNames(family);
     }
 
     window.handleSearchInput = function(value) {
@@ -2763,17 +1972,9 @@
 
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
-        let results = allNames.filter(item => 
-          item.name.toLowerCase().includes(trimmed)
-        );
-        
-        // Appliquer les filtres
-        if (filterType === 'hasChildren') {
-          results = results.filter(item => item.hasChildren);
-        } else if (filterType === 'noChildren') {
-          results = results.filter(item => !item.hasChildren);
-        }
-        
+        let results = allNames.filter(item => item.name.toLowerCase().includes(trimmed));
+        if (filterType === 'hasChildren') results = results.filter(item => item.hasChildren);
+        else if (filterType === 'noChildren') results = results.filter(item => !item.hasChildren);
         results = results.slice(0, 8);
 
         if (results.length === 0) {
@@ -2817,12 +2018,9 @@
     window.applyFilters = function() {
       filterType = document.getElementById('filterType').value;
       const searchValue = document.getElementById('searchBox').value.trim();
-      if (searchValue) {
-        handleSearchInput(searchValue);
-      } else {
-        if (currentNode) displayPerson(currentNode);
-        else displayRoot();
-      }
+      if (searchValue) handleSearchInput(searchValue);
+      else if (currentNode) displayPerson(currentNode);
+      else displayRoot();
     };
 
     window.clearSearch = function() {
@@ -2839,17 +2037,6 @@
       const searchBox = document.getElementById("searchBox");
       if (!suggestions.contains(e.target) && e.target !== searchBox) {
         suggestions.classList.remove("active");
-      }
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-        e.preventDefault();
-        document.getElementById("searchBox").focus();
-      }
-      if (e.key === 'Escape') {
-        document.getElementById("searchSuggestions").classList.remove("active");
-        document.getElementById("searchBox").blur();
       }
     });
 
@@ -2881,12 +2068,8 @@
       let childrenToShow = person.children;
       
       if (searchQuery) {
-        childrenToShow = person.children.filter(child => 
-          child.name.toLowerCase().includes(searchQuery)
-        );
+        childrenToShow = person.children.filter(child => child.name.toLowerCase().includes(searchQuery));
       }
-      
-      // Appliquer les filtres
       if (filterType === 'hasChildren') {
         childrenToShow = childrenToShow.filter(child => child.children && child.children.length > 0);
       } else if (filterType === 'noChildren') {
@@ -2899,7 +2082,6 @@
         div.draggable = true;
         div.dataset.index = index;
 
-        // === UN CLIC = NAVIGUER VERS LES ENFANTS ===
         div.onclick = (e) => {
           if (e.target.closest('.detail-btn')) return;
           if (e.target.tagName === 'INPUT') return;
@@ -2908,10 +2090,14 @@
           displayPerson(child);
         };
 
-        // === GLISSER-DÉPOSER POUR RÉORGANISER ===
+        // === GLISSER-DÉPOSER : UNIQUEMENT PROPRIÉTAIRE ET ADMIN ===
         let dragIndex = null;
-        
         div.addEventListener('dragstart', (e) => {
+          if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
+            e.preventDefault();
+            showToast("🔒 Permission refusée", "error");
+            return;
+          }
           dragIndex = index;
           e.dataTransfer.effectAllowed = 'move';
           div.classList.add('dragging');
@@ -2936,8 +2122,7 @@
           div.style.transform = '';
           if (dragIndex === null || dragIndex === index) return;
           
-          const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
-          if (!isAdmin) {
+          if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
             showToast("🔒 Permission refusée", "error");
             return;
           }
@@ -2959,11 +2144,10 @@
         name.className = "person-name";
         name.textContent = child.name;
 
-        // === DOUBLE-CLICS POUR ÉDITION RAPIDE ===
+        // === DOUBLE-CLIC : UNIQUEMENT PROPRIÉTAIRE ET ADMIN ===
         name.addEventListener('dblclick', (e) => {
           e.stopPropagation();
-          const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
-          if (!isAdmin) {
+          if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
             showToast("🔒 Permission refusée", "error");
             return;
           }
@@ -2996,7 +2180,6 @@
                 input.replaceWith(name);
                 return;
               }
-              
               const oldName = child.name;
               child.name = newName;
               await sauvegarderFamille();
@@ -3012,20 +2195,14 @@
           
           input.addEventListener('blur', saveEdit);
           input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              input.blur();
-            }
-            if (e.key === 'Escape') {
-              input.replaceWith(name);
-            }
+            if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { input.replaceWith(name); }
           });
         });
 
         div.appendChild(img);
         div.appendChild(name);
 
-        // === BOUTON DÉTAILS ===
         const detailBtn = document.createElement("button");
         detailBtn.className = "detail-btn";
         detailBtn.innerHTML = "👤";
@@ -3147,7 +2324,6 @@
     // ===== PERSON DETAIL =====
     window.openPersonDetail = function(person) {
       lastDetailPerson = person;
-      
       document.getElementById("detailName").textContent = person.name || "Nom inconnu";
       document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
       document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
@@ -3164,7 +2340,6 @@
       document.getElementById("detailChildren").textContent = childrenCount;
       
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
-      const isAdmin = currentUser && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
       const roleText = person === family ? "👑 Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
       document.getElementById("detailRole").textContent = roleText;
       
@@ -3189,7 +2364,7 @@
     // ===== ADD PERSON =====
     window.openAddModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Vous n'avez pas les permissions pour ajouter", "error");
+        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
         return;
       }
       document.getElementById("addModal").classList.add("active");
@@ -3205,7 +2380,7 @@
     window.addPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Vous n'avez pas les permissions pour ajouter", "error");
+        showToast("🔒 Seul le propriétaire ou admin peut ajouter", "error");
         return;
       }
 
@@ -3228,14 +2403,7 @@
         return;
       }
 
-      const newPerson = {
-        name,
-        photo: "",
-        birth: birth || "",
-        bio: bio || "",
-        children: []
-      };
-
+      const newPerson = { name, photo: "", birth: birth || "", bio: bio || "", children: [] };
       if (!currentNode.children) currentNode.children = [];
       currentNode.children.push(newPerson);
 
@@ -3248,7 +2416,6 @@
         
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
         await addJournalEntry('add', 'add', `${name} ajouté par ${userRole}`, userRole);
-        
         showToast(`"${name}" a été ajouté !`, "success");
       }
     };
@@ -3259,7 +2426,7 @@
 
     window.openEditModal = function() {
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Vous n'avez pas les permissions pour modifier", "error");
+        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -3289,7 +2456,7 @@
     window.editPerson = async function(e) {
       e.preventDefault();
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
-        showToast("Vous n'avez pas les permissions pour modifier", "error");
+        showToast("🔒 Seul le propriétaire ou admin peut modifier", "error");
         return;
       }
 
@@ -3319,23 +2486,17 @@
       editingPerson.birth = birth || "";
       editingPerson.bio = bio || "";
 
-      if (oldName !== name && currentNode === editingPerson) {
-        currentNode.name = name;
-      }
+      if (oldName !== name && currentNode === editingPerson) currentNode.name = name;
 
       const saved = await sauvegarderFamille();
       if (saved) {
         closeEditModal();
         buildNameIndex();
-        if (currentNode === editingPerson || currentNode.name === name) {
-          displayPerson(editingPerson);
-        } else {
-          displayPerson(currentNode);
-        }
+        if (currentNode === editingPerson || currentNode.name === name) displayPerson(editingPerson);
+        else displayPerson(currentNode);
         
         const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
         await addJournalEntry('edit', 'edit', `${oldName} → ${name} modifié par ${userRole}`, userRole);
-        
         showToast(`"${oldName}" modifié en "${name}"`, "success");
       }
     };
@@ -3346,7 +2507,7 @@
 
     window.openDeleteModal = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut supprimer", "error");
+        showToast("🔒 Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!currentNode || currentNode === family) {
@@ -3373,7 +2534,7 @@
 
     window.confirmDelete = async function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
-        showToast("Seul le propriétaire peut supprimer", "error");
+        showToast("🔒 Seul le propriétaire peut supprimer", "error");
         return;
       }
       if (!deletingPerson || !deletingParent) {
@@ -3382,12 +2543,7 @@
       }
 
       const nameToDelete = deletingPerson.name;
-
-      if (deletingParent.children) {
-        deletingParent.children = deletingParent.children.filter(
-          child => child !== deletingPerson
-        );
-      }
+      deletingParent.children = deletingParent.children.filter(child => child !== deletingPerson);
 
       const saved = await sauvegarderFamille();
       if (saved) {
@@ -3401,7 +2557,6 @@
         } else {
           displayRoot();
         }
-        
         await addJournalEntry('delete', 'delete', `${nameToDelete} supprimé par proprietaire`, 'proprietaire');
         showToast(`"${nameToDelete}" a été supprimé`, "success");
       }
@@ -3416,61 +2571,28 @@
       document.getElementById("historyModal").classList.remove("active");
     };
 
-    // ===== NOTIFICATIONS =====
-    // Simuler des notifications pour les modifications
-    function checkForUpdates() {
-      // Cette fonction serait appelée périodiquement
-      // Pour l'instant, on simule juste une notification
-    }
-
     // ===== MODE HORS-LIGNE =====
     const CACHE_KEY = 'gaway_family_cache';
     let isOnline = navigator.onLine;
 
     window.addEventListener('online', () => {
       isOnline = true;
-      showToast('📶 Retour en ligne - Synchronisation...', 'info', 2000);
-      syncData();
+      showToast('📶 Retour en ligne', 'info', 2000);
     });
 
     window.addEventListener('offline', () => {
       isOnline = false;
-      showToast('📶 Mode hors-ligne - Modifications locales', 'warning', 3000);
+      showToast('📶 Mode hors-ligne', 'warning', 3000);
     });
 
-    async function syncData() {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        try {
-          const data = JSON.parse(cached);
-          // Vérifier si les données locales sont plus récentes
-          if (data.timestamp > Date.now() - 3600000) { // Moins d'1 heure
-            if (confirm('📶 Des données locales ont été trouvées. Les utiliser ?')) {
-              family = data.family;
-              await sauvegarderFamille();
-              buildNameIndex();
-              displayRoot();
-              showToast('📶 Données synchronisées depuis le cache', 'success');
-            }
-          }
-        } catch (e) {}
-      }
-    }
-
     function saveToCache(data) {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        family: data,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ family: data, timestamp: Date.now() }));
     }
 
-    // Surcharger sauvegarderFamille pour sauvegarder en cache
     const originalSave = sauvegarderFamille;
     sauvegarderFamille = async function() {
       const result = await originalSave();
-      if (result) {
-        saveToCache(family);
-      }
+      if (result) saveToCache(family);
       return result;
     };
 
@@ -3482,20 +2604,26 @@
       buildNameIndex();
       updateUIForAuth();
       
-      // Vérifier le cache
-      syncData();
+      // Charger depuis le cache si hors-ligne
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached && !navigator.onLine) {
+        try {
+          const data = JSON.parse(cached);
+          if (data.family) {
+            family = data.family;
+            currentPath = [family];
+            displayRoot();
+          }
+        } catch (e) {}
+      }
       
       setTimeout(() => {
         showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
-        if (!isOnline) {
-          showToast('📶 Mode hors-ligne actif', 'warning', 3000);
-        }
       }, 500);
     }
 
     init();
 
-    // Exposer les fonctions nécessaires
     window.findNodeWithParent = findNodeWithParent;
     window.findPathToNode = findPathToNode;
     window.buildNameIndex = buildNameIndex;
