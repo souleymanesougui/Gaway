@@ -1119,11 +1119,11 @@
       
       <hr class="menu-divider">
       
-      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">Exporter l'arbre</button>
-      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">Importer un arbre</button>
+      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">Exporter</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">Importer</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
       
-      <button class="action-btn" onclick="shareFamily(); closeMenu();">Partager l'arbre</button>
+      <button class="action-btn" onclick="shareFamily(); closeMenu();">Partage</button>
       
       <hr class="menu-divider">
       
@@ -1132,8 +1132,8 @@
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
       
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Proprietaire</button>
-      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Historique</button>
+      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Mot de passe</button>
+      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Notification</button>
       
       <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">Statistiques</button>
       
@@ -1274,7 +1274,7 @@
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
       <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
-      <h2>Historique des modifications</h2>
+      <h2>Notification</h2>
       <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
       <div id="historiqueList" class="historique-list"></div>
       <div class="form-actions">
