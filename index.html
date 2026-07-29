@@ -45,7 +45,7 @@
       --menu-border: rgba(0, 0, 0, 0.06);
     }
 
-    /* === THEME SOMBRE === */
+    /* === THEMES === */
     [data-theme="dark"] {
       --primary: #ecf0f1;
       --secondary: #bdc3c7;
@@ -61,7 +61,6 @@
       --menu-border: rgba(255, 255, 255, 0.05);
     }
 
-    /* === THEME NATURE === */
     [data-theme="nature"] {
       --primary: #2E7D32;
       --secondary: #388E3C;
@@ -74,7 +73,6 @@
       --menu-border: rgba(46, 125, 50, 0.1);
     }
 
-    /* === THEME VINTAGE === */
     [data-theme="vintage"] {
       --primary: #5D4037;
       --secondary: #795548;
@@ -87,7 +85,6 @@
       --menu-border: rgba(93, 64, 55, 0.1);
     }
 
-    /* === THEME MODERN === */
     [data-theme="modern"] {
       --primary: #0D47A1;
       --secondary: #1565C0;
@@ -100,7 +97,6 @@
       --menu-border: rgba(13, 71, 161, 0.1);
     }
 
-    /* === THEME ACCESSIBILITÉ === */
     [data-theme="accessibility"] {
       --primary: #000000;
       --secondary: #1A237E;
@@ -114,7 +110,7 @@
       font-size: 120%;
     }
 
-    /* === ADAPTATION DU MENU SELON LE THEME === */
+    /* === ADAPTATION DU MENU === */
     [data-theme="dark"] .hamburger-menu {
       background: var(--menu-bg);
       border: 1px solid var(--menu-border);
@@ -569,8 +565,6 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* SUPPRESSION du badge-count et du person-gender */
-
     .detail-btn {
       position: absolute;
       top: 6px;
@@ -956,6 +950,21 @@
     .detail-body .detail-role .role-badge.male { background: rgba(52, 152, 219, 0.15); color: var(--male-color); }
     .detail-body .detail-role .role-badge.female { background: rgba(231, 76, 60, 0.15); color: var(--female-color); }
 
+    /* CHEMIN VERS LA RACINE */
+    .detail-path {
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-light);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      word-wrap: break-word;
+    }
+    .detail-path .path-arrow { color: var(--accent); font-weight: 600; margin: 0 4px; }
+    .detail-path .path-name { color: var(--text-dark); font-weight: 500; }
+    .detail-path .path-root { color: var(--accent); font-weight: 600; }
+
     .detail-grid { display: grid; gap: 10px; }
     .detail-card {
       background: rgba(0, 0, 0, 0.02);
@@ -1009,6 +1018,7 @@
       .detail-avatar-wrapper img { width: 70px; height: 70px; bottom: -35px; }
       .detail-body { padding: 45px 18px 20px 18px; }
       .detail-body .detail-name { font-size: 19px; }
+      .detail-path { font-size: 12px; padding: 8px 12px; }
       .person .click-hint { display: none; }
     }
   </style>
@@ -1033,7 +1043,6 @@
       
       <hr class="menu-divider">
       
-      <!-- Export/Import : UNIQUEMENT POUR PROPRIÉTAIRE -->
       <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">💾 Exporter l'arbre</button>
       <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">📥 Importer un arbre</button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
@@ -1044,19 +1053,11 @@
       
       <button class="history-btn" onclick="openHistoryModal(); closeMenu();">📖 Histoire</button>
       
-      <!-- Ajout : propriétaire ET admin -->
       <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">➕ Ajouter</button>
-      
-      <!-- Modification : propriétaire ET admin -->
       <button class="action-btn edit-btn" onclick="openEditModal(); closeMenu();" id="editBtn" style="display:none;">✏️ Modifier</button>
-      
-      <!-- Suppression : UNIQUEMENT propriétaire -->
       <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">🗑️ Supprimer</button>
       
-      <!-- Admin : UNIQUEMENT propriétaire -->
       <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">👑 Propriétaire</button>
-      
-      <!-- Historique : UNIQUEMENT propriétaire -->
       <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">📋 Historique</button>
       
       <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">📊 Statistiques</button>
@@ -1070,7 +1071,6 @@
 
   <div id="breadcrumb" class="breadcrumb"></div>
 
-  <!-- Barre de recherche SANS FILTRES -->
   <div class="search-wrapper">
     <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
     <div class="search-suggestions" id="searchSuggestions"></div>
@@ -1178,7 +1178,7 @@
     </div>
   </div>
 
-  <!-- Add Person Modal avec GENRE -->
+  <!-- Add Person Modal -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAddModal()">✕</button>
@@ -1212,7 +1212,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal avec GENRE -->
+  <!-- Edit Person Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1265,7 +1265,7 @@
     </div>
   </div>
 
-  <!-- Person Detail Modal avec GENRE -->
+  <!-- Person Detail Modal avec CHEMIN -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
       <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
@@ -1279,6 +1279,14 @@
         <div class="detail-role">
           <span class="role-badge" id="detailRole">Membre</span>
         </div>
+        
+        <!-- CHEMIN VERS LA RACINE -->
+        <div class="detail-path" id="detailPath">
+          <span class="path-root">🌳 Racine</span>
+          <span class="path-arrow">→</span>
+          <span class="path-name" id="pathDisplay">Chargement...</span>
+        </div>
+        
         <div class="detail-grid">
           <div class="detail-card">
             <div class="detail-label">⚤ Genre</div>
@@ -1297,6 +1305,7 @@
             <div class="detail-value" id="detailChildren">0</div>
           </div>
         </div>
+        
         <div class="detail-actions">
           <button type="button" class="btn-detail btn-primary" onclick="closePersonDetailModal(); navigateToPerson();">
             🌳 Voir dans l'arbre
@@ -1389,7 +1398,7 @@
     }
     window.showToast = showToast;
 
-    // ===== THEME TOGGLE (SANS ALERTE) =====
+    // ===== THEME TOGGLE =====
     function toggleTheme() {
       const html = document.documentElement;
       const current = html.getAttribute('data-theme');
@@ -1403,7 +1412,6 @@
       else newTheme = 'light';
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      // Plus de toast pour le thème
     }
     window.toggleTheme = toggleTheme;
 
@@ -1972,6 +1980,17 @@
       }
     });
 
+    // ===== FONCTION POUR TROUVER LE CHEMIN =====
+    function getPathToNode(node, targetName, path = []) {
+      if (node.name === targetName) return [...path, node];
+      if (!node.children) return null;
+      for (let child of node.children) {
+        const result = getPathToNode(child, targetName, [...path, node]);
+        if (result) return result;
+      }
+      return null;
+    }
+
     // ===== DISPLAY FUNCTIONS =====
     function displayPerson(person) {
       treeEl.innerHTML = "";
@@ -2017,7 +2036,6 @@
           displayPerson(child);
         };
 
-        // === GLISSER-DÉPOSER : UNIQUEMENT PROPRIÉTAIRE ET ADMIN ===
         let dragIndex = null;
         div.addEventListener('dragstart', (e) => {
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
@@ -2071,7 +2089,6 @@
         name.className = "person-name";
         name.textContent = child.name;
 
-        // === DOUBLE-CLIC : UNIQUEMENT PROPRIÉTAIRE ET ADMIN ===
         name.addEventListener('dblclick', (e) => {
           e.stopPropagation();
           if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
@@ -2140,8 +2157,6 @@
         };
         div.appendChild(detailBtn);
 
-        // SUPPRESSION du badge-count (nombre d'enfants)
-
         treeEl.appendChild(div);
       });
     }
@@ -2195,8 +2210,6 @@
       };
       div.appendChild(detailBtn);
 
-      // SUPPRESSION du badge-count pour la racine
-
       treeEl.appendChild(div);
     }
 
@@ -2235,7 +2248,7 @@
       }
     }
 
-    // ===== PERSON DETAIL =====
+    // ===== PERSON DETAIL AVEC CHEMIN =====
     window.openPersonDetail = function(person) {
       lastDetailPerson = person;
       
@@ -2268,6 +2281,35 @@
       const roleText = person === family ? "👑 Racine" : (isProprietaire ? "👤 Membre" : "👤 Membre");
       roleBadge.textContent = roleText;
       roleBadge.className = `role-badge ${genderClass}`;
+      
+      // === AFFICHAGE DU CHEMIN VERS LA RACINE ===
+      const pathDisplay = document.getElementById('pathDisplay');
+      if (person === family) {
+        pathDisplay.textContent = '👑 Racine';
+        document.getElementById('detailPath').innerHTML = `
+          <span class="path-root">🌳 Racine</span>
+          <span class="path-arrow">→</span>
+          <span class="path-name" style="color: var(--accent); font-weight: 600;">👑 ${person.name}</span>
+        `;
+      } else {
+        const path = getPathToNode(family, person.name);
+        if (path && path.length > 1) {
+          let pathHtml = `<span class="path-root">🌳 ${family.name}</span>`;
+          // Afficher le chemin sans le dernier (la personne elle-même)
+          for (let i = 1; i < path.length - 1; i++) {
+            pathHtml += ` <span class="path-arrow">→</span> <span class="path-name">${path[i].name}</span>`;
+          }
+          // Dernier élément : la personne en surbrillance
+          pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>`;
+          document.getElementById('detailPath').innerHTML = pathHtml;
+        } else {
+          document.getElementById('detailPath').innerHTML = `
+            <span class="path-root">🌳 ${family.name}</span>
+            <span class="path-arrow">→</span>
+            <span class="path-name" style="color: var(--accent); font-weight: 600;">✨ ${person.name}</span>
+          `;
+        }
+      }
       
       document.getElementById("personDetailModal").classList.add("active");
     };
@@ -2552,6 +2594,7 @@
     window.countNodes = countNodes;
     window.sauvegarderFamille = sauvegarderFamille;
     window.family = family;
+    window.getPathToNode = getPathToNode;
 
   </script>
 </body>
