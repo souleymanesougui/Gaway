@@ -936,7 +936,34 @@
       background: #ecf0f1;
     }
     .detail-body { padding: 55px 28px 28px 28px; }
-    .detail-body .detail-name { font-size: 22px; font-weight: 700; color: var(--primary); text-align: center; margin-bottom: 4px; }
+    
+    .detail-body .detail-name-wrapper {
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .detail-body .detail-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .detail-body .detail-name-input {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: center;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 4px 12px;
+      background: white;
+      width: 100%;
+      max-width: 300px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+    .detail-body .detail-name-input:focus {
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
+    }
+    
     .detail-body .detail-role { text-align: center; font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
     .detail-body .detail-role .role-badge {
       display: inline-block;
@@ -1029,6 +1056,23 @@
       outline: none;
     }
     .detail-card .detail-value-select:focus {
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
+    }
+    .detail-card .detail-value-textarea {
+      width: 100%;
+      font-size: 15px;
+      font-weight: 500;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 6px 10px;
+      background: white;
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      resize: vertical;
+      min-height: 50px;
+    }
+    .detail-card .detail-value-textarea:focus {
       box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
     }
 
@@ -1306,7 +1350,9 @@
         </div>
       </div>
       <div class="detail-body">
-        <div class="detail-name" id="detailName">Nom</div>
+        <div class="detail-name-wrapper" id="detailNameWrapper">
+          <div class="detail-name" id="detailName">Nom</div>
+        </div>
         <div class="detail-role">
           <span class="role-badge" id="detailRole">Membre</span>
         </div>
@@ -1864,6 +1910,16 @@
       return null;
     }
 
+    function findNodeByName(node, targetName) {
+      if (node.name === targetName) return node;
+      if (!node.children) return null;
+      for (const child of node.children) {
+        const result = findNodeByName(child, targetName);
+        if (result) return result;
+      }
+      return null;
+    }
+
     // ===== EXPORT/IMPORT =====
     window.exportFamily = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
@@ -2235,12 +2291,11 @@
       const genderText = gender === 'male' ? 'Homme' : gender === 'female' ? 'Femme' : 'Non renseigné';
       const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
       
-      document.getElementById("detailName").textContent = person.name || "Nom inconnu";
-      document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
-      document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
-      
       const cover = document.getElementById("detailCover");
       cover.className = `detail-cover ${genderClass}`;
+      
+      document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
+      document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
       
       // Affichage du chemin vers la racine
       if (person === family) {
@@ -2275,13 +2330,29 @@
 
     function renderDetailFields(person) {
       const isProprietaire = currentUser && currentUser.role === 'proprietaire';
+      const canEdit = isProprietaire && person !== family;
+      
+      // NOM - édition possible pour le propriétaire
+      const nameWrapper = document.getElementById('detailNameWrapper');
+      const nameDisplay = document.getElementById('detailName');
+      
+      if (canEdit) {
+        nameWrapper.innerHTML = `
+          <input type="text" class="detail-name-input" id="nameInput" value="${person.name || ''}" 
+                 onchange="saveDetailField('name', this.value)"
+                 onclick="event.stopPropagation();"
+                 placeholder="Nom">
+        `;
+      } else {
+        nameWrapper.innerHTML = `<div class="detail-name" id="detailName">${person.name || 'Nom inconnu'}</div>`;
+      }
       
       // Gender
       const genderCard = document.getElementById('detailGenderCard');
       const genderValue = document.getElementById('detailGender');
       const genderText = person.gender === 'male' ? 'Homme' : person.gender === 'female' ? 'Femme' : 'Non renseigné';
       
-      if (isProprietaire && person !== family) {
+      if (canEdit) {
         genderCard.classList.add('editable');
         genderValue.innerHTML = `
           <select class="detail-value-select" id="genderSelect" onchange="saveDetailField('gender', this.value)">
@@ -2301,7 +2372,7 @@
       const birthValue = document.getElementById('detailBirth');
       const birthText = person.birth || "Non renseigné";
       
-      if (isProprietaire && person !== family) {
+      if (canEdit) {
         birthCard.classList.add('editable');
         birthValue.innerHTML = `
           <input type="date" class="detail-value-input" id="birthInput" value="${person.birth || ''}" 
@@ -2319,10 +2390,10 @@
       const bioValue = document.getElementById('detailBio');
       const bioText = person.bio || "Non renseignée";
       
-      if (isProprietaire && person !== family) {
+      if (canEdit) {
         bioCard.classList.add('editable');
         bioValue.innerHTML = `
-          <textarea class="detail-value-input" id="bioInput" rows="2" 
+          <textarea class="detail-value-textarea" id="bioInput" rows="2" 
                     placeholder="Courte biographie..." 
                     onchange="saveDetailField('bio', this.value)" 
                     onclick="event.stopPropagation();"
@@ -2359,16 +2430,54 @@
       }
 
       const oldValue = currentDetailPerson[field] || '';
-      if (value === oldValue) return;
+      const newValue = value || '';
+      
+      if (newValue === oldValue) return;
 
       const fieldNames = {
+        name: 'Nom',
         gender: 'Genre',
         birth: 'Date de naissance',
         bio: 'Biographie'
       };
 
-      // Mettre à jour l'objet
-      currentDetailPerson[field] = value || '';
+      // Pour le nom, il faut vérifier les doublons
+      if (field === 'name') {
+        const trimmedName = newValue.trim();
+        if (!trimmedName) {
+          showToast("Le nom ne peut pas être vide", "warning");
+          // Re-rendre pour remettre l'ancienne valeur
+          renderDetailFields(currentDetailPerson);
+          return;
+        }
+        
+        // Vérifier si le nom existe déjà (sauf pour la personne elle-même)
+        const existing = findNodeByName(family, trimmedName);
+        if (existing && existing !== currentDetailPerson) {
+          showToast(`"${trimmedName}" existe déjà`, "warning");
+          renderDetailFields(currentDetailPerson);
+          return;
+        }
+        
+        // Mettre à jour l'objet
+        currentDetailPerson.name = trimmedName;
+        
+        // Si c'est le noeud courant, mettre à jour
+        if (currentNode === currentDetailPerson) {
+          currentNode.name = trimmedName;
+        }
+        
+        // Mettre à jour l'index de recherche
+        buildNameIndex();
+        
+        // Mettre à jour l'affichage de l'arbre
+        if (currentNode === currentDetailPerson) {
+          displayPerson(currentNode);
+        }
+      } else {
+        // Pour les autres champs
+        currentDetailPerson[field] = newValue;
+      }
 
       // Sauvegarder dans Firebase
       const saved = await sauvegarderFamille();
@@ -2378,7 +2487,7 @@
         
         // Journal
         await addJournalEntry('edit', 'edit', 
-          `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${value || 'vide'}"`, 
+          `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${newValue || 'vide'}"`, 
           'proprietaire'
         );
         
@@ -2590,6 +2699,7 @@
     window.family = family;
     window.getPathToNode = getPathToNode;
     window.currentDetailPerson = currentDetailPerson;
+    window.findNodeByName = findNodeByName;
 
   </script>
 </body>
