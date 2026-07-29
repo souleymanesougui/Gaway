@@ -1827,6 +1827,17 @@
       return results;
     }
 
+    // ===== FONCTION POUR TROUVER LE CHEMIN =====
+    function getPathToNode(node, targetName, path = []) {
+      if (node.name === targetName) return [...path, node];
+      if (!node.children) return null;
+      for (let child of node.children) {
+        const result = getPathToNode(child, targetName, [...path, node]);
+        if (result) return result;
+      }
+      return null;
+    }
+
     // ===== EXPORT/IMPORT =====
     window.exportFamily = function() {
       if (!currentUser || currentUser.role !== 'proprietaire') {
@@ -1979,17 +1990,6 @@
         document.getElementById("searchBox").blur();
       }
     });
-
-    // ===== FONCTION POUR TROUVER LE CHEMIN =====
-    function getPathToNode(node, targetName, path = []) {
-      if (node.name === targetName) return [...path, node];
-      if (!node.children) return null;
-      for (let child of node.children) {
-        const result = getPathToNode(child, targetName, [...path, node]);
-        if (result) return result;
-      }
-      return null;
-    }
 
     // ===== DISPLAY FUNCTIONS =====
     function displayPerson(person) {
@@ -2171,10 +2171,18 @@
       breadcrumbEl.style.display = "none";
       mainHeader.textContent = "🌳 Les fils Gaïda";
       
-      document.getElementById("editBtn").style.display = "none";
-      document.getElementById("deleteBtn").style.display = "none";
-      document.getElementById("exportBtn").style.display = "none";
-      document.getElementById("importBtn").style.display = "none";
+      // === MODIFICATION : Afficher les boutons selon les permissions ===
+      const isAuthenticated = currentUser !== null;
+      const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
+      const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
+      
+      document.getElementById("editBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
+      document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("historiqueBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("exportBtn").style.display = isProprietaire ? "flex" : "none";
+      document.getElementById("importBtn").style.display = isProprietaire ? "flex" : "none";
       document.getElementById("statsBtn").style.display = "flex";
 
       if (!family) return;
@@ -2399,7 +2407,7 @@
       }
     };
 
-    // ===== EDIT PERSON =====
+    // ===== EDIT PERSON - MODIFIÉ POUR PERMETTRE LA MODIFICATION DE LA RACINE =====
     let editingPerson = null;
     let editingParent = null;
 
@@ -2408,23 +2416,34 @@
         showToast("Seul le proprietaire ou admin peut modifier", "error");
         return;
       }
-      if (!currentNode || currentNode === family) {
-        showToast("Sélectionnez une personne à modifier", "warning");
-        return;
-      }
-
-      const result = findNodeWithParent(family, currentNode.name);
-      if (result) {
-        editingPerson = result.node;
-        editingParent = result.parent;
-        document.getElementById("editName").value = editingPerson.name;
-        document.getElementById("editGender").value = editingPerson.gender || "male";
-        document.getElementById("editBirth").value = editingPerson.birth || "";
-        document.getElementById("editBio").value = editingPerson.bio || "";
-        document.getElementById("editModal").classList.add("active");
+      
+      // On autorise la modification même si c'est la racine
+      let personToEdit = currentNode;
+      let parentToEdit = null;
+      
+      // Si c'est la racine, on l'édite directement
+      if (currentNode === family) {
+        personToEdit = family;
+        parentToEdit = null;
       } else {
-        showToast("Erreur : personne non trouvée", "error");
+        const result = findNodeWithParent(family, currentNode.name);
+        if (!result) {
+          showToast("Erreur : personne non trouvée", "error");
+          return;
+        }
+        personToEdit = result.node;
+        parentToEdit = result.parent;
       }
+      
+      editingPerson = personToEdit;
+      editingParent = parentToEdit;
+      
+      document.getElementById("editName").value = editingPerson.name;
+      document.getElementById("editGender").value = editingPerson.gender || "male";
+      document.getElementById("editBirth").value = editingPerson.birth || "";
+      document.getElementById("editBio").value = editingPerson.bio || "";
+      
+      document.getElementById("editModal").classList.add("active");
     };
 
     window.closeEditModal = function() {
@@ -2459,7 +2478,8 @@
         return;
       }
 
-      if (name !== editingPerson.name && editingParent && editingParent.children) {
+      // Vérification des doublons uniquement si ce n'est pas la racine
+      if (editingParent && editingParent.children && name !== editingPerson.name) {
         if (editingParent.children.some(c => c.name === name && c !== editingPerson)) {
           showToast(`"${name}" existe déjà`, "warning");
           return;
@@ -2471,6 +2491,12 @@
       editingPerson.gender = gender;
       editingPerson.birth = birth || "";
       editingPerson.bio = bio || "";
+
+      // Si c'est la racine, on met à jour family
+      if (editingPerson === family) {
+        family.name = name;
+        mainHeader.textContent = "🌳 Les fils " + name;
+      }
 
       if (oldName !== name && currentNode === editingPerson) currentNode.name = name;
 
@@ -2496,7 +2522,14 @@
         showToast("Seul le proprietaire peut supprimer", "error");
         return;
       }
-      if (!currentNode || currentNode === family) {
+      
+      // Empêcher la suppression de la racine
+      if (currentNode === family) {
+        showToast("Impossible de supprimer la racine de l'arbre", "warning");
+        return;
+      }
+      
+      if (!currentNode) {
         showToast("Sélectionnez une personne à supprimer", "warning");
         return;
       }
