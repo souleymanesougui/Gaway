@@ -765,84 +765,6 @@
     .modal-content h2 { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
     .modal-content .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 20px; line-height: 1.5; font-weight: 400; }
 
-    /* === STYLES POUR L'HISTOIRE === */
-    .history-content {
-      line-height: 1.8;
-      color: var(--text-dark);
-    }
-    .history-content p {
-      margin: 12px 0;
-    }
-    .history-content h3 {
-      color: var(--accent);
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-    .history-content ul {
-      list-style: none;
-      padding: 0;
-    }
-    .history-content ul li {
-      padding: 6px 0;
-      padding-left: 30px;
-      position: relative;
-    }
-    .history-content ul li::before {
-      content: '•';
-      color: var(--accent);
-      font-size: 20px;
-      position: absolute;
-      left: 5px;
-      top: 4px;
-    }
-    .history-content.editable {
-      cursor: text;
-    }
-    .history-content .editable-field {
-      border: 2px solid transparent;
-      border-radius: 8px;
-      padding: 8px 12px;
-      transition: all 0.2s ease;
-      cursor: pointer;
-      background: transparent;
-    }
-    .history-content .editable-field:hover {
-      border-color: var(--accent);
-      background: rgba(142, 68, 173, 0.05);
-    }
-    .history-content .editable-field:focus {
-      border-color: var(--accent);
-      outline: none;
-      background: rgba(142, 68, 173, 0.08);
-      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
-    }
-    .history-content .editable-field textarea {
-      width: 100%;
-      border: none;
-      background: transparent;
-      font-family: 'Inter', sans-serif;
-      font-size: inherit;
-      color: var(--text-dark);
-      resize: vertical;
-      outline: none;
-      padding: 0;
-      line-height: 1.8;
-    }
-    .history-content .editable-field textarea:focus {
-      outline: none;
-    }
-    .history-content .editable-field .edit-hint {
-      font-size: 11px;
-      color: var(--text-light);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      display: block;
-      margin-top: 4px;
-    }
-    .history-content .editable-field:hover .edit-hint {
-      opacity: 0.7;
-    }
-
     /* === FORMULAIRES === */
     .form-group { margin-bottom: 18px; }
     .form-group label {
@@ -1155,6 +1077,78 @@
       box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
     }
 
+    /* === STYLES POUR L'HISTOIRE === */
+    .history-content {
+      line-height: 1.8;
+      color: var(--text-dark);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .history-content p {
+      margin: 8px 0;
+    }
+    .history-content.editable {
+      cursor: text;
+    }
+    .history-textarea {
+      width: 100%;
+      min-height: 200px;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text-dark);
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .history-textarea:focus {
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .history-editor-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      justify-content: flex-end;
+    }
+    .history-editor-actions button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    .history-editor-actions .btn-save {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 16px rgba(142, 68, 173, 0.25);
+    }
+    .history-editor-actions .btn-save:hover {
+      background: #6c3483;
+      transform: translateY(-2px);
+    }
+    .history-editor-actions .btn-cancel {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--text-dark);
+    }
+    .history-editor-actions .btn-cancel:hover {
+      background: rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    .history-editor-hint {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 6px;
+      font-style: italic;
+    }
+
     /* === RESPONSIVE === */
     @media (max-width: 480px) {
       .person { width: calc(50% - 10px); padding: 8px; }
@@ -1175,7 +1169,6 @@
       .detail-path { font-size: 12px; padding: 8px 12px; }
       .person .click-hint { display: none; }
       .modal-content.history-modal { max-width: 100%; }
-      .history-content .editable-field textarea { font-size: 14px; }
     }
   </style>
 </head>
@@ -1237,7 +1230,7 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ===== HISTORY MODAL - DYNAMIQUE ET ÉDITABLE ===== -->
+  <!-- ===== HISTORY MODAL - SIMPLIFIÉ COMME LA BIO ===== -->
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content history-modal">
       <button class="modal-close" onclick="closeHistoryModal()">✕</button>
@@ -1245,7 +1238,6 @@
       <p class="subtitle" id="historySubtitle">Découvrez l'histoire de la famille Gaïda</p>
       
       <div class="history-content" id="historyContent">
-        <!-- Contenu chargé dynamiquement depuis Firebase -->
         <div id="historyBody">
           <p>Chargement de l'histoire...</p>
         </div>
@@ -1371,7 +1363,7 @@
     </div>
   </div>
 
-  <!-- Edit Person Modal - Gardé pour compatibilité -->
+  <!-- Edit Person Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
@@ -1536,15 +1528,7 @@
     let historyData = {
       title: "📜 Notre Histoire",
       subtitle: "Découvrez l'histoire de la famille Gaïda",
-      content: `<p>La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent au coeur des traditions et de l'histoire.</p>
-                <p>Ce site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.</p>
-                <h3>📌 Nos valeurs</h3>
-                <ul>
-                  <li>Unité familiale</li>
-                  <li>Transmission du savoir</li>
-                  <li>Ouverture sur le monde</li>
-                </ul>
-                <p style="font-style: italic; color: var(--accent);">— Que la mémoire de nos ancêtres vive à travers nous.</p>`
+      content: "La lignée des fils Gaida est une famille dont les racines plongent au coeur des traditions et de l'histoire.\n\nCe site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous."
     };
 
     // ===== TOAST SYSTEM =====
@@ -1672,7 +1656,6 @@
           historyData = docSnap.data();
           return historyData;
         } else {
-          // Créer le document par défaut
           await setDoc(docRef, historyData);
           return historyData;
         }
@@ -2604,7 +2587,7 @@
       currentDetailPerson = null;
     };
 
-    // ===== HISTORY MODAL - DYNAMIQUE ET ÉDITABLE =====
+    // ===== HISTORY MODAL - SIMPLIFIÉ COMME LA BIO =====
     window.openHistoryModal = async function() {
       await loadHistoryFromFirebase();
       document.getElementById("historyModal").classList.add("active");
@@ -2624,24 +2607,23 @@
       const body = document.getElementById('historyBody');
       
       if (isProprietaire) {
-        // Mode édition pour le propriétaire
+        // Mode édition pour le propriétaire - comme la bio
         body.innerHTML = `
-          <div class="editable-field">
+          <div style="margin-bottom: 8px;">
             <label style="font-size: 12px; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contenu de l'histoire</label>
-            <textarea id="historyEditor" rows="8" style="width: 100%; border: 2px solid var(--accent); border-radius: 8px; padding: 12px; font-family: 'Inter', sans-serif; font-size: 14px; background: rgba(255,255,255,0.5); color: var(--text-dark); resize: vertical; min-height: 200px;">${historyData.content || ''}</textarea>
-            <div style="display: flex; gap: 10px; margin-top: 12px;">
-              <button class="btn-submit" onclick="saveHistoryContent()" style="padding: 8px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">💾 Sauvegarder</button>
-              <button class="btn-cancel" onclick="resetHistoryContent()" style="padding: 8px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">↩️ Annuler</button>
-            </div>
-            <div style="font-size: 11px; color: var(--text-light); margin-top: 8px;">✏️ Vous pouvez modifier le contenu de l'histoire. Utilisez du HTML pour la mise en forme.</div>
           </div>
+          <textarea class="history-textarea" id="historyEditor" placeholder="Écrivez l'histoire de la famille ici...">${historyData.content || ''}</textarea>
+          <div class="history-editor-actions">
+            <button class="btn-cancel" onclick="closeHistoryModal()">Fermer</button>
+            <button class="btn-save" onclick="saveHistoryContent()">💾 Sauvegarder</button>
+          </div>
+          <div class="history-editor-hint">✏️ Cliquez sur Sauvegarder pour enregistrer vos modifications</div>
         `;
       } else {
         // Mode lecture pour tous
+        const content = historyData.content || "L'histoire de la famille est en cours de rédaction...";
         body.innerHTML = `
-          <div class="history-content">
-            ${historyData.content || '<p>L\'histoire de la famille est en cours de rédaction...</p>'}
-          </div>
+          <div style="white-space: pre-wrap; line-height: 1.8;">${content}</div>
         `;
       }
     }
@@ -2655,13 +2637,14 @@
       const editor = document.getElementById('historyEditor');
       if (!editor) return;
 
-      const newContent = editor.value.trim();
-      if (!newContent) {
-        showToast("Le contenu ne peut pas être vide", "warning");
+      const newContent = editor.value;
+      const oldContent = historyData.content || '';
+
+      if (newContent === oldContent) {
+        showToast("Aucune modification détectée", "info");
         return;
       }
 
-      const oldContent = historyData.content;
       historyData.content = newContent;
 
       const saved = await saveHistoryToFirebase(historyData);
@@ -2669,12 +2652,6 @@
         renderHistoryContent();
         await addJournalEntry('edit', 'edit', `Contenu de l'histoire modifié`, 'proprietaire');
         showToast("Histoire mise à jour avec succès !", "success");
-      }
-    };
-
-    window.resetHistoryContent = function() {
-      if (confirm("Voulez-vous annuler les modifications ?")) {
-        renderHistoryContent();
       }
     };
 
@@ -2750,7 +2727,7 @@
       }
     };
 
-    // ===== EDIT PERSON - Gardé pour compatibilité =====
+    // ===== EDIT PERSON =====
     window.openEditModal = function() {
       showToast("La modification se fait dans la vue détail", "info");
     };
