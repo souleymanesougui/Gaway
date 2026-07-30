@@ -1335,3 +1335,9 @@ window.family = family;
 window.getPathToNode = getPathToNode;
 window.currentDetailPerson = currentDetailPerson;
 window.findNodeByName = findNodeByName;
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js");
+  });
+}
