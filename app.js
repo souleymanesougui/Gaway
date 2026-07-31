@@ -790,7 +790,7 @@ function displayRoot() {
   backBtn.style.display = "none";
   mainHeader.style.display = "block";
   breadcrumbEl.style.display = "none";
-  mainHeader.textContent = "🌳 Les fils " + (family ? family.name : "Gaïda");
+  mainHeader.textContent = "🌳 Les fils Gaïda";
   
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
