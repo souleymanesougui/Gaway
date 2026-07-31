@@ -52,10 +52,6 @@ function toggleTheme() {
   const themes = ['light', 'dark', 'nature', 'vintage', 'modern', 'accessibility'];
   let newTheme = 'light';
   if (current === 'light') newTheme = 'dark';
-  else if (current === 'dark') newTheme = 'nature';
-  else if (current === 'nature') newTheme = 'vintage';
-  else if (current === 'vintage') newTheme = 'modern';
-  else if (current === 'modern') newTheme = 'accessibility';
   else newTheme = 'light';
   html.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
@@ -579,7 +575,7 @@ window.shareFamily = function() {
   if (navigator.share) {
     navigator.share({
       title: 'Arbre généalogique Gaway',
-      text: 'Découvrez l\'arbre généalogique des fils Gaïda',
+      text: 'Découvrez l\'arbre généalogique de Gaïda',
       url: url
     }).catch(() => {});
   } else {
@@ -771,7 +767,7 @@ function displayPerson(person) {
     const detailBtn = document.createElement("button");
     detailBtn.className = "detail-btn";
     detailBtn.innerHTML = "👤";
-    detailBtn.title = "Voir les détails de " + child.name;
+    detailBtn.title = "carte de " + child.name;
     detailBtn.onclick = (e) => {
       e.stopPropagation();
       openPersonDetail(child);
@@ -790,7 +786,7 @@ function displayRoot() {
   backBtn.style.display = "none";
   mainHeader.style.display = "block";
   breadcrumbEl.style.display = "none";
-  mainHeader.textContent = "🌳 Les fils Gaïda";
+  mainHeader.textContent = "Trouvez vos grands parents";
   
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
@@ -1318,10 +1314,6 @@ async function init() {
   await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
-  
-  setTimeout(() => {
-    showToast("Bienvenue dans l'univers Gaway du monde", "info", 3000);
-  }, 500);
 }
 
 init();
