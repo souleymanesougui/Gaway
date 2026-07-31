@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaway - Chargement</title>
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* FOND AVEC DÉGRADÉ */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2C3E50 0%, #8E44AD 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+        }
+
+        /* CONTENEUR PRINCIPAL */
+        .splash-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* ICÔNE QUI TOMBE */
+        .splash-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: tomber 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+            transform: translateY(-200px);
+        }
+
+        .splash-icon img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        /* TEXTE "FILS" ET "GAIDA" */
+        .splash-words {
+            display: flex;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .word-fils {
+            animation: glisserGauche 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+            transform: translateX(-300px);
+        }
+
+        .word-gaida {
+            animation: glisserDroite 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+            transform: translateX(300px);
+        }
+
+        /* PETIT SOUS-TITRE */
+        .splash-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: fadeIn 1.5s ease forwards;
+            opacity: 0;
+            margin-top: 10px;
+        }
+
+        /* BARRE DE CHARGEMENT */
+        .splash-loader {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            animation: fadeIn 1.5s ease forwards;
+            opacity: 0;
+        }
+
+        .splash-loader-bar {
+            width: 0%;
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            animation: charger 2s ease forwards;
+        }
+
+        /* ===== ANIMATIONS ===== */
+
+        @keyframes tomber {
+            0% {
+                opacity: 0;
+                transform: translateY(-200px) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes glisserGauche {
+            0% {
+                opacity: 0;
+                transform: translateX(-300px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes glisserDroite {
+            0% {
+                opacity: 0;
+                transform: translateX(300px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes charger {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* ===== RESPONSIVE ===== */
+
+        @media (max-width: 600px) {
+            .splash-icon {
+                width: 90px;
+                height: 90px;
+            }
+
+            .splash-words {
+                font-size: 32px;
+                gap: 10px;
+            }
+
+            .splash-subtitle {
+                font-size: 11px;
+                letter-spacing: 3px;
+            }
+
+            .splash-loader {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .splash-words {
+                font-size: 24px;
+                gap: 8px;
+            }
+
+            .splash-icon {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <!-- ICÔNE -->
+        <div class="splash-icon">
+            <img src="Images/gaway1.png" alt="Gaway">
+        </div>
+
+        <!-- MOTS -->
+        <div class="splash-words">
+            <span class="word-fils">FILS</span>
+            <span class="word-gaida">GAIDA</span>
+        </div>
+
+        <!-- SOUS-TITRE -->
+        <div class="splash-subtitle">Arbre Généalogique</div>
+
+        <!-- BARRE DE CHARGEMENT -->
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- REDIRECTION APRÈS 2.5s -->
+    <script>
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2500);
+    </script>
+</body>
+</html>

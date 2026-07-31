@@ -19,6 +19,13 @@
     gtag('js', new Date());
     gtag('config', 'G-JMQ004JQ2L');
   </script>
+  <!-- Redirection automatique vers l'animation -->
+  <script>
+    // Si ce n'est pas déjà la page splash
+    if (window.location.pathname !== '/splash.html' && !window.location.pathname.includes('splash')) {
+        window.location.href = 'splash.html';
+    }
+  </script>
   
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
