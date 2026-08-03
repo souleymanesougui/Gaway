@@ -1,56 +1,32 @@
 // app.js
-import { 
-  db,
-  incrementVisits, 
-  incrementDownloads, 
-  getStats, 
-  updateUserActivity,
-  loadFamilyData,
-  saveFamilyData,
-  loadPasswords as loadPasswordsDB,
-  savePasswords as savePasswordsDB,
-  loadFamilyHistory as loadFamilyHistoryDB,
-  saveFamilyHistory as saveFamilyHistoryDB,
-  addJournalEntry,
-  loadJournal,
-  deleteJournalEntry,
-  listenToStats
-} from './firebase.js';
-
+import { db } from './firebase.js';
 import { 
   doc, 
   getDoc, 
-  updateDoc, 
+  updateDoc,
   setDoc,
   collection,
   addDoc,
   getDocs,
   deleteDoc,
   query,
-  orderBy,
-  onSnapshot
+  orderBy
 } from "firebase/firestore";
-
-// ============================================
-// ÉTAT GLOBAL
-// ============================================
 
 let currentUser = null;
 let passwords = {
   admin: "admin123",
   editor: "editor123"
 };
+
 let journalEntries = [];
 let family = null;
 let history = [];
 let currentPath = [];
 let currentNode = null;
 let lastDetailPerson = null;
-let familyHistory = "La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous.";
 
-// ============================================
-// TOAST NOTIFICATIONS
-// ============================================
+let familyHistory = "La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous.";
 
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
@@ -70,10 +46,6 @@ function showToast(message, type = 'success', duration = 3500) {
 }
 window.showToast = showToast;
 
-// ============================================
-// THÈME
-// ============================================
-
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute('data-theme');
@@ -92,20 +64,112 @@ function initTheme() {
 }
 initTheme();
 
-// ============================================
-// FONCTIONS D'AUTHENTIFICATION
-// ============================================
+async function loadFamilyHistory() {
+  try {
+    const ref = doc(db, "config", "familyHistory");
+    const docSnap = await getDoc(ref);
+    if (docSnap.exists()) {
+      familyHistory = docSnap.data().content || familyHistory;
+    } else {
+      await setDoc(ref, { content: familyHistory });
+    }
+    return familyHistory;
+  } catch (error) {
+    console.error("Erreur chargement histoire:", error);
+    return familyHistory;
+  }
+}
+
+async function saveFamilyHistory(content) {
+  try {
+    const ref = doc(db, "config", "familyHistory");
+    await setDoc(ref, { content: content });
+    familyHistory = content;
+    return true;
+  } catch (error) {
+    console.error("Erreur sauvegarde histoire:", error);
+    return false;
+  }
+}
+
+async function loadJournal() {
+  try {
+    const q = query(collection(db, "journal"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    journalEntries = [];
+    querySnapshot.forEach((doc) => {
+      journalEntries.push({ id: doc.id, ...doc.data() });
+    });
+    return journalEntries;
+  } catch (error) {
+    console.error("Erreur journal:", error);
+    return [];
+  }
+}
+
+async function addJournalEntry(action, type, data, userRole, targetData = null) {
+  try {
+    const entry = {
+      action, type, data,
+      user: userRole || "admin",
+      date: new Date().toISOString(),
+      status: "accepted",
+      targetData: targetData || null
+    };
+    const docRef = await addDoc(collection(db, "journal"), entry);
+    return docRef.id;
+  } catch (error) {
+    console.error("Erreur ajout journal:", error);
+    return null;
+  }
+}
+
+async function deleteJournalEntry(entryId) {
+  try {
+    await deleteDoc(doc(db, "journal", entryId));
+    return true;
+  } catch (error) {
+    console.error("Erreur suppression journal:", error);
+    return false;
+  }
+}
+
+async function loadPasswords() {
+  try {
+    const docRef = doc(db, "config", "passwords");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data.admin) passwords.admin = data.admin;
+      if (data.editor) passwords.editor = data.editor;
+    } else {
+      await setDoc(docRef, passwords);
+    }
+    return true;
+  } catch (error) {
+    console.error("Erreur chargement mots de passe:", error);
+    return false;
+  }
+}
+
+async function savePasswords() {
+  try {
+    const docRef = doc(db, "config", "passwords");
+    await setDoc(docRef, passwords);
+    return true;
+  } catch (error) {
+    console.error("Erreur sauvegarde mots de passe:", error);
+    showToast("Erreur lors de la sauvegarde des mots de passe", "error");
+    return false;
+  }
+}
 
 window.authenticate = async function(e) {
   e.preventDefault();
   const password = document.getElementById("authPassword").value.trim();
   const errorEl = document.getElementById("authError");
   
-  const loaded = await loadPasswords();
-  if (!loaded) {
-    showToast("Erreur de chargement des mots de passe", "error");
-    return;
-  }
+  await loadPasswords();
   
   if (password === passwords.admin) {
     currentUser = { role: 'proprietaire' };
@@ -140,7 +204,7 @@ window.logout = function() {
   currentUser = null;
   updateUIForAuth();
   if (currentNode) displayPerson(currentNode);
-  showToast("Déconnecté", "info");
+  showToast("Deconnecté", "info");
 };
 
 window.openAdminModal = function() {
@@ -185,16 +249,40 @@ window.updatePasswords = async function(e) {
   if (newAdminPass) passwords.admin = newAdminPass;
   if (newEditorPass) passwords.editor = newEditorPass;
 
-  const saved = await savePasswordsDB(passwords);
+  const saved = await savePasswords();
   if (saved) {
     closeAdminModal();
     showToast("Les mots de passe ont été mis à jour !", "success");
   }
 };
 
-// ============================================
-// FONCTIONS D'HISTORIQUE
-// ============================================
+window.openStatsModal = function() {
+  if (!family) {
+    showToast("Les données ne sont pas encore chargées", "warning");
+    return;
+  }
+  document.getElementById("statsModal").classList.add("active");
+  calculateStats();
+};
+
+window.closeStatsModal = function() {
+  document.getElementById("statsModal").classList.remove("active");
+};
+
+function countNodes(node) {
+  let count = 1;
+  if (node.children) {
+    for (const child of node.children) {
+      count += countNodes(child);
+    }
+  }
+  return count;
+}
+
+function calculateStats() {
+  const total = countNodes(family);
+  document.getElementById('statTotal').textContent = total;
+}
 
 window.openHistoriqueModal = async function() {
   if (!currentUser || currentUser.role !== 'proprietaire') {
@@ -211,7 +299,7 @@ window.closeHistoriqueModal = function() {
 
 async function renderHistorique() {
   const container = document.getElementById("historiqueList");
-  journalEntries = await loadJournal();
+  await loadJournal();
   
   if (journalEntries.length === 0) {
     container.innerHTML = `
@@ -266,87 +354,6 @@ window.deleteHistoriqueEntry = async function(entryId) {
   }
 };
 
-// ============================================
-// FONCTIONS DE STATISTIQUES
-// ============================================
-
-let statsUpdateInterval = null;
-
-async function initStats() {
-  // Incrémenter les visites
-  await incrementVisits();
-  
-  // Générer ou récupérer l'ID utilisateur
-  let userId = sessionStorage.getItem('userId');
-  if (!userId) {
-    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem('userId', userId);
-  }
-  updateUserActivity(userId);
-  
-  // Écouter les changements en temps réel
-  listenToStats(() => {
-    updateStatsUI();
-  });
-  
-  // Mettre à jour l'activité toutes les 30 secondes
-  setInterval(() => {
-    const uid = sessionStorage.getItem('userId');
-    if (uid) {
-      updateUserActivity(uid);
-    }
-  }, 30000);
-  
-  // Mettre à jour les stats toutes les 30 secondes
-  statsUpdateInterval = setInterval(() => {
-    updateStatsUI();
-  }, 30000);
-}
-
-window.openStatsModal = async function() {
-  if (!family) {
-    showToast("Les données ne sont pas encore chargées", "warning");
-    return;
-  }
-  document.getElementById("statsModal").classList.add("active");
-  await updateStatsUI();
-};
-
-window.closeStatsModal = function() {
-  document.getElementById("statsModal").classList.remove("active");
-};
-
-async function updateStatsUI() {
-  const stats = await getStats();
-  if (!stats) {
-    showToast("Erreur lors du chargement des statistiques", "error");
-    return;
-  }
-  
-  const totalPersons = countNodes(family);
-  
-  document.getElementById('statTotalPersons').textContent = totalPersons;
-  document.getElementById('statTotalVisits').textContent = stats.totalVisits || 0;
-  document.getElementById('statTotalDownloads').textContent = stats.totalDownloads || 0;
-  document.getElementById('statOnlineUsers').textContent = stats.onlineUsers || 0;
-  document.getElementById('statTodayVisits').textContent = stats.todayVisits || 0;
-  document.getElementById('statWeekVisits').textContent = stats.weekVisits || 0;
-  document.getElementById('statMonthVisits').textContent = stats.monthVisits || 0;
-  
-  // Mettre à jour la section en direct
-  document.getElementById('liveVisits').textContent = stats.onlineUsers || 0;
-}
-
-window.trackDownload = async function() {
-  await incrementDownloads();
-  showToast("Téléchargement enregistré !", "success");
-  await updateStatsUI();
-};
-
-// ============================================
-// MENU
-// ============================================
-
 window.toggleMenu = function() {
   document.getElementById("hamburgerMenu").classList.toggle("open");
 };
@@ -362,10 +369,6 @@ document.addEventListener('click', function(event) {
     menu.classList.remove("open");
   }
 });
-
-// ============================================
-// UI AUTH
-// ============================================
 
 function updateUIForAuth() {
   const isAuthenticated = currentUser !== null;
@@ -418,30 +421,17 @@ function updateUIForAuth() {
   }
 }
 
-// ============================================
-// ARBRE GÉNÉALOGIQUE
-// ============================================
-
 const treeEl = document.getElementById('tree');
 const backBtn = document.getElementById('backBtn');
 const breadcrumbEl = document.getElementById('breadcrumb');
 const mainHeader = document.getElementById('mainHeader');
 
-function countNodes(node) {
-  let count = 1;
-  if (node.children) {
-    for (const child of node.children) {
-      count += countNodes(child);
-    }
-  }
-  return count;
-}
-
 async function chargerfamille() {
   try {
-    const data = await loadFamilyData();
-    if (data) {
-      family = data;
+    const ref = doc(db, "famille", "bollou_oumar");
+    const resultat = await getDoc(ref);
+    if (resultat.exists()) {
+      family = resultat.data();
       if (!family.gender) family.gender = 'unknown';
       if (!family.gender || family.gender === '') family.gender = 'male';
       currentPath = [family];
@@ -456,7 +446,22 @@ async function chargerfamille() {
 }
 
 async function sauvegarderFamille() {
-  return await saveFamilyData(family);
+  try {
+    const ref = doc(db, "famille", "bollou_oumar");
+    await updateDoc(ref, {
+      name: family.name,
+      children: family.children || [],
+      photo: family.photo || "",
+      gender: family.gender || "male",
+      birth: family.birth || "",
+      bio: family.bio || ""
+    });
+    return true;
+  } catch (error) {
+    console.error("Erreur sauvegarde:", error);
+    showToast("Erreur lors de la sauvegarde", "error");
+    return false;
+  }
 }
 
 function findNodeWithParent(node, targetName, parent = null) {
@@ -508,10 +513,6 @@ function findNodeByName(node, targetName) {
   }
   return null;
 }
-
-// ============================================
-// EXPORT / IMPORT
-// ============================================
 
 window.exportFamily = function() {
   if (!currentUser || currentUser.role !== 'proprietaire') {
@@ -585,10 +586,6 @@ window.shareFamily = function() {
     });
   }
 };
-
-// ============================================
-// RECHERCHE
-// ============================================
 
 let searchTimeout = null;
 let allNames = [];
@@ -667,10 +664,6 @@ document.addEventListener('keydown', function(e) {
     document.getElementById("searchBox").blur();
   }
 });
-
-// ============================================
-// AFFICHAGE
-// ============================================
 
 function displayPerson(person) {
   treeEl.innerHTML = "";
@@ -878,10 +871,6 @@ function updateBreadcrumb() {
   }
 }
 
-// ============================================
-// DÉTAIL PERSONNE
-// ============================================
-
 let currentDetailPerson = null;
 
 window.openPersonDetail = function(person) {
@@ -1079,10 +1068,6 @@ window.closePersonDetailModal = function() {
   currentDetailPerson = null;
 };
 
-// ============================================
-// AJOUT / MODIFICATION / SUPPRESSION
-// ============================================
-
 window.openAddModal = function() {
   if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
     showToast("Seul le proprietaire ou admin peut ajouter", "error");
@@ -1233,14 +1218,10 @@ window.confirmDelete = async function() {
   }
 };
 
-// ============================================
-// HISTORIQUE DES INFORMATIONS
-// ============================================
-
 let isHistoryEditMode = false;
 
 window.openHistoryModal = async function() {
-  familyHistory = await loadFamilyHistoryDB();
+  await loadFamilyHistory();
   document.getElementById("historyModal").classList.add("active");
   
   const displayEl = document.getElementById("historyTextDisplay");
@@ -1302,7 +1283,7 @@ window.saveHistory = async function() {
     return;
   }
   
-  const saved = await saveFamilyHistoryDB(newContent);
+  const saved = await saveFamilyHistory(newContent);
   if (saved) {
     document.getElementById("historyTextDisplay").innerHTML = newContent.replace(/\n/g, '<br>');
     await addJournalEntry('edit', 'edit', 'Informations de la famille modifiées', 'proprietaire');
@@ -1312,19 +1293,6 @@ window.saveHistory = async function() {
     showToast("Erreur lors de la sauvegarde", "error");
   }
 };
-
-// ============================================
-// CACHE & LOAD PASSWORDS
-// ============================================
-
-async function loadPasswords() {
-  const data = await loadPasswordsDB();
-  if (data) {
-    passwords = data;
-    return true;
-  }
-  return false;
-}
 
 const CACHE_KEY = 'gaway_family_cache';
 
@@ -1339,26 +1307,17 @@ sauvegarderFamille = async function() {
   return result;
 };
 
-// ============================================
-// INITIALISATION
-// ============================================
-
 async function init() {
   await loadPasswords();
   await chargerfamille();
-  journalEntries = await loadJournal();
-  familyHistory = await loadFamilyHistoryDB();
+  await loadJournal();
+  await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
-  
-  // Initialiser les statistiques
-  await initStats();
 }
 
-// Démarrer
 init();
 
-// Exposer les fonctions globales
 window.findNodeWithParent = findNodeWithParent;
 window.findPathToNode = findPathToNode;
 window.buildNameIndex = buildNameIndex;
@@ -1368,9 +1327,7 @@ window.family = family;
 window.getPathToNode = getPathToNode;
 window.currentDetailPerson = currentDetailPerson;
 window.findNodeByName = findNodeByName;
-window.updateStatsUI = updateStatsUI;
 
-// Service Worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js");
