@@ -150,6 +150,7 @@
 
 * { box-sizing: border-box; transition: var(--transition); }
 
+/* ===== CORPS ===== */
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -159,14 +160,25 @@ body {
   align-items: center;
   padding-bottom: 40px;
   position: relative;
-  background-image: url('Images/image.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: scroll;   /* corrigé pour iOS */
-  background-repeat: no-repeat;
   background-color: var(--bg);
 }
 
+/* Image de fond fixe (compatible iOS) */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background-image: url('Images/image.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Overlay semi-transparent */
 body::before {
   content: '';
   position: fixed;
@@ -175,7 +187,6 @@ body::before {
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.15);
-  /* suppression de backdrop-filter: blur(0px); pour éviter les bugs iOS */
   z-index: -1;
 }
 
@@ -207,7 +218,7 @@ header {
   flex-wrap: nowrap;
   min-width: 50px;
   justify-content: flex-end;
-  margin-left: auto;  /* force le bloc à droite */
+  margin-left: auto;
 }
 
 .hamburger-btn {
@@ -481,7 +492,6 @@ header {
 .hamburger-menu.open { display: flex; }
 .hamburge:hover { background: rgba(6, 6, 6, 0.25); transform: scale(1.02); border-color: rgba(255, 255, 255, 0.3); }
 
-
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -678,7 +688,6 @@ header {
   box-shadow: 0 4px 16px rgba(68, 173, 108, 0.25);
 }
 #historyEditBtn .btn-submit :hover { background: #898d86; transform: translateY(-2px); }
-
 
 .historique-list { margin: 16px 0; max-height: 400px; overflow-y: auto; }
 .historique-item {
@@ -963,7 +972,7 @@ header {
     font-size: 14px;
   }
   .auth-status {
-    display: none; /* masqué sur très petit écran pour gagner de la place */
+    display: none;
   }
   #tree {
     gap: 10px;
