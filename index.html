@@ -134,14 +134,46 @@
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
-      <h2>Statistiques</h2>
-      <p class="subtitle">Nombre total de personnes dans l'arbre</p>
-      <div class="stats-simple">
-        <span class="stat-icon">👤</span>
-        <div class="stat-number-big" id="statTotal">0</div>
-        <div class="stat-label-big">personnes dans l'arbre</div>
+      <h2>📊 Statistiques</h2>
+      <p class="subtitle">Données en temps réel</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+        <div class="stat-card">
+          <div class="stat-label">👥 En ligne</div>
+          <div class="stat-number" id="liveVisitors">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📅 Aujourd'hui</div>
+          <div class="stat-number" id="todayVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📆 Cette semaine</div>
+          <div class="stat-number" id="weekVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📆 Ce mois-ci</div>
+          <div class="stat-number" id="monthVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🔢 Total visites</div>
+          <div class="stat-number" id="totalVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">⬇️ Téléchargements</div>
+          <div class="stat-number" id="totalDownloads">0</div>
+        </div>
       </div>
-      <div class="form-actions">
+
+      <div style="margin-top: 12px; border-top: 1px solid rgba(0,0,0,0.04); padding-top: 16px;">
+        <p style="font-size: 13px; color: var(--text-light); text-align: center; margin-bottom: 10px;">
+          Téléchargez l'application officielle
+        </p>
+        <button id="downloadBtn" class="btn-submit" style="width: 100%; padding: 12px; font-size: 16px;">
+          ⬇️ Télécharger l'APK
+        </button>
+      </div>
+      
+      <div class="form-actions" style="margin-top: 16px;">
         <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
       </div>
     </div>
