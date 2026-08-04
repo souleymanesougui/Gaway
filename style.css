@@ -89,6 +89,42 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ===== STATISTIQUES ===== */
+.stat-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 14px;
+  padding: 14px 10px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+.stat-card:hover {
+  background: rgba(142, 68, 173, 0.04);
+  border-color: var(--accent-light);
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--text-light);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.stat-card .stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+[data-theme="dark"] .stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+[data-theme="dark"] .stat-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .toast-container {
   position: fixed;
   top: 80px;
@@ -586,7 +622,7 @@ header {
 }
 .modal-content.historique-modal { max-width: 700px; }
 .modal-content.person-detail-modal { max-width: 480px; padding: 0; overflow: hidden; }
-.modal-content.stats-modal { max-width: 400px; }
+.modal-content.stats-modal { max-width: 480px; }
 .modal-content.history-modal { max-width: 500px; }
 
 @keyframes modalSlide {
