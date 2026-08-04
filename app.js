@@ -1,4 +1,3 @@
-// app.js
 import { db } from './firebase.js';
 import { 
   doc, 
@@ -10,7 +9,11 @@ import {
   getDocs,
   deleteDoc,
   query,
-  orderBy
+  orderBy,
+  increment,        // nouveau
+  onSnapshot,       // nouveau
+  serverTimestamp,  // nouveau
+  where             // nouveau
 } from "firebase/firestore";
 
 let currentUser = null;
@@ -27,6 +30,158 @@ let currentNode = null;
 let lastDetailPerson = null;
 
 let familyHistory = "La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous.";
+
+// ===================== STATISTIQUES =====================
+const statsRef = doc(db, "stats", "siteStats");
+const presenceRef = collection(db, "presence");
+const sessionId = crypto.randomUUID();
+
+// Fonctions utilitaires pour les clés
+function getWeekKey() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 1);
+  const days = Math.floor((now - start) / 86400000);
+  const week = Math.ceil((days + start.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function getMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+}
+
+// 1. Incrémenter les visites à l'ouverture
+async function registerVisit() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const weekKey = getWeekKey();
+    const monthKey = getMonthKey();
+
+    await updateDoc(statsRef, {
+      totalVisits: increment(1),
+      [`dailyVisits.${today}`]: increment(1),
+      [`weeklyVisits.${weekKey}`]: increment(1),
+      [`monthlyVisits.${monthKey}`]: increment(1)
+    });
+  } catch (error) {
+    console.error("Erreur enregistrement visite:", error);
+  }
+}
+
+// 2. Gestion des visiteurs en direct
+async function registerPresence() {
+  try {
+    await addDoc(presenceRef, {
+      sessionId: sessionId,
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Erreur enregistrement présence:", error);
+  }
+}
+
+// Nettoyer les sessions obsolètes (plus de 2 minutes)
+async function cleanOldSessions() {
+  try {
+    const twoMinAgo = new Date(Date.now() - 120000);
+    const q = query(presenceRef, where("timestamp", "<", twoMinAgo));
+    const snap = await getDocs(q);
+    snap.forEach(doc => deleteDoc(doc.ref));
+  } catch (error) {
+    console.error("Erreur nettoyage sessions:", error);
+  }
+}
+
+// Compter les visiteurs en direct
+async function countLiveVisitors() {
+  await cleanOldSessions();
+  const snap = await getDocs(presenceRef);
+  return snap.size;
+}
+
+// 3. Incrémenter les téléchargements
+async function registerDownload() {
+  try {
+    await updateDoc(statsRef, {
+      totalDownloads: increment(1)
+    });
+  } catch (error) {
+    console.error("Erreur enregistrement téléchargement:", error);
+  }
+}
+
+// 4. Récupérer et afficher les stats en temps réel
+function displayStats() {
+  onSnapshot(statsRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('totalVisits').textContent = data.totalVisits || 0;
+      document.getElementById('totalDownloads').textContent = data.totalDownloads || 0;
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('todayVisits').textContent = data.dailyVisits?.[today] || 0;
+      
+      const weekKey = getWeekKey();
+      document.getElementById('weekVisits').textContent = data.weeklyVisits?.[weekKey] || 0;
+      
+      const monthKey = getMonthKey();
+      document.getElementById('monthVisits').textContent = data.monthlyVisits?.[monthKey] || 0;
+    }
+  });
+}
+
+// 5. Mise à jour du compteur live en continu
+async function updateLiveCount() {
+  const count = await countLiveVisitors();
+  document.getElementById('liveVisitors').textContent = count;
+}
+
+// 6. Initialisation des stats
+async function initStats() {
+  // Créer le document stats s'il n'existe pas
+  try {
+    const docSnap = await getDoc(statsRef);
+    if (!docSnap.exists()) {
+      await setDoc(statsRef, {
+        totalVisits: 0,
+        totalDownloads: 0,
+        dailyVisits: {},
+        weeklyVisits: {},
+        monthlyVisits: {}
+      });
+    }
+  } catch (error) {
+    console.error("Erreur création stats:", error);
+  }
+  
+  await registerVisit();
+  await registerPresence();
+  displayStats();
+  await updateLiveCount();
+  setInterval(updateLiveCount, 5000);
+  
+  // Supprimer la présence à la fermeture
+  window.addEventListener('beforeunload', async () => {
+    try {
+      const q = query(presenceRef, where("sessionId", "==", sessionId));
+      const snap = await getDocs(q);
+      snap.forEach(doc => deleteDoc(doc.ref));
+    } catch (error) {
+      console.error("Erreur nettoyage départ:", error);
+    }
+  });
+  
+  // Bouton de téléchargement
+  const downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await registerDownload();
+      // Lien vers l'APK (à remplacer)
+      window.location.href = 'https://example.com/votre-app.apk';
+    });
+  }
+}
+// =================== FIN STATISTIQUES ===================
 
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
@@ -1314,6 +1469,7 @@ async function init() {
   await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
+  await initStats();  // Lancer les statistiques
 }
 
 init();
@@ -1324,12 +1480,3 @@ window.buildNameIndex = buildNameIndex;
 window.countNodes = countNodes;
 window.sauvegarderFamille = sauvegarderFamille;
 window.family = family;
-window.getPathToNode = getPathToNode;
-window.currentDetailPerson = currentDetailPerson;
-window.findNodeByName = findNodeByName;
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
