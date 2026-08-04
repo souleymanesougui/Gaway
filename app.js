@@ -99,7 +99,7 @@ async function updateHeartbeat() {
 // 4. Nettoyer les sessions obsolètes (plus de 2 minutes)
 async function cleanOldSessions() {
   try {
-    const twoMinAgo = new Date(Date.now() - 120000);
+    const twoMinAgo = new Date(Date.now() - 5000);
     console.log("🧹 Nettoyage des sessions avant :", twoMinAgo.toISOString());
     
     const q = query(presenceRef, where("timestamp", "<", twoMinAgo));
