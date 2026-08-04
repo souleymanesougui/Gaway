@@ -13,7 +13,8 @@ import {
   increment,
   onSnapshot,
   serverTimestamp,
-  where
+  where,
+  writeBatch    // 👈 NOUVEAU : pour les suppressions en lot
 } from "firebase/firestore";
 
 let currentUser = null;
@@ -67,7 +68,7 @@ async function registerVisit() {
   }
 }
 
-// 2. Gestion des visiteurs en direct (avec ID fixe = sessionId)
+// 2. Gestion des visiteurs en direct (ID fixe = sessionId)
 async function registerPresence() {
   try {
     const sessionDoc = doc(presenceRef, sessionId);
@@ -75,8 +76,9 @@ async function registerPresence() {
       sessionId: sessionId,
       timestamp: serverTimestamp()
     });
+    console.log("🟢 Présence enregistrée pour :", sessionId);
   } catch (error) {
-    console.error("Erreur enregistrement présence:", error);
+    console.error("❌ Erreur enregistrement présence:", error);
   }
 }
 
@@ -87,8 +89,9 @@ async function updateHeartbeat() {
     await updateDoc(sessionDoc, {
       timestamp: serverTimestamp()
     });
+    console.log("💓 Heartbeat envoyé pour :", sessionId);
   } catch (error) {
-    console.warn("Heartbeat échoué, recréation de la session...", error);
+    console.warn("⚠️ Heartbeat échoué, recréation de la session...", error);
     await registerPresence();
   }
 }
@@ -97,11 +100,25 @@ async function updateHeartbeat() {
 async function cleanOldSessions() {
   try {
     const twoMinAgo = new Date(Date.now() - 120000);
+    console.log("🧹 Nettoyage des sessions avant :", twoMinAgo.toISOString());
+    
     const q = query(presenceRef, where("timestamp", "<", twoMinAgo));
     const snap = await getDocs(q);
-    snap.forEach(doc => deleteDoc(doc.ref));
+    
+    console.log(`📄 ${snap.size} sessions obsolètes trouvées.`);
+    
+    if (snap.empty) return;
+    
+    // Utiliser un batch pour supprimer en lot (plus efficace)
+    const batch = writeBatch(db);
+    snap.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    
+    console.log(`✅ ${snap.size} sessions supprimées.`);
   } catch (error) {
-    console.error("Erreur nettoyage sessions:", error);
+    console.error("❌ Erreur nettoyage sessions:", error);
   }
 }
 
@@ -147,6 +164,7 @@ function displayStats() {
 async function updateLiveCount() {
   const count = await countLiveVisitors();
   document.getElementById('liveVisitors').textContent = count;
+  console.log(`👥 En ligne : ${count} visiteurs`);
 }
 
 // 9. Initialisation des stats
@@ -162,13 +180,16 @@ async function initStats() {
         weeklyVisits: {},
         monthlyVisits: {}
       });
+      console.log("📊 Document stats créé.");
     }
   } catch (error) {
-    console.error("Erreur création stats:", error);
+    console.error("❌ Erreur création stats:", error);
   }
   
   await registerVisit();
   await registerPresence();
+  await cleanOldSessions(); // Nettoyage immédiat au démarrage
+  
   displayStats();
   await updateLiveCount();
   
@@ -178,13 +199,17 @@ async function initStats() {
   // Heartbeat toutes les 30 secondes pour rester "en ligne"
   setInterval(updateHeartbeat, 30000);
   
+  // Nettoyage agressif toutes les 10 secondes
+  setInterval(cleanOldSessions, 10000);
+  
   // Supprimer la présence à la fermeture de la page
   window.addEventListener('beforeunload', async () => {
     try {
       const sessionDoc = doc(presenceRef, sessionId);
       await deleteDoc(sessionDoc);
+      console.log("🔴 Session supprimée à la fermeture");
     } catch (error) {
-      console.error("Erreur nettoyage départ:", error);
+      console.error("❌ Erreur nettoyage départ:", error);
     }
   });
   
@@ -200,6 +225,9 @@ async function initStats() {
   }
 }
 // =================== FIN STATISTIQUES ===================
+
+// ******************** LE RESTE DU CODE ********************
+// (tout ce qui suit reste strictement identique à ta version originale)
 
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
@@ -1487,7 +1515,7 @@ async function init() {
   await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
-  await initStats();  // Lance les statistiques (visites, présence, heartbeat)
+  await initStats();  // Lance les statistiques
 }
 
 init();
