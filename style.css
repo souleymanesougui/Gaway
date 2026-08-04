@@ -163,7 +163,7 @@ body {
   background-image: url('Images/image.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: scroll;   /* corrigé pour iOS */
   background-repeat: no-repeat;
   background-color: var(--bg);
 }
@@ -176,8 +176,7 @@ body::before {
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
+  /* suppression de backdrop-filter: blur(0px); pour éviter les bugs iOS */
   z-index: -1;
 }
 
@@ -201,7 +200,16 @@ header {
 
 .header-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: nowrap; min-width: 60px; }
 .header-center { flex: 1; text-align: center; font-size: clamp(18px, 4vw, 28px); font-weight: 600; letter-spacing: 1px; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3); min-width: 0; white-space: nowrap; overflow: visible; padding: 0 5px; }
-.header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; min-width: 50px; justify-content: flex-end; }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  min-width: 50px;
+  justify-content: flex-end;
+  margin-left: auto;  /* force le bloc à droite */
+}
 
 .hamburger-btn {
   background: rgba(255, 255, 255, 0.15);
@@ -917,22 +925,90 @@ header {
   box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
 }
 
+/* ========== AMÉLIORATIONS MOBILES (iPhone) ========== */
 @media (max-width: 480px) {
-  .person { width: calc(50% - 10px); padding: 8px; }
-  .person img { max-width: 80px; }
-  .search-wrapper { width: 95%; margin: 10px 8px 6px; }
-  #searchBox { padding: 8px 12px 8px 35px; background-size: 14px; background-position: 14px center; }
-  header { padding: 8px 10px; min-height: 50px; }
-  .header-center { font-size: clamp(16px, 4vw, 20px); }
-  #tree { gap: 10px; padding: 8px; }
-  .modal-content { padding: 24px 18px 20px 18px; max-height: 85vh; border-radius: 24px; }
-  .modal-content h2 { font-size: 19px; }
-  .hamburger-menu { padding: 10px 14px 14px 14px; min-width: 200px; max-width: 85%; border-radius: 0 14px 14px 0; }
-  .toast-container { right: 10px; left: 10px; max-width: none; top: 70px; }
-  .detail-cover { height: 90px; }
-  .detail-avatar-wrapper img { width: 70px; height: 70px; bottom: -35px; }
-  .detail-body { padding: 45px 18px 20px 18px; }
-  .detail-body .detail-name { font-size: 19px; }
-  .detail-path { font-size: 12px; padding: 8px 12px; }
-  .person .click-hint { display: none; }
+  .person {
+    width: calc(50% - 10px);
+    padding: 8px;
+  }
+  .person img {
+    max-width: 80px;
+  }
+  .search-wrapper {
+    width: 95%;
+    margin: 10px 8px 6px;
+  }
+  #searchBox {
+    padding: 8px 12px 8px 35px;
+    background-size: 14px;
+    background-position: 14px center;
+  }
+  header {
+    padding: 8px 10px;
+    min-height: 50px;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+  .header-center {
+    font-size: clamp(14px, 4vw, 18px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-right {
+    gap: 4px;
+  }
+  .theme-toggle,
+  .hamburger-btn {
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+  .auth-status {
+    display: none; /* masqué sur très petit écran pour gagner de la place */
+  }
+  #tree {
+    gap: 10px;
+    padding: 8px;
+  }
+  .modal-content {
+    padding: 24px 18px 20px 18px;
+    max-height: 85vh;
+    border-radius: 24px;
+  }
+  .modal-content h2 {
+    font-size: 19px;
+  }
+  .hamburger-menu {
+    padding: 10px 14px 14px 14px;
+    min-width: 200px;
+    max-width: 85%;
+    border-radius: 0 14px 14px 0;
+  }
+  .toast-container {
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    top: 70px;
+  }
+  .detail-cover {
+    height: 90px;
+  }
+  .detail-avatar-wrapper img {
+    width: 70px;
+    height: 70px;
+    bottom: -35px;
+  }
+  .detail-body {
+    padding: 45px 18px 20px 18px;
+  }
+  .detail-body .detail-name {
+    font-size: 19px;
+  }
+  .detail-path {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+  .person .click-hint {
+    display: none;
+  }
 }
