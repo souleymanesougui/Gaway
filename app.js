@@ -89,9 +89,9 @@ async function updateHeartbeat() {
     await updateDoc(sessionDoc, {
       timestamp: serverTimestamp()
     });
-    console.log("💓 Heartbeat envoyé pour :", sessionId);
+    console.log("Heartbeat envoyé pour :", sessionId);
   } catch (error) {
-    console.warn("⚠️ Heartbeat échoué, recréation de la session...", error);
+    console.warn("Heartbeat échoué, recréation de la session...", error);
     await registerPresence();
   }
 }
@@ -99,7 +99,7 @@ async function updateHeartbeat() {
 // 4. Nettoyer les sessions obsolètes (plus de 2 minutes)
 async function cleanOldSessions() {
   try {
-    const twoMinAgo = new Date(Date.now() - 10000);
+    const twoMinAgo = new Date(Date.now() - 100000);
     console.log("🧹 Nettoyage des sessions avant :", twoMinAgo.toISOString());
     
     const q = query(presenceRef, where("timestamp", "<", twoMinAgo));
