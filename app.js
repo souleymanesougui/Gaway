@@ -177,7 +177,7 @@ async function initStats() {
       e.preventDefault();
       await registerDownload();
       // Lien vers l'APK (à remplacer)
-      window.location.href = 'https://example.com/votre-app.apk';
+      window.location.href = 'https://souleymanesougui.github.io/Gaway/';
     });
   }
 }
