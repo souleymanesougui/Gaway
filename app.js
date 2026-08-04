@@ -987,7 +987,7 @@ function displayRoot() {
   backBtn.style.display = "none";
   mainHeader.style.display = "block";
   breadcrumbEl.style.display = "none";
-  mainHeader.textContent = "Trouvez vos grands parents";
+  mainHeader.textContent = "Le passé éclaire ton présent";
   
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
