@@ -10,10 +10,10 @@ import {
   deleteDoc,
   query,
   orderBy,
-  increment,        // nouveau
-  onSnapshot,       // nouveau
-  serverTimestamp,  // nouveau
-  where             // nouveau
+  increment,
+  onSnapshot,
+  serverTimestamp,
+  where
 } from "firebase/firestore";
 
 let currentUser = null;
@@ -67,10 +67,11 @@ async function registerVisit() {
   }
 }
 
-// 2. Gestion des visiteurs en direct
+// 2. Gestion des visiteurs en direct (avec ID fixe = sessionId)
 async function registerPresence() {
   try {
-    await addDoc(presenceRef, {
+    const sessionDoc = doc(presenceRef, sessionId);
+    await setDoc(sessionDoc, {
       sessionId: sessionId,
       timestamp: serverTimestamp()
     });
@@ -79,7 +80,20 @@ async function registerPresence() {
   }
 }
 
-// Nettoyer les sessions obsolètes (plus de 2 minutes)
+// 3. Heartbeat : rafraîchir le timestamp toutes les 30 secondes
+async function updateHeartbeat() {
+  try {
+    const sessionDoc = doc(presenceRef, sessionId);
+    await updateDoc(sessionDoc, {
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.warn("Heartbeat échoué, recréation de la session...", error);
+    await registerPresence();
+  }
+}
+
+// 4. Nettoyer les sessions obsolètes (plus de 2 minutes)
 async function cleanOldSessions() {
   try {
     const twoMinAgo = new Date(Date.now() - 120000);
@@ -91,14 +105,14 @@ async function cleanOldSessions() {
   }
 }
 
-// Compter les visiteurs en direct
+// 5. Compter les visiteurs en direct
 async function countLiveVisitors() {
   await cleanOldSessions();
   const snap = await getDocs(presenceRef);
   return snap.size;
 }
 
-// 3. Incrémenter les téléchargements
+// 6. Incrémenter les téléchargements
 async function registerDownload() {
   try {
     await updateDoc(statsRef, {
@@ -109,7 +123,7 @@ async function registerDownload() {
   }
 }
 
-// 4. Récupérer et afficher les stats en temps réel
+// 7. Récupérer et afficher les stats en temps réel
 function displayStats() {
   onSnapshot(statsRef, (docSnap) => {
     if (docSnap.exists()) {
@@ -129,13 +143,13 @@ function displayStats() {
   });
 }
 
-// 5. Mise à jour du compteur live en continu
+// 8. Mise à jour du compteur live en continu
 async function updateLiveCount() {
   const count = await countLiveVisitors();
   document.getElementById('liveVisitors').textContent = count;
 }
 
-// 6. Initialisation des stats
+// 9. Initialisation des stats
 async function initStats() {
   // Créer le document stats s'il n'existe pas
   try {
@@ -157,14 +171,18 @@ async function initStats() {
   await registerPresence();
   displayStats();
   await updateLiveCount();
+  
+  // Mise à jour du live toutes les 5 secondes
   setInterval(updateLiveCount, 5000);
   
-  // Supprimer la présence à la fermeture
+  // Heartbeat toutes les 30 secondes pour rester "en ligne"
+  setInterval(updateHeartbeat, 30000);
+  
+  // Supprimer la présence à la fermeture de la page
   window.addEventListener('beforeunload', async () => {
     try {
-      const q = query(presenceRef, where("sessionId", "==", sessionId));
-      const snap = await getDocs(q);
-      snap.forEach(doc => deleteDoc(doc.ref));
+      const sessionDoc = doc(presenceRef, sessionId);
+      await deleteDoc(sessionDoc);
     } catch (error) {
       console.error("Erreur nettoyage départ:", error);
     }
@@ -176,8 +194,8 @@ async function initStats() {
     downloadBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       await registerDownload();
-      // Lien vers l'APK (à remplacer)
-      window.location.href = 'https://souleymanesougui.github.io/Gaway/';
+      // REMPLACE CETTE URL PAR LA TIENNE
+      window.location.href = 'https://example.com/votre-app.apk';
     });
   }
 }
@@ -1469,7 +1487,7 @@ async function init() {
   await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
-  await initStats();  // Lancer les statistiques
+  await initStats();  // Lance les statistiques (visites, présence, heartbeat)
 }
 
 init();
