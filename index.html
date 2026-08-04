@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,7 +13,7 @@
   <script>
     if (!sessionStorage.getItem("splash")) {
       window.location.href = "splash.html";
-      }
+    }
   </script>
   
   <!-- Google tag (gtag.js) -->
@@ -36,10 +35,10 @@
   <header>
     <div class="header-left">
       <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
     </div>
     <div class="header-center" id="mainHeader">Le passé éclaire ton présent</div>
     <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
       <span class="auth-status" id="authStatus"></span>
     </div>
     
