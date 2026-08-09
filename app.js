@@ -1,8 +1,7 @@
-// app.js
-import { db } from './firebase.js';
-import { 
-  doc, 
-  getDoc, 
+import { db, auth, provider, RecaptchaVerifier, signInWithPhoneNumber } from './firebase.js';
+import {
+  doc,
+  getDoc,
   updateDoc,
   setDoc,
   collection,
@@ -10,10 +9,23 @@ import {
   getDocs,
   deleteDoc,
   query,
-  orderBy
+  orderBy,
+  increment,
+  onSnapshot,
+  serverTimestamp,
+  where,
+  writeBatch
 } from "firebase/firestore";
+import {
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  PhoneAuthProvider,
+  signInWithCredential
+} from "firebase/auth";
 
-let currentUser = null;
+let currentUser = null;      // admin/proprietaire
+let firebaseUser = null;    // utilisateur Firebase (Google ou téléphone)
 let passwords = {
   admin: "admin123",
   editor: "editor123"
@@ -28,16 +40,430 @@ let lastDetailPerson = null;
 
 let familyHistory = "La lignée des <strong>fils Gaida</strong> est une famille dont les racines plongent au coeur des traditions et de l'histoire. Ce site a été créé pour préserver la mémoire et l'arbre généalogique de cette famille, afin que chaque génération puisse connaître ses origines et son héritage.\n\n— Que la mémoire de nos ancêtres vive à travers nous.";
 
+// = STATISTIQUES =
+const statsRef = doc(db, "stats", "siteStats");
+const presenceRef = collection(db, "presence");
+const sessionId = crypto.randomUUID();
+
+function getWeekKey() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 1);
+  const days = Math.floor((now - start) / 86400000);
+  const week = Math.ceil((days + start.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function getMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+}
+
+async function registerVisit() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const weekKey = getWeekKey();
+    const monthKey = getMonthKey();
+    await updateDoc(statsRef, {
+      totalVisits: increment(1),
+      [`dailyVisits.${today}`]: increment(1),
+      [`weeklyVisits.${weekKey}`]: increment(1),
+      [`monthlyVisits.${monthKey}`]: increment(1)
+    });
+  } catch (error) {
+    console.error("Erreur enregistrement visite:", error);
+  }
+}
+
+async function registerPresence() {
+  try {
+    const sessionDoc = doc(presenceRef, sessionId);
+    await setDoc(sessionDoc, {
+      sessionId: sessionId,
+      timestamp: serverTimestamp()
+    });
+    console.log("🟢 Présence enregistrée pour :", sessionId);
+  } catch (error) {
+    console.error("❌ Erreur enregistrement présence:", error);
+  }
+}
+
+async function updateHeartbeat() {
+  try {
+    const sessionDoc = doc(presenceRef, sessionId);
+    await updateDoc(sessionDoc, {
+      timestamp: serverTimestamp()
+    });
+    console.log("Heartbeat envoyé pour :", sessionId);
+  } catch (error) {
+    console.warn("Heartbeat échoué, recréation de la session...", error);
+    await registerPresence();
+  }
+}
+
+async function cleanOldSessions() {
+  try {
+    const twoMinAgo = new Date(Date.now() - 100000);
+    console.log("🧹 Nettoyage des sessions avant :", twoMinAgo.toISOString());
+    const q = query(presenceRef, where("timestamp", "<", twoMinAgo));
+    const snap = await getDocs(q);
+    console.log(`📄 ${snap.size} sessions obsolètes trouvées.`);
+    if (snap.empty) return;
+    const batch = writeBatch(db);
+    snap.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    console.log(`✅ ${snap.size} sessions supprimées.`);
+  } catch (error) {
+    console.error("❌ Erreur nettoyage sessions:", error);
+  }
+}
+
+async function countLiveVisitors() {
+  await cleanOldSessions();
+  const snap = await getDocs(presenceRef);
+  return snap.size;
+}
+
+async function registerDownload() {
+  try {
+    await updateDoc(statsRef, {
+      totalDownloads: increment(1)
+    });
+  } catch (error) {
+    console.error("Erreur enregistrement téléchargement:", error);
+  }
+}
+
+function displayStats() {
+  onSnapshot(statsRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('totalVisits').textContent = data.totalVisits || 0;
+      document.getElementById('totalDownloads').textContent = data.totalDownloads || 0;
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('todayVisits').textContent = data.dailyVisits?.[today] || 0;
+      const weekKey = getWeekKey();
+      document.getElementById('weekVisits').textContent = data.weeklyVisits?.[weekKey] || 0;
+      const monthKey = getMonthKey();
+      document.getElementById('monthVisits').textContent = data.monthlyVisits?.[monthKey] || 0;
+    }
+  });
+}
+
+async function updateLiveCount() {
+  const count = await countLiveVisitors();
+  document.getElementById('liveVisitors').textContent = count;
+  console.log(`👥 En ligne : ${count} visiteurs`);
+}
+
+async function initStats() {
+  try {
+    const docSnap = await getDoc(statsRef);
+    if (!docSnap.exists()) {
+      await setDoc(statsRef, {
+        totalVisits: 0,
+        totalDownloads: 0,
+        dailyVisits: {},
+        weeklyVisits: {},
+        monthlyVisits: {}
+      });
+      console.log("📊 Document stats créé.");
+    }
+  } catch (error) {
+    console.error("❌ Erreur création stats:", error);
+  }
+  await registerVisit();
+  await registerPresence();
+  await cleanOldSessions();
+  displayStats();
+  await updateLiveCount();
+  setInterval(updateLiveCount, 5000);
+  setInterval(updateHeartbeat, 30000);
+  setInterval(cleanOldSessions, 10000);
+  window.addEventListener('beforeunload', async () => {
+    try {
+      const sessionDoc = doc(presenceRef, sessionId);
+      await deleteDoc(sessionDoc);
+      console.log("🔴 Session supprimée à la fermeture");
+    } catch (error) {
+      console.error("❌ Erreur nettoyage départ:", error);
+    }
+  });
+  const downloadBtn = document.getElementById('downloadBtn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await registerDownload();
+      window.location.href = 'https://example.com/votre-app.apk';
+    });
+  }
+}
+// = FIN STATISTIQUES =
+
+// ========== AUTHENTIFICATION UTILISATEUR (Google + Téléphone) ==========
+
+// Sauvegarde automatique dans Firestore
+async function saveUserToFirestore(user) {
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const data = {
+      uid: user.uid,
+      name: user.displayName || "",
+      email: user.email || "",
+      phoneNumber: user.phoneNumber || "",
+      photoURL: user.photoURL || "",
+      lastLogin: serverTimestamp()
+    };
+    await setDoc(userRef, data, { merge: true });
+    console.log("✅ Utilisateur enregistré :", user.uid);
+    return true;
+  } catch (error) {
+    console.error("❌ Erreur sauvegarde utilisateur :", error);
+    return false;
+  }
+}
+
+// Mise à jour de l'interface
+function updateUserUI(user) {
+  const profileDiv = document.getElementById("userProfile");
+  const photo = document.getElementById("userPhoto");
+  const nameSpan = document.getElementById("userName");
+  const signInGoogle = document.getElementById("googleSignInBtn");
+  const signInPhone = document.getElementById("phoneSignInBtn");
+  const logoutBtn = document.getElementById("logoutBtnMenu");
+
+  if (user) {
+    profileDiv.style.display = "flex";
+    photo.src = user.photoURL || "ssi.jpg";
+    nameSpan.textContent = user.displayName || user.phoneNumber || "Utilisateur";
+    signInGoogle.style.display = "none";
+    signInPhone.style.display = "none";
+    logoutBtn.style.display = "flex";
+  } else {
+    profileDiv.style.display = "none";
+    signInGoogle.style.display = "flex";
+    signInPhone.style.display = "flex";
+    logoutBtn.style.display = "none";
+  }
+}
+
+// Connexion Google
+window.signInWithGoogle = async function() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    await saveUserToFirestore(user);
+    firebaseUser = user;
+    updateUserUI(user);
+    showToast(`Connecté : ${user.displayName || user.email}`, "success");
+  } catch (error) {
+    console.error("Erreur Google :", error);
+    showToast("Échec de la connexion Google", "error");
+  }
+};
+
+// Déconnexion utilisateur (Google ou téléphone)
+window.logoutUser = async function() {
+  try {
+    await signOut(auth);
+    firebaseUser = null;
+    updateUserUI(null);
+    showToast("Déconnecté", "info");
+  } catch (error) {
+    console.error("Erreur déconnexion :", error);
+    showToast("Erreur lors de la déconnexion", "error");
+  }
+};
+
+// ========== AUTHENTIFICATION PAR TÉLÉPHONE ==========
+let confirmationResult = null;
+let recaptchaVerifier = null;
+let phoneTimeout = null;
+
+function getPhoneRecaptcha() {
+  if (!recaptchaVerifier) {
+    recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
+      size: 'invisible',
+      callback: () => {}
+    });
+  }
+  return recaptchaVerifier;
+}
+
+window.openPhoneAuthModal = function() {
+  document.getElementById("phoneAuthModal").classList.add("active");
+  document.getElementById("phoneAuthStep1").style.display = "block";
+  document.getElementById("phoneAuthStep2").style.display = "none";
+  document.getElementById("phoneError").style.display = "none";
+  document.getElementById("otpError").style.display = "none";
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  if (phoneTimeout) {
+    clearTimeout(phoneTimeout);
+    phoneTimeout = null;
+  }
+  document.getElementById("resendBtn").style.display = "none";
+  document.getElementById("resendTimer").textContent = "";
+  // Réinitialiser le recaptcha
+  if (recaptchaVerifier) {
+    recaptchaVerifier.clear();
+    recaptchaVerifier = null;
+  }
+};
+
+window.closePhoneAuthModal = function() {
+  document.getElementById("phoneAuthModal").classList.remove("active");
+  if (phoneTimeout) {
+    clearTimeout(phoneTimeout);
+    phoneTimeout = null;
+  }
+  if (recaptchaVerifier) {
+    recaptchaVerifier.clear();
+    recaptchaVerifier = null;
+  }
+};
+
+window.sendVerificationCode = async function() {
+  const phoneInput = document.getElementById("phoneInput");
+  const phoneNumber = phoneInput.value.trim();
+  const errorDiv = document.getElementById("phoneError");
+
+  // Validation basique
+  if (!phoneNumber || phoneNumber.length < 8) {
+    errorDiv.textContent = "Veuillez entrer un numéro valide (ex: +33712345678)";
+    errorDiv.style.display = "block";
+    return;
+  }
+  errorDiv.style.display = "none";
+
+  try {
+    const verifier = getPhoneRecaptcha();
+    const appVerifier = verifier;
+    const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+    confirmationResult = result;
+    // Passer à l'étape 2
+    document.getElementById("phoneAuthStep1").style.display = "none";
+    document.getElementById("phoneAuthStep2").style.display = "block";
+    document.getElementById("otpInput").value = "";
+    document.getElementById("otpError").style.display = "none";
+
+    // Démarrer un timer pour renvoyer le code
+    let seconds = 60;
+    const timerEl = document.getElementById("resendTimer");
+    const resendBtn = document.getElementById("resendBtn");
+    resendBtn.style.display = "none";
+    timerEl.textContent = `Code envoyé. Prochain envoi dans ${seconds}s`;
+
+    if (phoneTimeout) clearTimeout(phoneTimeout);
+    phoneTimeout = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(phoneTimeout);
+        phoneTimeout = null;
+        timerEl.textContent = "";
+        resendBtn.style.display = "inline";
+      } else {
+        timerEl.textContent = `Code envoyé. Prochain envoi dans ${seconds}s`;
+      }
+    }, 1000);
+
+    showToast("Code SMS envoyé !", "success");
+  } catch (error) {
+    console.error("Erreur envoi SMS :", error);
+    let message = "Erreur lors de l'envoi du code.";
+    if (error.code === 'auth/invalid-phone-number') message = "Numéro de téléphone invalide.";
+    else if (error.code === 'auth/too-many-requests') message = "Trop de tentatives. Réessayez plus tard.";
+    else if (error.code === 'auth/quota-exceeded') message = "Quota de SMS dépassé.";
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+    // Réinitialiser le recaptcha
+    if (recaptchaVerifier) {
+      recaptchaVerifier.clear();
+      recaptchaVerifier = null;
+    }
+  }
+};
+
+window.resendCode = function() {
+  document.getElementById("resendBtn").style.display = "none";
+  // On repart à l'étape 1 pour renvoyer
+  document.getElementById("phoneAuthStep1").style.display = "block";
+  document.getElementById("phoneAuthStep2").style.display = "none";
+  // On garde le numéro saisi
+  sendVerificationCode();
+};
+
+window.verifyOtpCode = async function() {
+  const otp = document.getElementById("otpInput").value.trim();
+  const errorDiv = document.getElementById("otpError");
+
+  if (!otp || otp.length < 6) {
+    errorDiv.textContent = "Veuillez entrer les 6 chiffres reçus.";
+    errorDiv.style.display = "block";
+    return;
+  }
+  errorDiv.style.display = "none";
+
+  try {
+    const credential = PhoneAuthProvider.credential(confirmationResult.verificationId, otp);
+    const result = await signInWithCredential(auth, credential);
+    const user = result.user;
+    await saveUserToFirestore(user);
+    firebaseUser = user;
+    updateUserUI(user);
+    closePhoneAuthModal();
+    showToast(`Connecté : ${user.phoneNumber}`, "success");
+  } catch (error) {
+    console.error("Erreur vérification OTP :", error);
+    let message = "Code invalide ou expiré.";
+    if (error.code === 'auth/invalid-verification-code') message = "Le code est incorrect.";
+    else if (error.code === 'auth/code-expired') message = "Le code a expiré. Demandez un nouveau code.";
+    else if (error.code === 'auth/too-many-requests') message = "Trop de tentatives. Réessayez plus tard.";
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+  }
+};
+
+// ========== SUIVI DE L'ÉTAT D'AUTHENTIFICATION ==========
+function initFirebaseAuth() {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      firebaseUser = user;
+      await saveUserToFirestore(user);
+      updateUserUI(user);
+    } else {
+      firebaseUser = null;
+      updateUserUI(null);
+    }
+  });
+}
+
+// ========== PROFIL UTILISATEUR ==========
+window.openUserProfileModal = function() {
+  if (!firebaseUser) {
+    showToast("Vous n'êtes pas connecté", "warning");
+    return;
+  }
+  const user = firebaseUser;
+  document.getElementById("profilePhoto").src = user.photoURL || "ssi.jpg";
+  document.getElementById("profileName").textContent = user.displayName || "Non renseigné";
+  document.getElementById("profileEmail").textContent = user.email || "Non renseigné";
+  document.getElementById("profilePhone").textContent = user.phoneNumber || "Non renseigné";
+  document.getElementById("profileUid").textContent = user.uid;
+  document.getElementById("userProfileModal").classList.add("active");
+};
+
+window.closeUserProfileModal = function() {
+  document.getElementById("userProfileModal").classList.remove("active");
+};
+
+// ******************** LE RESTE DU CODE (inchangé) ********************
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   const icons = { success: '✔', error: '✖', warning: '!', info: 'i' };
   toast.className = `toast ${type}`;
-  toast.innerHTML = `
-    <span class="toast-icon">${icons[type] || 'i'}</span>
-    <span>${message}</span>
-    <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
-  `;
+  toast.innerHTML = `<span class="toast-icon">${icons[type] || 'i'}</span> <span>${message}</span> <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
   container.appendChild(toast);
   setTimeout(() => {
     toast.classList.add('removing');
@@ -168,9 +594,7 @@ window.authenticate = async function(e) {
   e.preventDefault();
   const password = document.getElementById("authPassword").value.trim();
   const errorEl = document.getElementById("authError");
-  
   await loadPasswords();
-  
   if (password === passwords.admin) {
     currentUser = { role: 'proprietaire' };
     errorEl.classList.remove("show");
@@ -204,7 +628,7 @@ window.logout = function() {
   currentUser = null;
   updateUIForAuth();
   if (currentNode) displayPerson(currentNode);
-  showToast("Deconnecté", "info");
+  showToast("Déconnecté (admin)", "info");
 };
 
 window.openAdminModal = function() {
@@ -229,10 +653,8 @@ window.updatePasswords = async function(e) {
     showToast("Seul le proprietaire peut modifier les mots de passe", "error");
     return;
   }
-
   const newAdminPass = document.getElementById("adminPassword").value.trim();
   const newEditorPass = document.getElementById("editorPassword").value.trim();
-
   if (newAdminPass && newAdminPass.length < 4) {
     showToast("Le mot de passe proprietaire doit faire au moins 4 caractères", "error");
     return;
@@ -245,10 +667,8 @@ window.updatePasswords = async function(e) {
     showToast("Veuillez entrer au moins un nouveau mot de passe", "warning");
     return;
   }
-
   if (newAdminPass) passwords.admin = newAdminPass;
   if (newEditorPass) passwords.editor = newEditorPass;
-
   const saved = await savePasswords();
   if (saved) {
     closeAdminModal();
@@ -300,24 +720,16 @@ window.closeHistoriqueModal = function() {
 async function renderHistorique() {
   const container = document.getElementById("historiqueList");
   await loadJournal();
-  
   if (journalEntries.length === 0) {
-    container.innerHTML = `
-      <div class="historique-empty">
-        <div class="icon">📭</div>
-        <p>Aucune modification enregistrée.</p>
-      </div>
-    `;
+    container.innerHTML = `<div class="historique-empty"> <div class="icon">📭</div> <p>Aucune modification enregistrée.</p> </div>`;
     return;
   }
-
   let html = '';
   journalEntries.forEach(entry => {
     const typeLabel = { add: 'Ajout', edit: 'Modification', delete: 'Suppression' }[entry.type] || entry.type;
     const statusClass = entry.status || 'pending';
     const date = new Date(entry.date);
     const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-
     html += `
       <div class="historique-item ${entry.type}">
         <div class="info">
@@ -334,7 +746,6 @@ async function renderHistorique() {
       </div>
     `;
   });
-
   container.innerHTML = html;
 }
 
@@ -374,7 +785,6 @@ function updateUIForAuth() {
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
   const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
-  
   document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
   document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
   document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
@@ -382,18 +792,14 @@ function updateUIForAuth() {
   document.getElementById("exportBtn").style.display = isProprietaire ? "flex" : "none";
   document.getElementById("importBtn").style.display = isProprietaire ? "flex" : "none";
   document.getElementById("statsBtn").style.display = "flex";
-  
   document.getElementById("loginBtn").style.display = isAuthenticated ? "none" : "flex";
   document.getElementById("logoutBtn").style.display = isAuthenticated ? "flex" : "none";
-
   const historyEditBtn = document.getElementById("historyEditBtn");
   if (historyEditBtn) {
     historyEditBtn.style.display = isProprietaire ? "flex" : "none";
   }
-
   const statusEl = document.getElementById("authStatus");
   const menuStatusEl = document.getElementById("menuAuthStatus");
-  
   if (isAuthenticated) {
     const statusText = isProprietaire ? "Proprietaire" : "Admin";
     const statusClass = isProprietaire ? "proprietaire" : "admin";
@@ -543,7 +949,6 @@ window.importFamily = function(event) {
   }
   const file = event.target.files[0];
   if (!file) return;
-  
   const reader = new FileReader();
   reader.onload = async (e) => {
     try {
@@ -597,23 +1002,19 @@ function buildNameIndex() {
 window.handleSearchInput = function(value) {
   const suggestions = document.getElementById("searchSuggestions");
   const trimmed = value.trim().toLowerCase();
-  
   if (!trimmed) {
     suggestions.classList.remove("active");
     if (currentNode) displayPerson(currentNode);
     else displayRoot();
     return;
   }
-
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
     const results = allNames.filter(item => item.name.toLowerCase().includes(trimmed)).slice(0, 8);
-
     if (results.length === 0) {
       suggestions.classList.remove("active");
       return;
     }
-
     suggestions.innerHTML = '';
     results.forEach(item => {
       const div = document.createElement("div");
@@ -621,8 +1022,8 @@ window.handleSearchInput = function(value) {
       const idx = item.name.toLowerCase().indexOf(trimmed);
       let displayName = item.name;
       if (idx !== -1) {
-        displayName = item.name.slice(0, idx) + 
-          `<span class="highlight">${item.name.slice(idx, idx + trimmed.length)}</span>` + 
+        displayName = item.name.slice(0, idx) +
+          `<span class="highlight">${item.name.slice(idx, idx + trimmed.length)}</span>` +
           item.name.slice(idx + trimmed.length);
       }
       div.innerHTML = `
@@ -670,11 +1071,9 @@ function displayPerson(person) {
   currentNode = person;
   backBtn.style.display = "inline-block";
   updateBreadcrumb();
-
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
   const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
-
   document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
   document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
   document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
@@ -738,12 +1137,10 @@ function displayPerson(person) {
       e.preventDefault();
       div.style.transform = '';
       if (dragIndex === null || dragIndex === index) return;
-      
       if (!currentUser || (currentUser.role !== 'proprietaire' && currentUser.role !== 'admin')) {
         showToast("Permission refusée", "error");
         return;
       }
-      
       const [moved] = person.children.splice(dragIndex, 1);
       person.children.splice(index, 0, moved);
       await sauvegarderFamille();
@@ -786,12 +1183,11 @@ function displayRoot() {
   backBtn.style.display = "none";
   mainHeader.style.display = "block";
   breadcrumbEl.style.display = "none";
-  mainHeader.textContent = "Trouvez vos grands parents";
-  
+  mainHeader.textContent = "Le passé éclaire ton présent";
+
   const isAuthenticated = currentUser !== null;
   const isProprietaire = isAuthenticated && currentUser.role === 'proprietaire';
   const isAdmin = isAuthenticated && (currentUser.role === 'proprietaire' || currentUser.role === 'admin');
-  
   document.getElementById("deleteBtn").style.display = isProprietaire ? "flex" : "none";
   document.getElementById("addBtn").style.display = isAdmin ? "flex" : "none";
   document.getElementById("adminBtn").style.display = isProprietaire ? "flex" : "none";
@@ -876,23 +1272,19 @@ let currentDetailPerson = null;
 window.openPersonDetail = function(person) {
   currentDetailPerson = person;
   lastDetailPerson = person;
-  
+
   const gender = person.gender || 'unknown';
   const genderText = gender === 'male' ? 'Homme' : gender === 'female' ? 'Femme' : 'Non renseigné';
   const genderClass = gender === 'male' ? 'male' : gender === 'female' ? 'female' : 'unknown';
-  
+
   const cover = document.getElementById("detailCover");
   cover.className = `detail-cover ${genderClass}`;
-  
+
   document.getElementById("detailAvatar").src = person.photo ? "photos/" + person.photo : "ssi.jpg";
   document.getElementById("detailAvatar").onerror = function() { this.src = "ssi.jpg"; };
-  
+
   if (person === family) {
-    document.getElementById('detailPath').innerHTML = `
-      <span class="path-root">Racine</span>
-      <span class="path-arrow">→</span>
-      <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>
-    `;
+    document.getElementById('detailPath').innerHTML = `<span class="path-root">Racine</span> <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>`;
   } else {
     const path = getPathToNode(family, person.name);
     if (path && path.length > 1) {
@@ -903,95 +1295,69 @@ window.openPersonDetail = function(person) {
       pathHtml += ` <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>`;
       document.getElementById('detailPath').innerHTML = pathHtml;
     } else {
-      document.getElementById('detailPath').innerHTML = `
-        <span class="path-root">${family.name}</span>
-        <span class="path-arrow">→</span>
-        <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>
-      `;
+      document.getElementById('detailPath').innerHTML = `<span class="path-root">${family.name}</span> <span class="path-arrow">→</span> <span class="path-name" style="color: var(--accent); font-weight: 600;">${person.name}</span>`;
     }
   }
-  
+
   renderDetailFields(person);
-  
   document.getElementById("personDetailModal").classList.add("active");
 };
 
 function renderDetailFields(person) {
   const isProprietaire = currentUser && currentUser.role === 'proprietaire';
   const canEdit = isProprietaire && person !== family;
-  
+
   const nameWrapper = document.getElementById('detailNameWrapper');
   const nameDisplay = document.getElementById('detailName');
-  
+
   if (canEdit) {
-    nameWrapper.innerHTML = `
-      <input type="text" class="detail-name-input" id="nameInput" value="${person.name || ''}" 
-             onchange="saveDetailField('name', this.value)"
-             onclick="event.stopPropagation();"
-             placeholder="Nom">
-    `;
+    nameWrapper.innerHTML = `<input type="text" class="detail-name-input" id="nameInput" value="${person.name || ''}"  onchange="saveDetailField('name', this.value)" onclick="event.stopPropagation();" placeholder="Nom">`;
   } else {
     nameWrapper.innerHTML = `<div class="detail-name" id="detailName">${person.name || 'Nom inconnu'}</div>`;
   }
-  
+
   const genderCard = document.getElementById('detailGenderCard');
   const genderValue = document.getElementById('detailGender');
   const genderText = person.gender === 'male' ? 'Homme' : person.gender === 'female' ? 'Femme' : 'Non renseigné';
-  
+
   if (canEdit) {
     genderCard.classList.add('editable');
-    genderValue.innerHTML = `
-      <select class="detail-value-select" id="genderSelect" onchange="saveDetailField('gender', this.value)">
-        <option value="male" ${person.gender === 'male' ? 'selected' : ''}>Homme</option>
-        <option value="female" ${person.gender === 'female' ? 'selected' : ''}>Femme</option>
-        <option value="unknown" ${person.gender === 'unknown' || !person.gender ? 'selected' : ''}>Non renseigné</option>
-      </select>
-    `;
+    genderValue.innerHTML = `<select class="detail-value-select" id="genderSelect" onchange="saveDetailField('gender', this.value)"> <option value="male" ${person.gender === 'male' ? 'selected' : ''}>Homme</option> <option value="female" ${person.gender === 'female' ? 'selected' : ''}>Femme</option> <option value="unknown" ${person.gender === 'unknown' || !person.gender ? 'selected' : ''}>Non renseigné</option> </select>`;
   } else {
     genderCard.classList.remove('editable');
     genderValue.textContent = genderText;
     genderValue.className = `detail-value${genderText === 'Non renseigné' ? ' empty' : ''}`;
   }
-  
+
   const birthCard = document.getElementById('detailBirthCard');
   const birthValue = document.getElementById('detailBirth');
   const birthText = person.birth || "Non renseigné";
-  
+
   if (canEdit) {
     birthCard.classList.add('editable');
-    birthValue.innerHTML = `
-      <input type="date" class="detail-value-input" id="birthInput" value="${person.birth || ''}" 
-             onchange="saveDetailField('birth', this.value)" 
-             onclick="event.stopPropagation();">
-    `;
+    birthValue.innerHTML = `<input type="date" class="detail-value-input" id="birthInput" value="${person.birth || ''}"  onchange="saveDetailField('birth', this.value)"  onclick="event.stopPropagation();">`;
   } else {
     birthCard.classList.remove('editable');
     birthValue.textContent = birthText;
     birthValue.className = `detail-value${birthText === "Non renseigné" ? ' empty' : ''}`;
   }
-  
+
   const bioCard = document.getElementById('detailBioCard');
   const bioValue = document.getElementById('detailBio');
   const bioText = person.bio || "Non renseignée";
-  
+
   if (canEdit) {
     bioCard.classList.add('editable');
-    bioValue.innerHTML = `
-      <textarea class="detail-value-textarea" id="bioInput" rows="2" 
-                placeholder="Courte biographie..." 
-                onchange="saveDetailField('bio', this.value)" 
-                onclick="event.stopPropagation();"
-                style="resize: vertical; min-height: 50px;">${person.bio || ''}</textarea>
-    `;
+    bioValue.innerHTML = `<textarea class="detail-value-textarea" id="bioInput" rows="2"  placeholder="Courte biographie..."  onchange="saveDetailField('bio', this.value)"  onclick="event.stopPropagation();" style="resize: vertical; min-height: 50px;">${person.bio || ''}</textarea>`;
   } else {
     bioCard.classList.remove('editable');
     bioValue.textContent = bioText;
     bioValue.className = `detail-value${bioText === "Non renseignée" ? ' empty' : ''}`;
   }
-  
+
   const childrenCount = (person.children && person.children.length) || 0;
   document.getElementById("detailChildren").textContent = childrenCount;
-  
+
   const roleBadge = document.getElementById("detailRole");
   const roleText = person === family ? "Racine" : "Membre";
   const genderClass = person.gender === 'male' ? 'male' : person.gender === 'female' ? 'female' : 'unknown';
@@ -1012,7 +1378,7 @@ window.saveDetailField = async function(field, value) {
 
   const oldValue = currentDetailPerson[field] || '';
   const newValue = value || '';
-  
+
   if (newValue === oldValue) return;
 
   const fieldNames = {
@@ -1029,22 +1395,17 @@ window.saveDetailField = async function(field, value) {
       renderDetailFields(currentDetailPerson);
       return;
     }
-    
     const existing = findNodeByName(family, trimmedName);
     if (existing && existing !== currentDetailPerson) {
       showToast(`"${trimmedName}" existe déjà`, "warning");
       renderDetailFields(currentDetailPerson);
       return;
     }
-    
     currentDetailPerson.name = trimmedName;
-    
     if (currentNode === currentDetailPerson) {
       currentNode.name = trimmedName;
     }
-    
     buildNameIndex();
-    
     if (currentNode === currentDetailPerson) {
       displayPerson(currentNode);
     }
@@ -1055,8 +1416,8 @@ window.saveDetailField = async function(field, value) {
   const saved = await sauvegarderFamille();
   if (saved) {
     renderDetailFields(currentDetailPerson);
-    await addJournalEntry('edit', 'edit', 
-      `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${newValue || 'vide'}"`, 
+    await addJournalEntry('edit', 'edit',
+      `${fieldNames[field] || field} modifié: "${oldValue || 'vide'}" → "${newValue || 'vide'}"`,
       'proprietaire'
     );
     showToast(`${fieldNames[field] || field} modifié avec succès !`, "success");
@@ -1115,13 +1476,13 @@ window.addPerson = async function(e) {
     return;
   }
 
-  const newPerson = { 
-    name, 
+  const newPerson = {
+    name,
     gender: gender,
-    photo: "", 
-    birth: birth || "", 
-    bio: bio || "", 
-    children: [] 
+    photo: "",
+    birth: birth || "",
+    bio: bio || "",
+    children: []
   };
   if (!currentNode.children) currentNode.children = [];
   currentNode.children.push(newPerson);
@@ -1132,7 +1493,7 @@ window.addPerson = async function(e) {
     buildNameIndex();
     if (currentNode === family) displayRoot();
     else displayPerson(currentNode);
-    
+
     const userRole = currentUser.role === 'proprietaire' ? 'proprietaire' : 'admin';
     await addJournalEntry('add', 'add', `${name} (${gender}) ajouté par ${userRole}`, userRole);
     showToast(`"${name}" a été ajouté !`, "success");
@@ -1160,12 +1521,12 @@ window.openDeleteModal = function() {
     showToast("Seul le proprietaire peut supprimer", "error");
     return;
   }
-  
+
   if (currentNode === family) {
     showToast("Impossible de supprimer la racine de l'arbre", "warning");
     return;
   }
-  
+
   if (!currentNode) {
     showToast("Sélectionnez une personne à supprimer", "warning");
     return;
@@ -1223,16 +1584,16 @@ let isHistoryEditMode = false;
 window.openHistoryModal = async function() {
   await loadFamilyHistory();
   document.getElementById("historyModal").classList.add("active");
-  
+
   const displayEl = document.getElementById("historyTextDisplay");
   const textarea = document.getElementById("historyTextarea");
-  
+
   displayEl.innerHTML = familyHistory.replace(/\n/g, '<br>');
   textarea.value = familyHistory;
-  
+
   const isProprietaire = currentUser && currentUser.role === 'proprietaire';
   document.getElementById("historyEditBtn").style.display = isProprietaire ? "flex" : "none";
-  
+
   if (isHistoryEditMode) {
     cancelHistoryEdit();
   }
@@ -1248,12 +1609,12 @@ window.enableHistoryEdit = function() {
     showToast("Seul le proprietaire peut modifier les informations", "error");
     return;
   }
-  
+
   isHistoryEditMode = true;
   document.getElementById("historyDisplay").style.display = "none";
   document.getElementById("historyEdit").style.display = "block";
   document.getElementById("historyEditBtn").style.display = "none";
-  
+
   const textarea = document.getElementById("historyTextarea");
   textarea.value = familyHistory;
   textarea.focus();
@@ -1263,7 +1624,7 @@ window.cancelHistoryEdit = function() {
   isHistoryEditMode = false;
   document.getElementById("historyDisplay").style.display = "block";
   document.getElementById("historyEdit").style.display = "none";
-  
+
   const isProprietaire = currentUser && currentUser.role === 'proprietaire';
   document.getElementById("historyEditBtn").style.display = isProprietaire ? "flex" : "none";
 };
@@ -1273,16 +1634,16 @@ window.saveHistory = async function() {
     showToast("Seul le proprietaire peut modifier les informations", "error");
     return;
   }
-  
+
   const newContent = document.getElementById("historyTextarea").value;
   const oldContent = familyHistory;
-  
+
   if (newContent === oldContent) {
     showToast("Aucune modification détectée", "info");
     cancelHistoryEdit();
     return;
   }
-  
+
   const saved = await saveFamilyHistory(newContent);
   if (saved) {
     document.getElementById("historyTextDisplay").innerHTML = newContent.replace(/\n/g, '<br>');
@@ -1314,6 +1675,8 @@ async function init() {
   await loadFamilyHistory();
   buildNameIndex();
   updateUIForAuth();
+  await initStats();
+  initFirebaseAuth(); // Initialisation de l'écoute d'authentification Firebase
 }
 
 init();
@@ -1323,13 +1686,3 @@ window.findPathToNode = findPathToNode;
 window.buildNameIndex = buildNameIndex;
 window.countNodes = countNodes;
 window.sauvegarderFamille = sauvegarderFamille;
-window.family = family;
-window.getPathToNode = getPathToNode;
-window.currentDetailPerson = currentDetailPerson;
-window.findNodeByName = findNodeByName;
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}

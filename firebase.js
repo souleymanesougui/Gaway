@@ -1,6 +1,12 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDh1sYrwm5dTG3ktVHprKzE3Gr7fRmxOzfQ",
@@ -13,5 +19,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-export { db };
+// Pour la vérification par téléphone, nous exporterons également RecaptchaVerifier
+export { db, auth, provider, RecaptchaVerifier, signInWithPhoneNumber };

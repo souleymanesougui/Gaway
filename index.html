@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,9 +13,9 @@
   <script>
     if (!sessionStorage.getItem("splash")) {
       window.location.href = "splash.html";
-      }
+    }
   </script>
-  
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JMQ004JQ2L"></script>
   <script>
@@ -25,7 +24,7 @@
     gtag('js', new Date());
     gtag('config', 'G-JMQ004JQ2L');
   </script>
-  
+
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2C3E50">
@@ -36,19 +35,37 @@
   <header>
     <div class="header-left">
       <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
     </div>
-    <div class="header-center" id="mainHeader">Trouve tes grands parents ici</div>
+    <div class="header-center" id="mainHeader">Le passé éclaire ton présent</div>
     <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
       <span class="auth-status" id="authStatus"></span>
+      <!-- PROFIL UTILISATEUR (Google ou Téléphone) -->
+      <div id="userProfile" style="display: none; align-items: center; gap: 8px; cursor: pointer;" onclick="openUserProfileModal()">
+        <img id="userPhoto" src="ssi.jpg" alt="Profil" style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; object-fit: cover;">
+        <span id="userName" style="color: white; font-size: 13px; font-weight: 500; white-space: nowrap;"></span>
+      </div>
     </div>
-    
+
     <div class="hamburger-menu" id="hamburgerMenu">
       <span class="auth-status" id="menuAuthStatus"></span>
       
       <div class="translate-container">
         <div id="google_translate_element"></div>
       </div>
+      
+      <hr class="menu-divider">
+      
+      <!-- BOUTONS CONNEXION -->
+      <button class="action-btn" id="googleSignInBtn" onclick="signInWithGoogle(); closeMenu();">
+        🔑 Se connecter avec Google
+      </button>
+      <button class="action-btn" id="phoneSignInBtn" onclick="openPhoneAuthModal(); closeMenu();">
+        📱 Se connecter par téléphone
+      </button>
+      <button class="action-btn" id="logoutBtnMenu" onclick="logoutUser(); closeMenu();" style="display: none;">
+        🚪 Se déconnecter
+      </button>
       
       <hr class="menu-divider">
       
@@ -72,8 +89,8 @@
       
       <hr class="menu-divider">
       
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Deconnexion</button>
+      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion (admin)</button>
+      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion (admin)</button>
     </div>
   </header>
 
@@ -83,7 +100,7 @@
     <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
     <div class="search-suggestions" id="searchSuggestions"></div>
   </div>
-  
+
   <button id="backBtn" onclick="goBack()">Retour</button>
   <div id="tree"></div>
 
@@ -101,7 +118,7 @@
         <p class="subtitle" style="margin-bottom: 16px;">
           Informations sur le site
         </p>
-        
+
         <div id="historyContentWrapper">
           <div id="historyDisplay" class="detail-card" style="padding: 16px 20px; border: 1px solid rgba(0,0,0,0.06);">
             <div class="detail-value" id="historyTextDisplay" style="font-size: 16px; line-height: 1.7; white-space: pre-wrap;">
@@ -135,24 +152,56 @@
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
       <button class="modal-close" onclick="closeStatsModal()">✕</button>
-      <h2>Statistiques</h2>
-      <p class="subtitle">Nombre total de personnes dans l'arbre</p>
-      <div class="stats-simple">
-        <span class="stat-icon">👤</span>
-        <div class="stat-number-big" id="statTotal">0</div>
-        <div class="stat-label-big">personnes dans l'arbre</div>
+      <h2>📊 Statistiques</h2>
+      <p class="subtitle">Données en temps réel</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+        <div class="stat-card">
+          <div class="stat-label">👥 En ligne</div>
+          <div class="stat-number" id="liveVisitors">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📅 Aujourd'hui</div>
+          <div class="stat-number" id="todayVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📆 Cette semaine</div>
+          <div class="stat-number" id="weekVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">📆 Ce mois-ci</div>
+          <div class="stat-number" id="monthVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🔢 Total visites</div>
+          <div class="stat-number" id="totalVisits">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">⬇️ Téléchargements</div>
+          <div class="stat-number" id="totalDownloads">0</div>
+        </div>
       </div>
-      <div class="form-actions">
+
+      <div style="margin-top: 12px; border-top: 1px solid rgba(0,0,0,0.04); padding-top: 16px;">
+        <p style="font-size: 13px; color: var(--text-light); text-align: center; margin-bottom: 10px;">
+          Téléchargez l'application officielle
+        </p>
+        <button id="downloadBtn" class="btn-submit" style="width: 100%; padding: 12px; font-size: 16px;">
+          ⬇️ Télécharger l'APK
+        </button>
+      </div>
+      
+      <div class="form-actions" style="margin-top: 16px;">
         <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
       </div>
     </div>
   </div>
 
-  <!-- Auth Modal -->
+  <!-- Auth Modal (admin) -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      <h2>Connexion</h2>
+      <h2>Connexion admin</h2>
       <form id="authForm" onsubmit="authenticate(event)">
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
@@ -206,6 +255,74 @@
       <div id="historiqueList" class="historique-list"></div>
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeHistoriqueModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone Auth Modal -->
+  <div class="modal-overlay" id="phoneAuthModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closePhoneAuthModal()">✕</button>
+      <h2>📱 Connexion par téléphone</h2>
+      <p class="subtitle">Entrez votre numéro pour recevoir un code SMS</p>
+      
+      <div id="phoneAuthStep1">
+        <div class="form-group">
+          <label for="phoneInput">Numéro de téléphone (ex: +33712345678)</label>
+          <input type="tel" id="phoneInput" placeholder="+33712345678" value="">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closePhoneAuthModal()">Annuler</button>
+          <button type="button" class="btn-submit" id="sendCodeBtn" onclick="sendVerificationCode()">Envoyer le code</button>
+        </div>
+        <div id="phoneError" class="auth-error" style="display: none;"></div>
+      </div>
+
+      <div id="phoneAuthStep2" style="display: none;">
+        <div class="form-group">
+          <label for="otpInput">Code reçu par SMS</label>
+          <input type="text" id="otpInput" placeholder="6 chiffres" maxlength="6" inputmode="numeric">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closePhoneAuthModal()">Annuler</button>
+          <button type="button" class="btn-submit" id="verifyCodeBtn" onclick="verifyOtpCode()">Vérifier</button>
+        </div>
+        <div id="otpError" class="auth-error" style="display: none;"></div>
+        <div style="margin-top: 10px; font-size: 13px; color: var(--text-light); text-align: center;">
+          <span id="resendTimer"></span>
+          <button id="resendBtn" style="display: none; background: none; border: none; color: var(--accent); cursor: pointer; text-decoration: underline;" onclick="resendCode()">Renvoyer le code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile Modal -->
+  <div class="modal-overlay" id="userProfileModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeUserProfileModal()">✕</button>
+      <h2>👤 Mon compte</h2>
+      <div style="text-align: center; margin: 16px 0;">
+        <img id="profilePhoto" src="ssi.jpg" alt="Photo" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover;">
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <div id="profileName" style="font-size: 16px; font-weight: 500; padding: 8px 0;">—</div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <div id="profileEmail" style="font-size: 16px; padding: 8px 0; color: var(--text-light);">—</div>
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <div id="profilePhone" style="font-size: 16px; padding: 8px 0; color: var(--text-light);">—</div>
+      </div>
+      <div class="form-group">
+        <label>UID Firebase</label>
+        <div id="profileUid" style="font-size: 13px; padding: 8px 0; color: var(--text-light); word-break: break-all;">—</div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeUserProfileModal()">Fermer</button>
+        <button type="button" class="btn-delete-confirm" onclick="logoutUser(); closeUserProfileModal();">Se déconnecter</button>
       </div>
     </div>
   </div>
@@ -313,7 +430,7 @@
         <div class="detail-role">
           <span class="role-badge" id="detailRole">Membre</span>
         </div>
-        
+
         <div class="detail-path" id="detailPath">
           <span class="path-root">Racine</span>
           <span class="path-arrow">→</span>
@@ -359,7 +476,8 @@
     {
       "imports": {
         "firebase/app": "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js"
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js"
       }
     }
   </script>
