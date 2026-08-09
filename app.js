@@ -260,7 +260,15 @@ window.signInWithGoogle = async function() {
     showToast(`Connecté : ${user.displayName || user.email}`, "success");
   } catch (error) {
     console.error("Erreur Google :", error);
-    showToast("Échec de la connexion Google", "error");
+    let message = "Échec de la connexion Google";
+    if (error.code === 'auth/unauthorized-domain') {
+      message = "Domaine non autorisé. Contactez l'administrateur.";
+    } else if (error.code === 'auth/api-key-not-valid') {
+      message = "Clé API invalide. Contactez l'administrateur.";
+    } else if (error.code === 'auth/popup-closed-by-user') {
+      message = "Fenêtre de connexion fermée.";
+    }
+    showToast(message, "error");
   }
 };
 
@@ -278,13 +286,28 @@ window.logoutUser = async function() {
   }
 };
 
-// Variables pour l'authentification téléphone
+// ========== AUTHENTIFICATION PAR TÉLÉPHONE ==========
 let confirmationResult = null;
 let recaptchaVerifier = null;
 let phoneTimeout = null;
 
-// Ouverture modale téléphone
+function cleanupRecaptcha() {
+  if (recaptchaVerifier) {
+    try {
+      recaptchaVerifier.clear();
+    } catch (e) {
+      console.warn("Erreur nettoyage reCAPTCHA :", e);
+    }
+    recaptchaVerifier = null;
+  }
+  const container = document.getElementById('recaptcha-container');
+  if (container) {
+    container.innerHTML = '';
+  }
+}
+
 window.openPhoneAuthModal = function() {
+  cleanupRecaptcha();
   const modal = document.getElementById("phoneAuthModal");
   if (!modal) return;
   modal.classList.add("active");
@@ -300,27 +323,17 @@ window.openPhoneAuthModal = function() {
   }
   document.getElementById("resendBtn").style.display = "none";
   document.getElementById("resendTimer").textContent = "";
-  if (recaptchaVerifier) {
-    recaptchaVerifier.clear();
-    recaptchaVerifier = null;
-  }
 };
 
-// Fermeture modale téléphone
 window.closePhoneAuthModal = function() {
-  const modal = document.getElementById("phoneAuthModal");
-  if (modal) modal.classList.remove("active");
+  document.getElementById("phoneAuthModal").classList.remove("active");
   if (phoneTimeout) {
     clearTimeout(phoneTimeout);
     phoneTimeout = null;
   }
-  if (recaptchaVerifier) {
-    recaptchaVerifier.clear();
-    recaptchaVerifier = null;
-  }
+  cleanupRecaptcha();
 };
 
-// Envoi du code SMS
 window.sendVerificationCode = async function() {
   const phoneInput = document.getElementById("phoneInput");
   const phoneNumber = phoneInput.value.trim();
@@ -334,19 +347,28 @@ window.sendVerificationCode = async function() {
   errorDiv.style.display = "none";
 
   try {
-    if (recaptchaVerifier) {
-      recaptchaVerifier.clear();
-      recaptchaVerifier = null;
+    cleanupRecaptcha();
+
+    let container = document.getElementById('recaptcha-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'recaptcha-container';
+      container.style.position = 'fixed';
+      container.style.bottom = '10px';
+      container.style.right = '10px';
+      container.style.zIndex = '9999';
+      document.body.appendChild(container);
     }
 
-    recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
-      size: 'invisible',
+    recaptchaVerifier = new RecaptchaVerifier(auth, container, {
+      size: 'normal',
       callback: () => {
         console.log("✅ reCAPTCHA résolu");
       },
       'expired-callback': () => {
         console.log("⏰ reCAPTCHA expiré");
         showToast("La vérification a expiré, réessayez", "warning");
+        cleanupRecaptcha();
       }
     });
 
@@ -373,6 +395,7 @@ window.sendVerificationCode = async function() {
         phoneTimeout = null;
         timerEl.textContent = "Code expiré. Demandez-en un nouveau";
         resendBtn.style.display = "inline";
+        cleanupRecaptcha();
       } else {
         timerEl.textContent = `Code envoyé. Prochain envoi dans ${seconds}s`;
       }
@@ -385,22 +408,19 @@ window.sendVerificationCode = async function() {
     if (error.code === 'auth/invalid-phone-number') message = "Numéro de téléphone invalide.";
     else if (error.code === 'auth/too-many-requests') message = "Trop de tentatives. Réessayez plus tard.";
     else if (error.code === 'auth/quota-exceeded') message = "Quota de SMS dépassé.";
-    else if (error.code === 'auth/api-key-not-valid') message = "Clé API Firebase invalide. Vérifiez la configuration.";
+    else if (error.code === 'auth/api-key-not-valid') message = "Clé API Firebase invalide. Contactez l'administrateur.";
     else if (error.code === 'auth/network-request-failed') message = "Problème réseau. Vérifiez votre connexion.";
+    else if (error.message && error.message.includes('reCAPTCHA')) message = "Erreur de vérification reCAPTCHA. Réessayez.";
     else {
-      message = `Erreur : ${error.message}`;
+      message = `Erreur : ${error.message || 'Inconnue'}`;
     }
     errorDiv.textContent = message;
     errorDiv.style.display = "block";
     
-    if (recaptchaVerifier) {
-      recaptchaVerifier.clear();
-      recaptchaVerifier = null;
-    }
+    cleanupRecaptcha();
   }
 };
 
-// Renvoyer le code
 window.resendCode = function() {
   document.getElementById("resendBtn").style.display = "none";
   document.getElementById("phoneAuthStep1").style.display = "block";
@@ -408,7 +428,6 @@ window.resendCode = function() {
   window.sendVerificationCode();
 };
 
-// Vérification du code OTP
 window.verifyOtpCode = async function() {
   const otp = document.getElementById("otpInput").value.trim();
   const errorDiv = document.getElementById("otpError");
@@ -475,7 +494,7 @@ function initFirebaseAuth() {
 
 // ========== FIN AUTH ==========
 
-// ******************** LE RESTE DU CODE (inchangé) ********************
+// ******************** LE RESTE DU CODE ********************
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
