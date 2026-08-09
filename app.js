@@ -291,8 +291,9 @@ let confirmationResult = null;
 let recaptchaVerifier = null;
 let phoneTimeout = null;
 
-// ✅ Nettoyage reCAPTCHA
+// ✅ Nettoyage complet du reCAPTCHA
 function cleanupRecaptcha() {
+  // 1. Nettoyer le verifier
   if (recaptchaVerifier) {
     try {
       recaptchaVerifier.clear();
@@ -301,18 +302,28 @@ function cleanupRecaptcha() {
     }
     recaptchaVerifier = null;
   }
-  // Supprimer les anciens conteneurs reCAPTCHA
+  
+  // 2. Supprimer tous les badges reCAPTCHA
   document.querySelectorAll('.grecaptcha-badge').forEach(el => {
     if (el.parentNode) el.parentNode.removeChild(el);
   });
+  
+  // 3. Supprimer le conteneur reCAPTCHA
   const container = document.getElementById('recaptcha-container');
   if (container) {
     container.remove();
   }
+  
+  // 4. Supprimer tous les iframes reCAPTCHA
+  document.querySelectorAll('iframe[src*="recaptcha"]').forEach(el => {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  });
 }
 
 window.openPhoneAuthModal = function() {
+  // Nettoyer avant d'ouvrir
   cleanupRecaptcha();
+  
   const modal = document.getElementById("phoneAuthModal");
   if (!modal) return;
   modal.classList.add("active");
@@ -339,7 +350,7 @@ window.closePhoneAuthModal = function() {
   cleanupRecaptcha();
 };
 
-// ✅ Envoi du code SMS avec reCAPTCHA invisible
+// ✅ Envoi du code SMS - VERSION CORRIGÉE
 window.sendVerificationCode = async function() {
   const phoneInput = document.getElementById("phoneInput");
   const phoneNumber = phoneInput.value.trim();
@@ -353,9 +364,17 @@ window.sendVerificationCode = async function() {
   errorDiv.style.display = "none";
 
   try {
+    // ✅ Nettoyage complet avant chaque tentative
     cleanupRecaptcha();
 
-    recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
+    // ✅ Créer un nouveau conteneur
+    const container = document.createElement('div');
+    container.id = 'recaptcha-container';
+    container.style.display = 'none'; // Caché, le reCAPTCHA est invisible
+    document.body.appendChild(container);
+
+    // ✅ Créer le verifier avec le conteneur
+    recaptchaVerifier = new RecaptchaVerifier(auth, container, {
       size: 'invisible',
       callback: () => {
         console.log("✅ reCAPTCHA résolu - Envoi du SMS...");
@@ -390,7 +409,6 @@ window.sendVerificationCode = async function() {
         phoneTimeout = null;
         timerEl.textContent = "Code expiré. Demandez-en un nouveau";
         resendBtn.style.display = "inline";
-        cleanupRecaptcha();
       } else {
         timerEl.textContent = `Code envoyé. Prochain envoi dans ${seconds}s`;
       }
@@ -419,10 +437,11 @@ window.resendCode = function() {
   document.getElementById("resendBtn").style.display = "none";
   document.getElementById("phoneAuthStep1").style.display = "block";
   document.getElementById("phoneAuthStep2").style.display = "none";
+  // Nettoyer avant de renvoyer
+  cleanupRecaptcha();
   window.sendVerificationCode();
 };
 
-// ✅ Vérification du code OTP
 window.verifyOtpCode = async function() {
   const otp = document.getElementById("otpInput").value.trim();
   const errorDiv = document.getElementById("otpError");
@@ -451,6 +470,8 @@ window.verifyOtpCode = async function() {
     else if (error.code === 'auth/too-many-requests') message = "Trop de tentatives. Réessayez plus tard.";
     errorDiv.textContent = message;
     errorDiv.style.display = "block";
+    // Nettoyer en cas d'erreur
+    cleanupRecaptcha();
   }
 };
 
