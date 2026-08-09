@@ -309,7 +309,7 @@ flex-shrink: 0;
 .auth-status.proprietaire { background: rgba(46, 204, 113, 0.3); color: #2ecc71; display: inline-block; } 
 .auth-status.admin { background: rgba(52, 152, 219, 0.3); color: #3498db; display: inline-block; }
 
-/* = PROFIL UTILISATEUR (nouveau) = */
+/* = PROFIL UTILISATEUR = */
 #userProfile {
   display: none;
   align-items: center;
