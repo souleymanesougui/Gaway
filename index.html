@@ -34,14 +34,14 @@
 <body>
   <header>
     <div class="header-left">
-      <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+      <button class="hamburger-btn" onclick="window.toggleMenu()">☰</button>
     </div>
     <div class="header-center" id="mainHeader">Le passé éclaire ton présent</div>
     <div class="header-right">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
+      <button class="theme-toggle" onclick="window.toggleTheme()" title="Changer de thème">🌓</button>
       <span class="auth-status" id="authStatus"></span>
       <!-- PROFIL UTILISATEUR (Google ou Téléphone) -->
-      <div id="userProfile" style="display: none; align-items: center; gap: 8px; cursor: pointer;" onclick="openUserProfileModal()">
+      <div id="userProfile" style="display: none; align-items: center; gap: 8px; cursor: pointer;" onclick="window.openUserProfileModal()">
         <img id="userPhoto" src="ssi.jpg" alt="Profil" style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; object-fit: cover;">
         <span id="userName" style="color: white; font-size: 13px; font-weight: 500; white-space: nowrap;"></span>
       </div>
@@ -57,51 +57,51 @@
       <hr class="menu-divider">
       
       <!-- BOUTONS CONNEXION -->
-      <button class="action-btn" id="googleSignInBtn" onclick="signInWithGoogle(); closeMenu();">
+      <button class="action-btn" id="googleSignInBtn" onclick="window.signInWithGoogle(); window.closeMenu();">
         🔑 Se connecter avec Google
       </button>
-      <button class="action-btn" id="phoneSignInBtn" onclick="openPhoneAuthModal(); closeMenu();">
+      <button class="action-btn" id="phoneSignInBtn" onclick="window.openPhoneAuthModal(); window.closeMenu();">
         📱 Se connecter par téléphone
       </button>
-      <button class="action-btn" id="logoutBtnMenu" onclick="logoutUser(); closeMenu();" style="display: none;">
+      <button class="action-btn" id="logoutBtnMenu" onclick="window.logoutUser(); window.closeMenu();" style="display: none;">
         🚪 Se déconnecter
       </button>
       
       <hr class="menu-divider">
       
-      <button class="action-btn" onclick="exportFamily(); closeMenu();" id="exportBtn" style="display:none;">Exporter</button>
-      <button class="action-btn" onclick="document.getElementById('importFile').click(); closeMenu();" id="importBtn" style="display:none;">Importer</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFamily(event)">
+      <button class="action-btn" onclick="window.exportFamily(); window.closeMenu();" id="exportBtn" style="display:none;">Exporter</button>
+      <button class="action-btn" onclick="document.getElementById('importFile').click(); window.closeMenu();" id="importBtn" style="display:none;">Importer</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="window.importFamily(event)">
       
-      <button class="action-btn" onclick="shareFamily(); closeMenu();">Partage</button>
-      
-      <hr class="menu-divider">
-      
-      <button class="history-btn" onclick="openHistoryModal(); closeMenu();">Info</button>
-      
-      <button class="action-btn add-btn" onclick="openAddModal(); closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
-      <button class="action-btn delete-btn" onclick="openDeleteModal(); closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
-      
-      <button class="action-btn" onclick="openAdminModal(); closeMenu();" id="adminBtn" style="display:none;">Mot de passe</button>
-      <button class="action-btn" onclick="openHistoriqueModal(); closeMenu();" id="historiqueBtn" style="display:none;">Notification</button>
-      
-      <button class="action-btn" onclick="openStatsModal(); closeMenu();" id="statsBtn">Statistiques</button>
+      <button class="action-btn" onclick="window.shareFamily(); window.closeMenu();">Partage</button>
       
       <hr class="menu-divider">
       
-      <button class="auth-btn login-btn" onclick="openAuthModal(); closeMenu();" id="loginBtn">Connexion (admin)</button>
-      <button class="auth-btn logout-btn" onclick="logout(); closeMenu();" id="logoutBtn" style="display:none;">Déconnexion (admin)</button>
+      <button class="history-btn" onclick="window.openHistoryModal(); window.closeMenu();">Info</button>
+      
+      <button class="action-btn add-btn" onclick="window.openAddModal(); window.closeMenu();" id="addBtn" style="display:none;">Ajouter</button>
+      <button class="action-btn delete-btn" onclick="window.openDeleteModal(); window.closeMenu();" id="deleteBtn" style="display:none;">Supprimer</button>
+      
+      <button class="action-btn" onclick="window.openAdminModal(); window.closeMenu();" id="adminBtn" style="display:none;">Mot de passe</button>
+      <button class="action-btn" onclick="window.openHistoriqueModal(); window.closeMenu();" id="historiqueBtn" style="display:none;">Notification</button>
+      
+      <button class="action-btn" onclick="window.openStatsModal(); window.closeMenu();" id="statsBtn">Statistiques</button>
+      
+      <hr class="menu-divider">
+      
+      <button class="auth-btn login-btn" onclick="window.openAuthModal(); window.closeMenu();" id="loginBtn">Connexion (admin)</button>
+      <button class="auth-btn logout-btn" onclick="window.logout(); window.closeMenu();" id="logoutBtn" style="display:none;">Déconnexion (admin)</button>
     </div>
   </header>
 
   <div id="breadcrumb" class="breadcrumb"></div>
 
   <div class="search-wrapper">
-    <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="handleSearchInput(this.value)">
+    <input id="searchBox" type="text" placeholder="Rechercher un nom..." oninput="window.handleSearchInput(this.value)">
     <div class="search-suggestions" id="searchSuggestions"></div>
   </div>
 
-  <button id="backBtn" onclick="goBack()">Retour</button>
+  <button id="backBtn" onclick="window.goBack()">Retour</button>
   <div id="tree"></div>
 
   <!-- Toast Container -->
@@ -110,7 +110,7 @@
   <!-- History Modal -->
   <div class="modal-overlay" id="historyModal">
     <div class="modal-content history-modal">
-      <button class="modal-close" onclick="closeHistoryModal()">✕</button>
+      <button class="modal-close" onclick="window.closeHistoryModal()">✕</button>
       <div class="detail-body" style="padding: 28px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <h2 style="margin: 0;">📖 Info</h2>
@@ -135,14 +135,14 @@
               <textarea id="historyTextarea" rows="6" style="width: 100%; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 14px; font-size: 15px; font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.85); color: var(--text-dark); resize: vertical;"></textarea>
             </div>
             <div class="form-actions" style="margin-top: 12px;">
-              <button type="button" class="btn-cancel" onclick="cancelHistoryEdit()">Annuler</button>
-              <button type="button" class="btn-submit" onclick="saveHistory()">💾</button>
+              <button type="button" class="btn-cancel" onclick="window.cancelHistoryEdit()">Annuler</button>
+              <button type="button" class="btn-submit" onclick="window.saveHistory()">💾</button>
             </div>
           </div>
         </div>
         
         <div id="historyActions" style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; border-top: 1px solid rgba(0,0,0,0.04); padding-top: 16px;">
-          <button type="button" id="historyEditBtn" class="btn-submit" onclick="enableHistoryEdit()" style="display: none;">✏️</button>
+          <button type="button" id="historyEditBtn" class="btn-submit" onclick="window.enableHistoryEdit()" style="display: none;">✏️</button>
         </div>
       </div>
     </div>
@@ -151,7 +151,7 @@
   <!-- Stats Modal -->
   <div class="modal-overlay" id="statsModal">
     <div class="modal-content stats-modal">
-      <button class="modal-close" onclick="closeStatsModal()">✕</button>
+      <button class="modal-close" onclick="window.closeStatsModal()">✕</button>
       <h2>📊 Statistiques</h2>
       <p class="subtitle">Données en temps réel</p>
 
@@ -192,7 +192,7 @@
       </div>
       
       <div class="form-actions" style="margin-top: 16px;">
-        <button type="button" class="btn-cancel" onclick="closeStatsModal()">Fermer</button>
+        <button type="button" class="btn-cancel" onclick="window.closeStatsModal()">Fermer</button>
       </div>
     </div>
   </div>
@@ -200,9 +200,9 @@
   <!-- Auth Modal (admin) -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      <button class="modal-close" onclick="window.closeAuthModal()">✕</button>
       <h2>Connexion admin</h2>
-      <form id="authForm" onsubmit="authenticate(event)">
+      <form id="authForm" onsubmit="window.authenticate(event)">
         <div class="form-group">
           <label for="authPassword">Mot de passe</label>
           <input type="password" id="authPassword" required placeholder="Entrez votre mot de passe">
@@ -210,7 +210,7 @@
         </div>
         <div class="auth-error" id="authError">Mot de passe incorrect</div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeAuthModal()">Annuler</button>
+          <button type="button" class="btn-cancel" onclick="window.closeAuthModal()">Annuler</button>
           <button type="submit" class="btn-submit">Se connecter</button>
         </div>
       </form>
@@ -220,10 +220,10 @@
   <!-- Admin Modal -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeAdminModal()">✕</button>
+      <button class="modal-close" onclick="window.closeAdminModal()">✕</button>
       <h2>Gestion des mots de passe</h2>
       <p class="subtitle">Gérez les accès pour chaque rôle.</p>
-      <form id="adminForm" onsubmit="updatePasswords(event)">
+      <form id="adminForm" onsubmit="window.updatePasswords(event)">
         <div class="form-group">
           <label for="adminPassword">Mot de passe Proprietaire</label>
           <input type="text" id="adminPassword" placeholder="Nouveau mot de passe">
@@ -239,7 +239,7 @@
           </div>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeAdminModal()">Fermer</button>
+          <button type="button" class="btn-cancel" onclick="window.closeAdminModal()">Fermer</button>
           <button type="submit" class="btn-submit">Mettre à jour</button>
         </div>
       </form>
@@ -249,12 +249,12 @@
   <!-- Historique Modal -->
   <div class="modal-overlay" id="historiqueModal">
     <div class="modal-content historique-modal">
-      <button class="modal-close" onclick="closeHistoriqueModal()">✕</button>
+      <button class="modal-close" onclick="window.closeHistoriqueModal()">✕</button>
       <h2>Notification</h2>
       <p class="subtitle">Consultez et gérez l'historique des modifications.</p>
       <div id="historiqueList" class="historique-list"></div>
       <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="closeHistoriqueModal()">Fermer</button>
+        <button type="button" class="btn-cancel" onclick="window.closeHistoriqueModal()">Fermer</button>
       </div>
     </div>
   </div>
@@ -262,7 +262,7 @@
   <!-- Phone Auth Modal -->
   <div class="modal-overlay" id="phoneAuthModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closePhoneAuthModal()">✕</button>
+      <button class="modal-close" onclick="window.closePhoneAuthModal()">✕</button>
       <h2>📱 Connexion par téléphone</h2>
       <p class="subtitle">Entrez votre numéro pour recevoir un code SMS</p>
       
@@ -272,8 +272,8 @@
           <input type="tel" id="phoneInput" placeholder="+33712345678" value="">
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closePhoneAuthModal()">Annuler</button>
-          <button type="button" class="btn-submit" id="sendCodeBtn" onclick="sendVerificationCode()">Envoyer le code</button>
+          <button type="button" class="btn-cancel" onclick="window.closePhoneAuthModal()">Annuler</button>
+          <button type="button" class="btn-submit" id="sendCodeBtn" onclick="window.sendVerificationCode()">Envoyer le code</button>
         </div>
         <div id="phoneError" class="auth-error" style="display: none;"></div>
       </div>
@@ -284,13 +284,13 @@
           <input type="text" id="otpInput" placeholder="6 chiffres" maxlength="6" inputmode="numeric">
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closePhoneAuthModal()">Annuler</button>
-          <button type="button" class="btn-submit" id="verifyCodeBtn" onclick="verifyOtpCode()">Vérifier</button>
+          <button type="button" class="btn-cancel" onclick="window.closePhoneAuthModal()">Annuler</button>
+          <button type="button" class="btn-submit" id="verifyCodeBtn" onclick="window.verifyOtpCode()">Vérifier</button>
         </div>
         <div id="otpError" class="auth-error" style="display: none;"></div>
         <div style="margin-top: 10px; font-size: 13px; color: var(--text-light); text-align: center;">
           <span id="resendTimer"></span>
-          <button id="resendBtn" style="display: none; background: none; border: none; color: var(--accent); cursor: pointer; text-decoration: underline;" onclick="resendCode()">Renvoyer le code</button>
+          <button id="resendBtn" style="display: none; background: none; border: none; color: var(--accent); cursor: pointer; text-decoration: underline;" onclick="window.resendCode()">Renvoyer le code</button>
         </div>
       </div>
     </div>
@@ -299,7 +299,7 @@
   <!-- User Profile Modal -->
   <div class="modal-overlay" id="userProfileModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeUserProfileModal()">✕</button>
+      <button class="modal-close" onclick="window.closeUserProfileModal()">✕</button>
       <h2>👤 Mon compte</h2>
       <div style="text-align: center; margin: 16px 0;">
         <img id="profilePhoto" src="ssi.jpg" alt="Photo" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover;">
@@ -321,8 +321,8 @@
         <div id="profileUid" style="font-size: 13px; padding: 8px 0; color: var(--text-light); word-break: break-all;">—</div>
       </div>
       <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="closeUserProfileModal()">Fermer</button>
-        <button type="button" class="btn-delete-confirm" onclick="logoutUser(); closeUserProfileModal();">Se déconnecter</button>
+        <button type="button" class="btn-cancel" onclick="window.closeUserProfileModal()">Fermer</button>
+        <button type="button" class="btn-delete-confirm" onclick="window.logoutUser(); window.closeUserProfileModal();">Se déconnecter</button>
       </div>
     </div>
   </div>
@@ -330,9 +330,9 @@
   <!-- Add Person Modal -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeAddModal()">✕</button>
+      <button class="modal-close" onclick="window.closeAddModal()">✕</button>
       <h2>Ajouter une personne</h2>
-      <form id="addForm" onsubmit="addPerson(event)">
+      <form id="addForm" onsubmit="window.addPerson(event)">
         <div class="form-group">
           <label for="addName">Nom complet *</label>
           <input type="text" id="addName" required placeholder="Entrez le nom complet">
@@ -354,7 +354,7 @@
           <textarea id="addBio" placeholder="Courte biographie..." rows="2"></textarea>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeAddModal()">Annuler</button>
+          <button type="button" class="btn-cancel" onclick="window.closeAddModal()">Annuler</button>
           <button type="submit" class="btn-submit">Ajouter</button>
         </div>
       </form>
@@ -364,9 +364,9 @@
   <!-- Edit Person Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeEditModal()">✕</button>
+      <button class="modal-close" onclick="window.closeEditModal()">✕</button>
       <h2>Modifier une personne</h2>
-      <form id="editForm" onsubmit="editPerson(event)">
+      <form id="editForm" onsubmit="window.editPerson(event)">
         <div class="form-group">
           <label for="editName">Nom complet *</label>
           <input type="text" id="editName" required placeholder="Entrez le nom complet">
@@ -387,7 +387,7 @@
           <textarea id="editBio" placeholder="Courte biographie..." rows="2"></textarea>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeEditModal()">Annuler</button>
+          <button type="button" class="btn-cancel" onclick="window.closeEditModal()">Annuler</button>
           <button type="submit" class="btn-submit">Modifier</button>
         </div>
       </form>
@@ -397,7 +397,7 @@
   <!-- Delete Person Modal -->
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-content delete-modal">
-      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+      <button class="modal-close" onclick="window.closeDeleteModal()">✕</button>
       <div class="delete-icon">!</div>
       <h2>Supprimer une personne</h2>
       <p>
@@ -408,8 +408,8 @@
         Cette action est irréversible.
       </p>
       <div class="form-actions">
-        <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Annuler</button>
-        <button type="button" class="btn-delete-confirm" onclick="confirmDelete()">Supprimer</button>
+        <button type="button" class="btn-cancel" onclick="window.closeDeleteModal()">Annuler</button>
+        <button type="button" class="btn-delete-confirm" onclick="window.confirmDelete()">Supprimer</button>
       </div>
     </div>
   </div>
@@ -417,7 +417,7 @@
   <!-- Person Detail Modal -->
   <div class="modal-overlay" id="personDetailModal">
     <div class="modal-content person-detail-modal">
-      <button class="modal-close" onclick="closePersonDetailModal()">✕</button>
+      <button class="modal-close" onclick="window.closePersonDetailModal()">✕</button>
       <div class="detail-cover" id="detailCover">
         <div class="detail-avatar-wrapper">
           <img id="detailAvatar" src="ssi.jpg" alt="Photo">

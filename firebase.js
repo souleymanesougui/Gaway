@@ -22,5 +22,4 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Pour la vérification par téléphone, nous exporterons également RecaptchaVerifier
 export { db, auth, provider, RecaptchaVerifier, signInWithPhoneNumber };

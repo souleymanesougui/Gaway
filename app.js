@@ -24,8 +24,8 @@ import {
   signInWithCredential
 } from "firebase/auth";
 
-let currentUser = null;      // admin/proprietaire
-let firebaseUser = null;    // utilisateur Firebase (Google ou téléphone)
+let currentUser = null;
+let firebaseUser = null;
 let passwords = {
   admin: "admin123",
   editor: "editor123"
@@ -247,6 +247,8 @@ function updateUserUI(user) {
   }
 }
 
+// ========== EXPOSITION GLOBALE ==========
+
 // Connexion Google
 window.signInWithGoogle = async function() {
   try {
@@ -262,36 +264,30 @@ window.signInWithGoogle = async function() {
   }
 };
 
-// Déconnexion utilisateur (Google ou téléphone)
+// Déconnexion
 window.logoutUser = async function() {
   try {
     await signOut(auth);
     firebaseUser = null;
     updateUserUI(null);
     showToast("Déconnecté", "info");
+    closeUserProfileModal();
   } catch (error) {
     console.error("Erreur déconnexion :", error);
     showToast("Erreur lors de la déconnexion", "error");
   }
 };
 
-// ========== AUTHENTIFICATION PAR TÉLÉPHONE ==========
+// Variables pour l'authentification téléphone
 let confirmationResult = null;
 let recaptchaVerifier = null;
 let phoneTimeout = null;
 
-function getPhoneRecaptcha() {
-  if (!recaptchaVerifier) {
-    recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
-      size: 'invisible',
-      callback: () => {}
-    });
-  }
-  return recaptchaVerifier;
-}
-
+// Ouverture modale téléphone
 window.openPhoneAuthModal = function() {
-  document.getElementById("phoneAuthModal").classList.add("active");
+  const modal = document.getElementById("phoneAuthModal");
+  if (!modal) return;
+  modal.classList.add("active");
   document.getElementById("phoneAuthStep1").style.display = "block";
   document.getElementById("phoneAuthStep2").style.display = "none";
   document.getElementById("phoneError").style.display = "none";
@@ -304,15 +300,16 @@ window.openPhoneAuthModal = function() {
   }
   document.getElementById("resendBtn").style.display = "none";
   document.getElementById("resendTimer").textContent = "";
-  // Réinitialiser le recaptcha
   if (recaptchaVerifier) {
     recaptchaVerifier.clear();
     recaptchaVerifier = null;
   }
 };
 
+// Fermeture modale téléphone
 window.closePhoneAuthModal = function() {
-  document.getElementById("phoneAuthModal").classList.remove("active");
+  const modal = document.getElementById("phoneAuthModal");
+  if (modal) modal.classList.remove("active");
   if (phoneTimeout) {
     clearTimeout(phoneTimeout);
     phoneTimeout = null;
@@ -323,12 +320,12 @@ window.closePhoneAuthModal = function() {
   }
 };
 
+// Envoi du code SMS
 window.sendVerificationCode = async function() {
   const phoneInput = document.getElementById("phoneInput");
   const phoneNumber = phoneInput.value.trim();
   const errorDiv = document.getElementById("phoneError");
 
-  // Validation basique
   if (!phoneNumber || phoneNumber.length < 8) {
     errorDiv.textContent = "Veuillez entrer un numéro valide (ex: +33712345678)";
     errorDiv.style.display = "block";
@@ -337,17 +334,31 @@ window.sendVerificationCode = async function() {
   errorDiv.style.display = "none";
 
   try {
-    const verifier = getPhoneRecaptcha();
-    const appVerifier = verifier;
-    const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+    if (recaptchaVerifier) {
+      recaptchaVerifier.clear();
+      recaptchaVerifier = null;
+    }
+
+    recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
+      size: 'invisible',
+      callback: () => {
+        console.log("✅ reCAPTCHA résolu");
+      },
+      'expired-callback': () => {
+        console.log("⏰ reCAPTCHA expiré");
+        showToast("La vérification a expiré, réessayez", "warning");
+      }
+    });
+
+    console.log("📱 Envoi du code pour :", phoneNumber);
+    const result = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
     confirmationResult = result;
-    // Passer à l'étape 2
+    
     document.getElementById("phoneAuthStep1").style.display = "none";
     document.getElementById("phoneAuthStep2").style.display = "block";
     document.getElementById("otpInput").value = "";
     document.getElementById("otpError").style.display = "none";
 
-    // Démarrer un timer pour renvoyer le code
     let seconds = 60;
     const timerEl = document.getElementById("resendTimer");
     const resendBtn = document.getElementById("resendBtn");
@@ -360,7 +371,7 @@ window.sendVerificationCode = async function() {
       if (seconds <= 0) {
         clearInterval(phoneTimeout);
         phoneTimeout = null;
-        timerEl.textContent = "";
+        timerEl.textContent = "Code expiré. Demandez-en un nouveau";
         resendBtn.style.display = "inline";
       } else {
         timerEl.textContent = `Code envoyé. Prochain envoi dans ${seconds}s`;
@@ -369,14 +380,19 @@ window.sendVerificationCode = async function() {
 
     showToast("Code SMS envoyé !", "success");
   } catch (error) {
-    console.error("Erreur envoi SMS :", error);
+    console.error("❌ Erreur envoi SMS :", error);
     let message = "Erreur lors de l'envoi du code.";
     if (error.code === 'auth/invalid-phone-number') message = "Numéro de téléphone invalide.";
     else if (error.code === 'auth/too-many-requests') message = "Trop de tentatives. Réessayez plus tard.";
     else if (error.code === 'auth/quota-exceeded') message = "Quota de SMS dépassé.";
+    else if (error.code === 'auth/api-key-not-valid') message = "Clé API Firebase invalide. Vérifiez la configuration.";
+    else if (error.code === 'auth/network-request-failed') message = "Problème réseau. Vérifiez votre connexion.";
+    else {
+      message = `Erreur : ${error.message}`;
+    }
     errorDiv.textContent = message;
     errorDiv.style.display = "block";
-    // Réinitialiser le recaptcha
+    
     if (recaptchaVerifier) {
       recaptchaVerifier.clear();
       recaptchaVerifier = null;
@@ -384,15 +400,15 @@ window.sendVerificationCode = async function() {
   }
 };
 
+// Renvoyer le code
 window.resendCode = function() {
   document.getElementById("resendBtn").style.display = "none";
-  // On repart à l'étape 1 pour renvoyer
   document.getElementById("phoneAuthStep1").style.display = "block";
   document.getElementById("phoneAuthStep2").style.display = "none";
-  // On garde le numéro saisi
-  sendVerificationCode();
+  window.sendVerificationCode();
 };
 
+// Vérification du code OTP
 window.verifyOtpCode = async function() {
   const otp = document.getElementById("otpInput").value.trim();
   const errorDiv = document.getElementById("otpError");
@@ -411,7 +427,7 @@ window.verifyOtpCode = async function() {
     await saveUserToFirestore(user);
     firebaseUser = user;
     updateUserUI(user);
-    closePhoneAuthModal();
+    window.closePhoneAuthModal();
     showToast(`Connecté : ${user.phoneNumber}`, "success");
   } catch (error) {
     console.error("Erreur vérification OTP :", error);
@@ -424,21 +440,7 @@ window.verifyOtpCode = async function() {
   }
 };
 
-// ========== SUIVI DE L'ÉTAT D'AUTHENTIFICATION ==========
-function initFirebaseAuth() {
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      firebaseUser = user;
-      await saveUserToFirestore(user);
-      updateUserUI(user);
-    } else {
-      firebaseUser = null;
-      updateUserUI(null);
-    }
-  });
-}
-
-// ========== PROFIL UTILISATEUR ==========
+// Profil utilisateur
 window.openUserProfileModal = function() {
   if (!firebaseUser) {
     showToast("Vous n'êtes pas connecté", "warning");
@@ -456,6 +458,22 @@ window.openUserProfileModal = function() {
 window.closeUserProfileModal = function() {
   document.getElementById("userProfileModal").classList.remove("active");
 };
+
+// ========== SUIVI DE L'ÉTAT D'AUTHENTIFICATION ==========
+function initFirebaseAuth() {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      firebaseUser = user;
+      await saveUserToFirestore(user);
+      updateUserUI(user);
+    } else {
+      firebaseUser = null;
+      updateUserUI(null);
+    }
+  });
+}
+
+// ========== FIN AUTH ==========
 
 // ******************** LE RESTE DU CODE (inchangé) ********************
 function showToast(message, type = 'success', duration = 3500) {
@@ -475,7 +493,6 @@ window.showToast = showToast;
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute('data-theme');
-  const themes = ['light', 'dark', 'nature', 'vintage', 'modern', 'accessibility'];
   let newTheme = 'light';
   if (current === 'light') newTheme = 'dark';
   else newTheme = 'light';
@@ -1676,7 +1693,7 @@ async function init() {
   buildNameIndex();
   updateUIForAuth();
   await initStats();
-  initFirebaseAuth(); // Initialisation de l'écoute d'authentification Firebase
+  initFirebaseAuth();
 }
 
 init();
