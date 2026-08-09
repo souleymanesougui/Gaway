@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AlzaSyDh1sYrwm5dTG3ktVHprKzEGr7fRmzOzfQ",
+  apiKey: "AIzaSyDh1sYrwm5dTG3ktVHprKzEGr7fRmzOzfQ",
   authDomain: "gaway-290bc.firebaseapp.com",
   projectId: "gaway-290bc",
   storageBucket: "gaway-290bc.firebasestorage.app",
