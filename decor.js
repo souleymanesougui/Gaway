@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { grassTexture } from './textures.js';
-import { createWalkControls, attachJoystick } from './WalkControls.js';
 
 /* ============================================================
    DECOR.JS — éléments d'environnement extérieur, réutilisables
