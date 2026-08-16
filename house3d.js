@@ -2,12 +2,18 @@ import { db } from './firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { buildLot, buildInterior } from './house.js';
+import { makeGrassGround, makeTree, makeStreetLamp, makeCar, makePerson, setPersonPath, updatePerson, PERF } from './decor.js';
+import { asphaltTexture, concreteTexture, marbleTexture } from './textures.js';
 
 /* ============================================================
-   GAWAY 3D — monde familial explorable
-   Maisons générées procéduralement (aucun asset externe requis,
-   aucun emoji). Style "réaliste stylisé" : matériaux PBR,
-   ombres portées, éclairage chaud/froid, proportions réelles.
+   GAWAY 3D v2 — quartier résidentiel de luxe explorable.
+   Rendu "haut de gamme stylisé" via matériaux PBR procéduraux,
+   verre réel (transmission + environment map), ciel réaliste,
+   jardins, piscines, garages, personnages qui marchent, voitures
+   qui circulent.
    ============================================================ */
 
 // ---------- DOM ----------
@@ -27,30 +33,50 @@ const exitHouseBtn = document.getElementById('exitHouseBtn');
 
 // ---------- THREE base ----------
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b0f14);
-scene.fog = new THREE.FogExp2(0x0b0f14, 0.028);
 
-const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 500);
-camera.position.set(0, 1.7, 7);
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 800);
+camera.position.set(0, 1.7, 8);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const renderer = new THREE.WebGLRenderer({ antialias: !PERF.mobile, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, PERF.pixelRatioCap));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.0;
 host.appendChild(renderer.domElement);
+
+// Real environment reflections for glass / marble / metal
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// Realistic sky + sun
+const sky = new Sky();
+sky.scale.setScalar(450);
+scene.add(sky);
+const sunPos = new THREE.Vector3();
+function setSky(elevation = 32, azimuth = 145) {
+  const uniforms = sky.material.uniforms;
+  uniforms['turbidity'].value = 3.2;
+  uniforms['rayleigh'].value = 1.6;
+  uniforms['mieCoefficient'].value = 0.006;
+  uniforms['mieDirectionalG'].value = 0.8;
+  const phi = THREE.MathUtils.degToRad(90 - elevation);
+  const theta = THREE.MathUtils.degToRad(azimuth);
+  sunPos.setFromSphericalCoords(1, phi, theta);
+  uniforms['sunPosition'].value.copy(sunPos);
+}
+setSky();
+scene.fog = new THREE.Fog(0xbfd4e8, 40, 130);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.minDistance = 1.5;
-controls.maxDistance = 40;
+controls.maxDistance = 45;
 controls.maxPolarAngle = Math.PI / 2 - 0.02;
 controls.target.set(0, 1.4, 0);
-controls.enabled = true;
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -58,294 +84,61 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ---------- Lighting ----------
-const hemi = new THREE.HemisphereLight(0x9fb8d9, 0x3a2f28, 0.55);
+// ---------- Lighting (sun matches sky) ----------
+const hemi = new THREE.HemisphereLight(0xbfd4e8, 0x4a3f30, 0.55);
 scene.add(hemi);
 
-const sun = new THREE.DirectionalLight(0xfff2e0, 1.3);
-sun.position.set(12, 18, 8);
+const sun = new THREE.DirectionalLight(0xfff2e0, 2.1);
+sun.position.set(sunPos.x * 60, sunPos.y * 60, sunPos.z * 60);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -30;
-sun.shadow.camera.right = 30;
-sun.shadow.camera.top = 30;
-sun.shadow.camera.bottom = -30;
-sun.shadow.camera.far = 80;
-sun.shadow.bias = -0.0015;
+sun.shadow.mapSize.set(PERF.shadowMapSize, PERF.shadowMapSize);
+sun.shadow.camera.left = -26;
+sun.shadow.camera.right = 26;
+sun.shadow.camera.top = 26;
+sun.shadow.camera.bottom = -26;
+sun.shadow.camera.far = 120;
+sun.shadow.bias = -0.0012;
 scene.add(sun);
+scene.add(sun.target);
 
-const fill = new THREE.DirectionalLight(0x6d8fc9, 0.25);
-fill.position.set(-10, 6, -10);
-scene.add(fill);
-
-// ---------- Ground plaza (always present) ----------
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x2c3a33, roughness: 0.95, metalness: 0.0 });
-const ground = new THREE.Mesh(new THREE.CircleGeometry(60, 64), groundMat);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
-
-// world content group — cleared & rebuilt on every navigation
+// ---------- World group ----------
 const worldGroup = new THREE.Group();
 scene.add(worldGroup);
+let activeNpcs = [];
+let activeCars = []; // {group, path (Vector3[]), t, speed}
+let waterMeshes = [];
 
-// ---------- Text-plate helper (names, no emoji, real typography) ----------
+// ---------- Label sprite (names — real typography, no emoji) ----------
 function makeLabelSprite(text, opts = {}) {
-  const { fontSize = 64, color = '#f5f0ff', bg = 'rgba(20,16,28,0.55)', w = 512, h = 128 } = opts;
+  const { fontSize = 60, color = '#f5f0ff', bg = 'rgba(18,14,26,0.6)', w = 512, h = 128 } = opts;
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = bg;
-  roundRect(ctx, 0, 0, w, h, 26);
-  ctx.fill();
+  roundRect(ctx, 0, 0, w, h, 26); ctx.fill();
   ctx.fillStyle = color;
   ctx.font = `600 ${fontSize}px Inter, Arial, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(text, w / 2, h / 2 + 4);
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true });
-  const sprite = new THREE.Sprite(mat);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
   sprite.scale.set(2.4, 0.6, 1);
   return sprite;
 }
 function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-// ---------- Portrait texture loader (uses your existing photos/ folder, gracefully falls back) ----------
-const texLoader = new THREE.TextureLoader();
-function loadPortraitTexture(photo) {
-  return new Promise((resolve) => {
-    if (!photo) return resolve(null);
-    texLoader.load(
-      'photos/' + photo,
-      (tex) => { tex.colorSpace = THREE.SRGBColorSpace; resolve(tex); },
-      undefined,
-      () => resolve(null)
-    );
-  });
-}
-
-// ---------- House palette by gender ----------
-function paletteFor(person) {
-  if (person.gender === 'male') return { wall: 0xdcd3c4, roof: 0x3a5a78, door: 0x2f4d63, accent: 0x3498db };
-  if (person.gender === 'female') return { wall: 0xe9d9d6, roof: 0x7a3b52, door: 0x6b2c42, accent: 0xe74c3c };
-  return { wall: 0xd8d4cc, roof: 0x555b62, door: 0x43484d, accent: 0x8E44AD };
+  ctx.beginPath(); ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
 }
 
 /* ============================================================
-   HOUSE BUILDER — real structure: foundation, walls, windows,
-   pitched roof, chimney, real door with hinge for opening.
-   Interior: floor, rug, sofa, table, bed, lamp (all primitives).
+   Scene builders
    ============================================================ */
-function buildHouse(person, opts = {}) {
-  const scale = opts.scale ?? 1;
-  const pal = paletteFor(person);
-  const group = new THREE.Group();
-  group.userData.person = person;
-
-  const W = 4.2 * scale, D = 3.6 * scale, H = 2.6 * scale;
-
-  // Foundation
-  const foundation = new THREE.Mesh(
-    new THREE.BoxGeometry(W + 0.4, 0.2, D + 0.4),
-    new THREE.MeshStandardMaterial({ color: 0x6b6459, roughness: 0.9 })
-  );
-  foundation.position.y = 0.1;
-  foundation.receiveShadow = true;
-  group.add(foundation);
-
-  // Walls
-  const wallMat = new THREE.MeshStandardMaterial({ color: pal.wall, roughness: 0.85, metalness: 0.02 });
-  const walls = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), wallMat);
-  walls.position.y = 0.2 + H / 2;
-  walls.castShadow = true;
-  walls.receiveShadow = true;
-  group.add(walls);
-
-  // Roof (pyramidal hip roof)
-  const roofMat = new THREE.MeshStandardMaterial({ color: pal.roof, roughness: 0.6, metalness: 0.05 });
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(W, D) * 0.78, 1.3 * scale, 4), roofMat);
-  roof.rotation.y = Math.PI / 4;
-  roof.position.y = 0.2 + H + 0.62 * scale;
-  roof.castShadow = true;
-  group.add(roof);
-
-  // Chimney
-  const chimney = new THREE.Mesh(
-    new THREE.BoxGeometry(0.3 * scale, 0.9 * scale, 0.3 * scale),
-    new THREE.MeshStandardMaterial({ color: 0x8a4a3a, roughness: 0.9 })
-  );
-  chimney.position.set(W * 0.28, 0.2 + H + 0.75 * scale, D * 0.15);
-  chimney.castShadow = true;
-  group.add(chimney);
-
-  // Windows (front)
-  const winMat = new THREE.MeshStandardMaterial({ color: 0xbfe0ff, roughness: 0.15, metalness: 0.3, emissive: 0x142033, emissiveIntensity: 0.6 });
-  [-1, 1].forEach((side) => {
-    const win = new THREE.Mesh(new THREE.BoxGeometry(0.6 * scale, 0.7 * scale, 0.06), winMat);
-    win.position.set(side * W * 0.28, 0.2 + H * 0.58, D / 2 + 0.03);
-    group.add(win);
-    const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(0.68 * scale, 0.78 * scale, 0.04),
-      new THREE.MeshStandardMaterial({ color: 0x3a3128, roughness: 0.8 })
-    );
-    frame.position.copy(win.position);
-    frame.position.z -= 0.02;
-    group.add(frame);
-  });
-
-  // Door + hinge pivot (this is what opens on click)
-  const doorW = 0.85 * scale, doorH = 1.9 * scale;
-  const doorPivot = new THREE.Group();
-  doorPivot.position.set(-doorW / 2, 0.2, D / 2);
-  const doorMat = new THREE.MeshStandardMaterial({ color: pal.door, roughness: 0.55, metalness: 0.1 });
-  const door = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.08), doorMat);
-  door.position.set(doorW / 2, doorH / 2, 0);
-  door.castShadow = true;
-  const handle = new THREE.Mesh(
-    new THREE.SphereGeometry(0.045 * scale, 12, 12),
-    new THREE.MeshStandardMaterial({ color: 0xd8c27a, roughness: 0.3, metalness: 0.8 })
-  );
-  handle.position.set(doorW - 0.1, doorH / 2, 0.06);
-  door.add(handle);
-  doorPivot.add(door);
-  group.add(doorPivot);
-  group.userData.doorPivot = doorPivot;
-  group.userData.doorHitbox = door;
-
-  // Door frame
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x2a231c, roughness: 0.8 });
-  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.12, doorH + 0.1, 0.12), frameMat);
-  doorFrame.position.set(0, (doorH + 0.1) / 2 + 0.2, D / 2 + 0.02);
-  group.add(doorFrame);
-
-  // Name plate above door
-  const label = makeLabelSprite(person.name || 'Sans nom');
-  label.position.set(0, 0.2 + H + 0.05, D / 2 + 0.5);
-  group.add(label);
-
-  // Small path to door
-  const path = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.9 * scale, 1.6 * scale),
-    new THREE.MeshStandardMaterial({ color: 0x8a8378, roughness: 1 })
-  );
-  path.rotation.x = -Math.PI / 2;
-  path.position.set(0, 0.11, D / 2 + 1.2 * scale);
-  path.receiveShadow = true;
-  group.add(path);
-
-  return group;
-}
-
-/* Interior room — built lazily, positioned "inside" the same house group
-   so the camera can dolly through the doorway into it. */
-function buildInterior(person, scale = 1) {
-  const pal = paletteFor(person);
-  const room = new THREE.Group();
-  const W = 4.2 * scale, D = 3.6 * scale, H = 2.6 * scale;
-
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x8a6a4a, roughness: 0.7 });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.2, D - 0.2), floorMat);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = 0.21;
-  floor.receiveShadow = true;
-  room.add(floor);
-
-  const rug = new THREE.Mesh(
-    new THREE.CircleGeometry(0.9 * scale, 32),
-    new THREE.MeshStandardMaterial({ color: pal.accent, roughness: 1 })
-  );
-  rug.rotation.x = -Math.PI / 2;
-  rug.position.set(0, 0.215, 0.2);
-  room.add(rug);
-
-  // Interior walls (inverted normals feel via double-sided ceiling)
-  const ceilMat = new THREE.MeshStandardMaterial({ color: 0xf2ede4, roughness: 0.95, side: THREE.DoubleSide });
-  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.15, D - 0.15), ceilMat);
-  ceiling.rotation.x = Math.PI / 2;
-  ceiling.position.y = 0.2 + H - 0.05;
-  room.add(ceiling);
-
-  // Sofa
-  const sofaMat = new THREE.MeshStandardMaterial({ color: 0x5a4a6b, roughness: 0.8 });
-  const sofaBase = new THREE.Mesh(new THREE.BoxGeometry(1.4 * scale, 0.4 * scale, 0.6 * scale), sofaMat);
-  sofaBase.position.set(-1.1 * scale, 0.4 * scale, -0.9 * scale);
-  sofaBase.castShadow = true;
-  const sofaBack = new THREE.Mesh(new THREE.BoxGeometry(1.4 * scale, 0.5 * scale, 0.15 * scale), sofaMat);
-  sofaBack.position.set(-1.1 * scale, 0.65 * scale, -1.15 * scale);
-  room.add(sofaBase, sofaBack);
-
-  // Coffee table
-  const table = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.32 * scale, 0.32 * scale, 0.32 * scale, 20),
-    new THREE.MeshStandardMaterial({ color: 0x3a2c22, roughness: 0.5, metalness: 0.1 })
-  );
-  table.position.set(-0.4 * scale, 0.36 * scale, -0.3 * scale);
-  table.castShadow = true;
-  room.add(table);
-
-  // Bed (small alcove)
-  const bedMat = new THREE.MeshStandardMaterial({ color: 0xcfd8e6, roughness: 0.9 });
-  const bedBase = new THREE.Mesh(new THREE.BoxGeometry(1.0 * scale, 0.32 * scale, 1.6 * scale), new THREE.MeshStandardMaterial({ color: 0x6b4a35, roughness: 0.8 }));
-  bedBase.position.set(1.2 * scale, 0.36 * scale, 0.3 * scale);
-  const mattress = new THREE.Mesh(new THREE.BoxGeometry(0.92 * scale, 0.18 * scale, 1.5 * scale), bedMat);
-  mattress.position.set(1.2 * scale, 0.56 * scale, 0.3 * scale);
-  bedBase.castShadow = true; mattress.castShadow = true;
-  room.add(bedBase, mattress);
-
-  // Lamp with actual point light
-  const lampPole = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.02 * scale, 0.02 * scale, 1.1 * scale, 8),
-    new THREE.MeshStandardMaterial({ color: 0x2a2a2a })
-  );
-  lampPole.position.set(1.6 * scale, 0.75 * scale, -1.2 * scale);
-  const lampShade = new THREE.Mesh(
-    new THREE.ConeGeometry(0.22 * scale, 0.28 * scale, 16, 1, true),
-    new THREE.MeshStandardMaterial({ color: 0xf2d9a0, emissive: 0xf2d9a0, emissiveIntensity: 0.4, side: THREE.DoubleSide })
-  );
-  lampShade.position.set(1.6 * scale, 1.28 * scale, -1.2 * scale);
-  const lampLight = new THREE.PointLight(0xffdca8, 0.9, 4 * scale, 2);
-  lampLight.position.set(1.6 * scale, 1.2 * scale, -1.2 * scale);
-  lampLight.castShadow = true;
-  room.add(lampPole, lampShade, lampLight);
-
-  // Portrait frame on back wall (uses real photo texture if available)
-  const frameGeo = new THREE.PlaneGeometry(0.6 * scale, 0.75 * scale);
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.4 });
-  const frame = new THREE.Mesh(frameGeo, frameMat);
-  frame.position.set(0, 1.55 * scale, -D / 2 + 0.18);
-  room.add(frame);
-  loadPortraitTexture(person.photo).then((tex) => {
-    if (!tex) return;
-    const portraitMat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6 });
-    const portrait = new THREE.Mesh(new THREE.PlaneGeometry(0.5 * scale, 0.65 * scale), portraitMat);
-    portrait.position.copy(frame.position);
-    portrait.position.z += 0.01;
-    room.add(portrait);
-  });
-
-  room.position.z = -D * 0.15; // sit slightly toward the back of the shell
-  return room;
-}
-
-/* ============================================================
-   NAVIGATION STATE
-   ============================================================ */
-let family = null;             // root node from Firestore (nested tree, same shape as app.js)
-let historyStack = [];         // {type:'single'|'circle', person, parent}
-let current = null;            // current state object
-let interactionsLocked = false;
-
 function clearWorld() {
+  activeNpcs = [];
+  activeCars = [];
+  waterMeshes = [];
   while (worldGroup.children.length) {
     const obj = worldGroup.children.pop();
     disposeDeep(obj);
@@ -361,36 +154,165 @@ function disposeDeep(obj) {
   });
 }
 
+function collectWater(root) {
+  root.traverse((c) => { if (c.userData && c.userData.isWater) waterMeshes.push(c); });
+}
+
+/* ---------- Single lot (the person you're currently "at") ---------- */
+function buildSingleLotScene(person) {
+  const lot = buildLot(person, { scale: 1, decorLevel: 'high' });
+  worldGroup.add(lot);
+  collectWater(lot);
+
+  // Background neighbor silhouettes for atmosphere (cheap, non-interactive)
+  const neighborCount = PERF.mobile ? 2 : 4;
+  for (let i = 0; i < neighborCount; i++) {
+    const fakePerson = { name: 'voisin' + i, gender: i % 2 === 0 ? 'male' : 'female' };
+    const nb = buildLot(fakePerson, { scale: 0.85, skipFence: true, skipGarage: true, skipPool: true, skipTerrace: true, decorLevel: 'low' });
+    const angle = (i / neighborCount) * Math.PI * 2 + 0.6;
+    const r = 16;
+    nb.position.set(Math.cos(angle) * r, 0, Math.sin(angle) * r);
+    nb.lookAt(0, 0, 0);
+    nb.userData.person = null; // not clickable as a real house
+    worldGroup.add(nb);
+  }
+
+  // Wide ground so the plaza doesn't feel like it floats in a void
+  const ground = makeGrassGround(60);
+  ground.position.y = -0.01;
+  worldGroup.add(ground);
+
+  // A couple of NPCs strolling the front yard
+  const npcCount = Math.min(2, PERF.npcCount);
+  for (let i = 0; i < npcCount; i++) {
+    const npc = makePerson([0xe0b090, 0xc98b62, 0x8a5a3a][i % 3], [0x3a5a78, 0x8a3a3a, 0x2c6b4a][i % 3]);
+    const pts = [
+      new THREE.Vector3(-2 + i, 0, 3.5), new THREE.Vector3(2 - i, 0, 3.2), new THREE.Vector3(1, 0, 4.5),
+    ];
+    setPersonPath(npc, pts, 0.45 + i * 0.1);
+    worldGroup.add(npc);
+    activeNpcs.push(npc);
+  }
+
+  return lot;
+}
+
+/* ---------- Residential street with children's houses ---------- */
+function buildStreetScene(parent, children) {
+  const n = children.length;
+  const spacing = 7.5;
+  const radius = Math.max(9, (n / (Math.PI * 2)) * spacing + 5);
+
+  const ground = makeGrassGround(radius + 20);
+  worldGroup.add(ground);
+
+  const roadMat = new THREE.MeshStandardMaterial({ map: asphaltTexture([1, Math.max(8, radius)]), roughness: 0.95 });
+  const road = new THREE.Mesh(new THREE.RingGeometry(radius - 1.6, radius + 1.6, 64), roadMat);
+  road.rotation.x = -Math.PI / 2;
+  road.position.y = 0.02;
+  road.receiveShadow = true;
+  worldGroup.add(road);
+
+  const sidewalkMat = new THREE.MeshStandardMaterial({ map: concreteTexture([2, Math.max(6, radius)]), roughness: 0.9 });
+  [radius - 2.0, radius + 2.0].forEach((r) => {
+    const sw = new THREE.Mesh(new THREE.RingGeometry(r - 0.35, r + 0.35, 64), sidewalkMat);
+    sw.rotation.x = -Math.PI / 2;
+    sw.position.y = 0.03;
+    worldGroup.add(sw);
+  });
+
+  const centerLabel = makeLabelSprite('Enfants de ' + (parent.name || ''), { w: 680, h: 130, fontSize: 46 });
+  centerLabel.position.set(0, 2.4, 0);
+  worldGroup.add(centerLabel);
+  const centerPad = new THREE.Mesh(new THREE.CircleGeometry(2.2, 32), new THREE.MeshStandardMaterial({ map: marbleTexture([2, 2]), roughness: 0.3 }));
+  centerPad.rotation.x = -Math.PI / 2;
+  centerPad.position.y = 0.03;
+  worldGroup.add(centerPad);
+
+  const houseScale = n > 8 ? 0.65 : n > 4 ? 0.8 : 1;
+  const placeR = radius + 4.2;
+  children.forEach((child, i) => {
+    const angle = (i / n) * Math.PI * 2;
+    const lot = buildLot(child, { scale: houseScale, decorLevel: n > 6 ? 'low' : 'high', skipPool: n > 6, skipTerrace: n > 6 });
+    lot.position.set(Math.cos(angle) * placeR, 0, Math.sin(angle) * placeR);
+    lot.lookAt(0, 0, 0);
+    lot.rotateY(Math.PI);
+    worldGroup.add(lot);
+    collectWater(lot);
+
+    const lamp = makeStreetLamp(false);
+    const curbR = radius - 2.0;
+    lamp.position.set(Math.cos(angle) * curbR, 0, Math.sin(angle) * curbR);
+    worldGroup.add(lamp);
+  });
+
+  const treeN = Math.min(16, Math.max(6, Math.round(n * 1.4)));
+  for (let i = 0; i < treeN; i++) {
+    const a = (i / treeN) * Math.PI * 2 + 0.3;
+    const tree = makeTree(i * 11);
+    tree.position.set(Math.cos(a) * (radius + 3.2), 0, Math.sin(a) * (radius + 3.2));
+    worldGroup.add(tree);
+  }
+
+  if (!PERF.mobile || n <= 6) {
+    const car = makeCar(0x8a1e1e);
+    const pathPts = [];
+    for (let i = 0; i <= 32; i++) {
+      const a = (i / 32) * Math.PI * 2;
+      pathPts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+    }
+    worldGroup.add(car);
+    activeCars.push({ group: car, path: pathPts, t: 0, speed: 0.03 });
+  }
+
+  const npcCount = Math.min(3, PERF.npcCount);
+  for (let i = 0; i < npcCount; i++) {
+    const npc = makePerson([0xd8a878, 0xc98b62, 0x8a5a3a][i % 3], [0x2c6b4a, 0x8a3a3a, 0x3a5a78][i % 3]);
+    const a0 = (i / npcCount) * Math.PI * 2;
+    const r = radius - 2.0;
+    const pts = [
+      new THREE.Vector3(Math.cos(a0) * r, 0, Math.sin(a0) * r),
+      new THREE.Vector3(Math.cos(a0 + 0.6) * r, 0, Math.sin(a0 + 0.6) * r),
+      new THREE.Vector3(Math.cos(a0 + 1.1) * r, 0, Math.sin(a0 + 1.1) * r),
+    ];
+    setPersonPath(npc, pts, 0.4);
+    worldGroup.add(npc);
+    activeNpcs.push(npc);
+  }
+}
+
+/* ============================================================
+   NAVIGATION STATE
+   ============================================================ */
+let family = null;
+let historyStack = [];
+let current = null;
+let interactionsLocked = false;
+
 function updateBreadcrumb(path) {
   breadcrumbEl.textContent = path.map((p) => p.name).join(' → ');
   breadcrumbEl.style.display = path.length ? 'block' : 'none';
 }
-
 function pathFromHistory(person) {
-  // rebuild readable path for breadcrumb using stack + current person
-  const names = historyStack
-    .filter((s) => s.type === 'single')
-    .map((s) => s.person);
+  const names = historyStack.filter((s) => s.type === 'single').map((s) => s.person);
   return [...names, person];
 }
 
-/* ---------- STATE: single house (exterior) ---------- */
-function showSingleHouse(person, { pushHistory = true, cameFromCircleOf = null } = {}) {
+function showSingleHouse(person, { pushHistory = true } = {}) {
   if (pushHistory && current) historyStack.push(current);
-  current = { type: 'single', person, cameFromCircleOf };
+  current = { type: 'single', person };
 
   fadeTransition(() => {
     clearWorld();
     personCard.classList.remove('show');
     controls.enabled = true;
-
-    const house = buildHouse(person, { scale: 1 });
-    worldGroup.add(house);
-
     controls.minDistance = 1.5;
-    controls.maxDistance = 40;
-    controls.target.set(0, 1.5, 0.5);
-    camera.position.set(0, 1.7, 6.5);
+    controls.maxDistance = 45;
+
+    buildSingleLotScene(person);
+
+    controls.target.set(0, 1.6, 1.5);
+    camera.position.set(0.5, 2.0, 9.5);
     controls.update();
 
     hintEl.textContent = 'Cliquez la porte pour entrer chez ' + (person.name || '');
@@ -400,26 +322,19 @@ function showSingleHouse(person, { pushHistory = true, cameFromCircleOf = null }
   });
 }
 
-/* ---------- STATE: interior ---------- */
 function enterHouse(person, houseGroup) {
   interactionsLocked = true;
   hintEl.style.opacity = '0';
-
-  // Door swing animation
   const pivot = houseGroup.userData.doorPivot;
-  animateValue(0, -Math.PI / 1.7, 700, (v) => { pivot.rotation.y = v; }, () => {
-    // Dolly camera through doorway
+  animateValue(0, -Math.PI / 1.7, 750, (v) => { pivot.rotation.y = v; }, () => {
     const interior = buildInterior(person, 1);
     worldGroup.add(interior);
     controls.enabled = false;
     animateCamera(
-      new THREE.Vector3(0, 1.5, -0.6),
-      new THREE.Vector3(0, 1.3, -2.2),
+      new THREE.Vector3(0, 1.5, -0.4),
+      new THREE.Vector3(0, 1.3, -2.4),
       1000,
-      () => {
-        interactionsLocked = false;
-        showPersonCard(person);
-      }
+      () => { interactionsLocked = false; showPersonCard(person); }
     );
   });
 }
@@ -438,11 +353,9 @@ function showPersonCard(person) {
   personCard.classList.add('show');
 }
 
-/* ---------- STATE: circle of children ---------- */
 function showChildrenCircle(parent) {
   const children = parent.children || [];
   if (!children.length) return;
-
   historyStack.push(current);
   current = { type: 'circle', person: parent, children };
 
@@ -450,32 +363,16 @@ function showChildrenCircle(parent) {
     clearWorld();
     personCard.classList.remove('show');
     controls.enabled = true;
+    controls.minDistance = 2;
+    controls.maxDistance = 60;
 
-    const n = children.length;
-    const radius = Math.max(6, 3 + n * 1.6);
-    const houseScale = n > 6 ? 0.75 : 1;
+    buildStreetScene(parent, children);
 
-    children.forEach((child, i) => {
-      const angle = (i / n) * Math.PI * 2;
-      const house = buildHouse(child, { scale: houseScale });
-      house.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-      house.lookAt(0, 0, 0);
-      house.rotateY(Math.PI); // face door toward center
-      worldGroup.add(house);
-    });
-
-    // Central marker (parent's plaza)
-    const centerLabel = makeLabelSprite('Enfants de ' + (parent.name || ''), { w: 640, h: 128, fontSize: 48 });
-    centerLabel.position.set(0, 2.2, 0);
-    worldGroup.add(centerLabel);
-
-    controls.target.set(0, 1.2, 0);
-    camera.position.set(0, 1.7, 0.01); // center point, user rotates to look around
-    controls.minDistance = 0.1;
-    controls.maxDistance = 0.1;
+    controls.target.set(0, 1.4, 0);
+    camera.position.set(0, 5.5, 14);
     controls.update();
 
-    hintEl.textContent = 'Tournez autour de vous, puis cliquez une maison';
+    hintEl.textContent = 'Faites glisser pour regarder autour, cliquez une maison';
     hintEl.style.opacity = '1';
     updateBreadcrumb([...pathFromHistory(parent), { name: 'Enfants' }]);
     backBtn.style.display = 'inline-block';
@@ -484,25 +381,18 @@ function showChildrenCircle(parent) {
 
 function flyToChildHouse(childPerson) {
   interactionsLocked = true;
-  controls.minDistance = 1.5;
-  controls.maxDistance = 40;
   hintEl.style.opacity = '0';
-
-  // Rebuild as single-house scene directly (visually it's a fresh location,
-  // navigation intent matters more than continuous flight physics here)
   fadeTransition(() => {
     showSingleHouse(childPerson, { pushHistory: false });
-    // replace the circle entry in history with nothing extra; single state already set
     interactionsLocked = false;
   });
 }
 
-/* ---------- Back navigation ---------- */
 function goBack() {
   if (!historyStack.length) return;
   const prev = historyStack.pop();
   if (prev.type === 'single') {
-    current = null; // avoid double push
+    current = null;
     showSingleHouse(prev.person, { pushHistory: false });
     current = prev;
     backBtn.style.display = historyStack.length ? 'inline-block' : 'none';
@@ -517,23 +407,13 @@ function rebuildCircle(parent, children) {
     clearWorld();
     personCard.classList.remove('show');
     controls.enabled = true;
-    const n = children.length;
-    const radius = Math.max(6, 3 + n * 1.6);
-    const houseScale = n > 6 ? 0.75 : 1;
-    children.forEach((child, i) => {
-      const angle = (i / n) * Math.PI * 2;
-      const house = buildHouse(child, { scale: houseScale });
-      house.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-      house.lookAt(0, 0, 0);
-      house.rotateY(Math.PI);
-      worldGroup.add(house);
-    });
-    controls.target.set(0, 1.2, 0);
-    camera.position.set(0, 1.7, 0.01);
-    controls.minDistance = 0.1;
-    controls.maxDistance = 0.1;
+    controls.minDistance = 2;
+    controls.maxDistance = 60;
+    buildStreetScene(parent, children);
+    controls.target.set(0, 1.4, 0);
+    camera.position.set(0, 5.5, 14);
     controls.update();
-    hintEl.textContent = 'Tournez autour de vous, puis cliquez une maison';
+    hintEl.textContent = 'Faites glisser pour regarder autour, cliquez une maison';
     hintEl.style.opacity = '1';
     updateBreadcrumb([...pathFromHistory(parent), { name: 'Enfants' }]);
     backBtn.style.display = 'inline-block';
@@ -541,25 +421,28 @@ function rebuildCircle(parent, children) {
 }
 
 /* ============================================================
-   INTERACTION — click/tap on doors or circle houses
+   INTERACTION — click on desktop, tap (not drag) on mobile
    ============================================================ */
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
+let downPos = null;
 
-renderer.domElement.addEventListener('click', (e) => {
-  if (interactionsLocked) return;
+renderer.domElement.addEventListener('pointerdown', (e) => { downPos = { x: e.clientX, y: e.clientY }; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (interactionsLocked || !downPos) return;
+  const moved = Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y);
+  downPos = null;
+  if (moved > 6) return; // was a drag/orbit, not a tap
+
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
   const intersects = raycaster.intersectObjects(worldGroup.children, true);
   if (!intersects.length) return;
 
-  const hit = intersects[0].object;
-  // Walk up to find a house group with userData.person
-  let obj = hit;
-  while (obj && !obj.userData.person) obj = obj.parent;
-  if (!obj) return;
-
+  let obj = intersects[0].object;
+  while (obj && !(obj.userData && obj.userData.person)) obj = obj.parent;
+  if (!obj || !obj.userData.person) return;
   const person = obj.userData.person;
 
   if (current.type === 'single' && person === current.person) {
@@ -583,16 +466,14 @@ enterChildrenBtn.addEventListener('click', () => {
 });
 
 /* ============================================================
-   Small animation helpers (no external tween lib needed)
+   Animation helpers
    ============================================================ */
 function animateValue(from, to, duration, onUpdate, onDone) {
   const start = performance.now();
   function step(now) {
     const t = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    onUpdate(from + (to - from) * eased);
-    if (t < 1) requestAnimationFrame(step);
-    else onDone && onDone();
+    onUpdate(from + (to - from) * (1 - Math.pow(1 - t, 3)));
+    if (t < 1) requestAnimationFrame(step); else onDone && onDone();
   }
   requestAnimationFrame(step);
 }
@@ -606,17 +487,13 @@ function animateCamera(toPos, toTarget, duration, onDone) {
     camera.position.lerpVectors(fromPos, toPos, eased);
     controls.target.lerpVectors(fromTarget, toTarget, eased);
     controls.update();
-    if (t < 1) requestAnimationFrame(step);
-    else onDone && onDone();
+    if (t < 1) requestAnimationFrame(step); else onDone && onDone();
   }
   requestAnimationFrame(step);
 }
 function fadeTransition(rebuildFn) {
   fadeEl.classList.add('active');
-  setTimeout(() => {
-    rebuildFn();
-    setTimeout(() => fadeEl.classList.remove('active'), 60);
-  }, 320);
+  setTimeout(() => { rebuildFn(); setTimeout(() => fadeEl.classList.remove('active'), 60); }, 320);
 }
 
 /* ============================================================
@@ -642,12 +519,28 @@ async function init() {
     return;
   }
   loadingEl.classList.add('hidden');
+  clock.start();
   animate();
 }
 
+const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
+  const dt = Math.min(0.05, clock.getDelta());
   controls.update();
+  activeNpcs.forEach((npc) => updatePerson(npc, dt));
+  activeCars.forEach((c) => {
+    c.t += c.speed * dt;
+    const path = c.path;
+    const idx = Math.floor(c.t) % path.length;
+    const nextIdx = (idx + 1) % path.length;
+    const localT = c.t % 1;
+    const p0 = path[idx], p1 = path[nextIdx];
+    c.group.position.lerpVectors(p0, p1, localT);
+    const dir = new THREE.Vector3().subVectors(p1, p0).normalize();
+    c.group.rotation.y = Math.atan2(dir.x, dir.z) + Math.PI / 2;
+  });
+  waterMeshes.forEach((w) => { if (w.material.map) w.material.map.offset.y = clock.elapsedTime * 0.02; });
   renderer.render(scene, camera);
 }
 
