@@ -4,6 +4,7 @@ import {
   concreteTexture, marbleTexture, waterTexture, poolTileTexture, abstractArtTexture,
 } from './textures.js';
 import { makeTree, makeBush, makeFlowerbed, makeFence, makeStreetLamp, makeCar, makeGrassGround, PERF } from './decor.js';
+import { createWalkControls, attachJoystick } from './WalkControls.js';
 
 /* ============================================================
    HOUSE.JS — maisons à véritable architecture (pas de cubes nus),
