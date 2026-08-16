@@ -6,6 +6,7 @@ import { Sky } from 'three/addons/objects/Sky.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { buildLot, buildInterior, buildRoomShell, buildHallway } from './house.js';
 import { makeGrassGround, PERF } from './decor.js';
+import { createWalkControls, attachJoystick } from './WalkControls.js';
 
 /* ============================================================
    GAWAY 3D v3
