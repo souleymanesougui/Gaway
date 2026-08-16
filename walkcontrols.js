@@ -1,4 +1,12 @@
 import * as THREE from 'three';
+import { db } from './firebase.js';
+import { doc, getDoc } from 'firebase/firestore';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { buildLot, buildInterior, buildRoomShell, buildHallway } from './house.js';
+import { makeGrassGround, PERF } from './decor.js';
 
 /* ============================================================
    WALKCONTROLS.JS — déplacement libre à la première personne,
