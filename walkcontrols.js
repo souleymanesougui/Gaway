@@ -115,20 +115,33 @@ export function attachJoystick(padEl, knobEl, onChange) {
     originY = rect.top + rect.height / 2;
     padEl.setPointerCapture(pointerId);
   }
+
   function move(e) {
     if (!active || e.pointerId !== pointerId) return;
-    let dx = e.clientX - originX, dy = e.clientY - originY;
+
+    let dx = e.clientX - originX;
+    let dy = e.clientY - originY;
+
     const dist = Math.hypot(dx, dy);
-    if (dist > maxR) { dx = (dx / dist) * maxR; dy = (dy / dist) * maxR; }
+
+    if (dist > maxR) {
+      dx = (dx / dist) * maxR;
+      dy = (dy / dist) * maxR;
+    }
+
     knobEl.style.transform = `translate(${dx}px, ${dy}px)`;
     onChange(dx / maxR, dy / maxR);
   }
+
   function end(e) {
     if (pointerId !== null && e.pointerId !== pointerId) return;
-    active = false; pointerId = null;
+
+    active = false;
+    pointerId = null;
     knobEl.style.transform = 'translate(0px, 0px)';
     onChange(0, 0);
   }
+
   padEl.addEventListener('pointerdown', start);
   padEl.addEventListener('pointermove', move);
   padEl.addEventListener('pointerup', end);
