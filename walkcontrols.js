@@ -1,21 +1,5 @@
 import * as THREE from 'three';
-import { db } from './firebase.js';
-import { doc, getDoc } from 'firebase/firestore';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Sky } from 'three/addons/objects/Sky.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { buildLot, buildInterior, buildRoomShell, buildHallway } from './house.js';
-import { makeGrassGround, PERF } from './decor.js';
 
-/* ============================================================
-   WALKCONTROLS.JS — déplacement libre à la première personne,
-   identique en extérieur et en intérieur :
-   - glisser (souris ou doigt) = regarder autour
-   - clavier (WASD / flèches) = se déplacer (ordinateur)
-   - joystick virtuel = se déplacer (mobile)
-   - tap/clic bref (sans glisser) = sélectionner un objet (porte)
-   ============================================================ */
 export function createWalkControls(camera, domElement, opts = {}) {
   const eyeHeight = opts.eyeHeight ?? 1.65;
   let yaw = opts.yaw ?? 0;
