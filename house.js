@@ -387,18 +387,175 @@ export function buildInterior(person, scale = 1) {
   lampLight.castShadow = true;
   room.add(lampPole, lampShade, lampLight);
 
-  // Paintings on back wall
-  for (let i = 0; i < 2; i++) {
+  // Paintings on the side walls (kept clear of the back opening that leads to the hallway)
+  const paintSpots = [
+    { x: -W / 2 + 0.08, z: -0.6 * scale, ry: Math.PI / 2 },
+    { x: W / 2 - 0.08, z: 0.6 * scale, ry: -Math.PI / 2 },
+  ];
+  paintSpots.forEach((spot, i) => {
     const frame = new THREE.Mesh(new THREE.BoxGeometry(0.55 * scale, 0.4 * scale, 0.04), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.4 }));
-    frame.position.set((-1.4 + i * 0.9) * scale, 1.7, -D / 2 + 0.08);
+    frame.position.set(spot.x, 1.7, spot.z);
+    frame.rotation.y = spot.ry;
     const art = new THREE.Mesh(new THREE.PlaneGeometry(0.48 * scale, 0.34 * scale), new THREE.MeshStandardMaterial({ map: abstractArtTexture(i + hashSeedLocal(person)), roughness: 0.8 }));
-    art.position.copy(frame.position); art.position.z += 0.03;
+    art.position.copy(frame.position);
+    art.rotation.y = spot.ry;
+    art.translateZ(0.03);
     room.add(frame, art);
-  }
+  });
 
-  room.position.z = -D * 0.12;
   return room;
 }
 function hashSeedLocal(person) {
   return (person.name || 'x').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+}
+
+/* ============================================================
+   ROOM SHELL — encloses buildInterior()'s furniture in real
+   walls/floor/ceiling. If the person has children, the back wall
+   is left open (with door-frame flanks) so the room flows
+   straight into the hallway of "chambres" below.
+   ============================================================ */
+export function buildRoomShell(person, scale = 1, openBack = false) {
+  const style = styleFor(person);
+  const mats = getMaterials(style);
+  const W = 5.2 * scale, D = 4.4 * scale, H = 2.9 * scale;
+  const group = new THREE.Group();
+
+  const floorMat = new THREE.MeshStandardMaterial({
+    map: style === 1 ? woodTexture([2, 3], '#8a6a48') : marbleTexture([3, 3]), roughness: 0.4, metalness: 0.05,
+  });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = 0.36;
+  floor.receiveShadow = true;
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshStandardMaterial({ color: 0xf5f1e8, roughness: 0.95, side: THREE.DoubleSide }));
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = H;
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.12, H, D), mats.wallMat);
+  leftWall.position.set(-W / 2, H / 2, 0);
+  const rightWall = leftWall.clone();
+  rightWall.position.x = W / 2;
+  [leftWall, rightWall].forEach((w) => { w.castShadow = true; w.receiveShadow = true; group.add(w); });
+  group.add(floor, ceiling);
+
+  const backOpeningWidth = Math.min(2.6 * scale, W * 0.5);
+  if (openBack) {
+    const segW = (W - backOpeningWidth) / 2;
+    const segL = new THREE.Mesh(new THREE.BoxGeometry(segW, H, 0.12), mats.wallMat);
+    segL.position.set(-W / 2 + segW / 2, H / 2, -D / 2);
+    const segR = segL.clone();
+    segR.position.x = W / 2 - segW / 2;
+    [segL, segR].forEach((w) => { w.castShadow = true; w.receiveShadow = true; group.add(w); });
+  } else {
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(W, H, 0.12), mats.wallMat);
+    backWall.position.set(0, H / 2, -D / 2);
+    backWall.castShadow = true; backWall.receiveShadow = true;
+    group.add(backWall);
+  }
+
+  return { group, W, D, H, backOpeningWidth };
+}
+
+function makeDoorLabel(text) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 320; canvas.height = 96;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(20,16,26,0.65)';
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(0, 0, 320, 96, 18) : ctx.rect(0, 0, 320, 96);
+  ctx.fill();
+  ctx.fillStyle = '#f5f0ff';
+  ctx.font = '600 40px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 160, 50);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+  sprite.scale.set(1.4, 0.42, 1);
+  return sprite;
+}
+
+/* ============================================================
+   HALLWAY — one real, openable door per child ("chambre").
+   Extends indefinitely (length adapts to how many children);
+   each door, opened, leads recursively into that child's own
+   room + their own hallway of children, forever, driven purely
+   by the Firestore data (no hardcoded depth limit).
+   ============================================================ */
+export function buildHallway(person, children, scale, startZ) {
+  const style = styleFor(person);
+  const mats = getMaterials(style);
+  const n = children.length;
+  const doorGap = 1.9 * scale;
+  const rows = Math.max(1, Math.ceil(n / 2));
+  const length = rows * doorGap + 1.2 * scale;
+  const width = 2.6 * scale;
+  const H = 2.9 * scale;
+  const midZ = startZ - length / 2;
+  const endZ = startZ - length;
+
+  const group = new THREE.Group();
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial({ map: marbleTexture([1, Math.max(2, rows)]), roughness: 0.35 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(0, 0.36, midZ);
+  floor.receiveShadow = true;
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial({ color: 0xf5f1e8, roughness: 0.95, side: THREE.DoubleSide }));
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.set(0, H, midZ);
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.1, H, length), mats.wallMat);
+  leftWall.position.set(-width / 2, H / 2, midZ);
+  const rightWall = leftWall.clone();
+  rightWall.position.x = width / 2;
+  const endWall = new THREE.Mesh(new THREE.BoxGeometry(width, H, 0.1), mats.wallMat);
+  endWall.position.set(0, H / 2, endZ);
+  [leftWall, rightWall, endWall].forEach((w) => { w.castShadow = true; w.receiveShadow = true; group.add(w); });
+  group.add(floor, ceiling);
+
+  // Corridor lighting (kept light on lights/shadows for long hallways)
+  const lightEvery = n > 16 ? 2 : 1;
+  for (let i = 0; i <= rows; i += lightEvery) {
+    const z = startZ - i * doorGap;
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06 * scale, 8, 8), new THREE.MeshStandardMaterial({ color: 0xfff2c8, emissive: 0xffdca0, emissiveIntensity: 1 }));
+    bulb.position.set(0, H - 0.15, z);
+    const light = new THREE.PointLight(0xffdca0, 0.6, 4 * scale, 2);
+    light.position.copy(bulb.position);
+    group.add(bulb, light);
+  }
+
+  const doors = [];
+  const doorW = 0.85 * scale, doorH = 2.0 * scale;
+  const doorMat = new THREE.MeshStandardMaterial({ color: style === 1 ? 0x4a3120 : 0x232323, roughness: 0.45, metalness: 0.25 });
+
+  children.forEach((child, i) => {
+    const side = i % 2 === 0 ? -1 : 1;
+    const row = Math.floor(i / 2);
+    const z = startZ - 0.9 * scale - row * doorGap;
+    const wallX = side * (width / 2 - 0.05);
+
+    const pivot = new THREE.Group();
+    pivot.position.set(wallX, 0, z - (side < 0 ? doorW / 2 : -doorW / 2));
+    const door = new THREE.Mesh(new THREE.BoxGeometry(0.06, doorH, doorW), doorMat);
+    door.position.set(0, doorH / 2, side < 0 ? doorW / 2 : -doorW / 2);
+    door.castShadow = true;
+    door.userData.person = child; // click target — walking up the graph stops right here
+    const handle = new THREE.Mesh(new THREE.SphereGeometry(0.03 * scale, 8, 8), new THREE.MeshStandardMaterial({ color: 0xd8c27a, roughness: 0.25, metalness: 0.85 }));
+    handle.position.set(0.05, 0, side < 0 ? doorW * 0.15 : -doorW * 0.15);
+    door.add(handle);
+    pivot.add(door);
+    group.add(pivot);
+
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.1, doorH + 0.1, doorW + 0.1), mats.trimMat);
+    frame.position.set(wallX + (side < 0 ? -0.03 : 0.03), doorH / 2, z);
+    group.add(frame);
+
+    const grandChildCount = (child.children && child.children.length) || 0;
+    const labelText = child.name + (grandChildCount ? ` (${grandChildCount})` : '');
+    const label = makeDoorLabel(labelText);
+    label.position.set(wallX + (side < 0 ? -0.35 : 0.35), doorH + 0.15, z);
+    group.add(label);
+
+    doors.push({ pivot, hitbox: door, person: child });
+  });
+
+  return { group, doors, length, endZ, width };
 }
